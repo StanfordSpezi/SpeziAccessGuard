@@ -14,8 +14,7 @@ import PackageDescription
 let package = Package(
     name: "SpeziAccessCode",
     platforms: [
-        .iOS(.v16),
-        .watchOS(.v9)
+        .iOS(.v16)
     ],
     products: [
         .library(name: "SpeziAccessCode", targets: ["SpeziAccessCode"])
