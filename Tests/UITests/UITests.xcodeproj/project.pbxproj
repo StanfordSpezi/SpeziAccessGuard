@@ -10,6 +10,7 @@
 		2F68C3C8292EA52000B3E12C /* SpeziAccessGuard in Frameworks */ = {isa = PBXBuildFile; productRef = 2F68C3C7292EA52000B3E12C /* SpeziAccessGuard */; };
 		2F6D139A28F5F386007C25D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F6D139928F5F386007C25D6 /* Assets.xcassets */; };
 		2F7E29302AAD5E29000458CE /* TestAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7E292F2AAD5E29000458CE /* TestAppDelegate.swift */; };
+		2F7E29322AAE61DB000458CE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7E29312AAE61DB000458CE /* ContentView.swift */; };
 		2F8A431329130A8C005D2B8F /* TestAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8A431229130A8C005D2B8F /* TestAppUITests.swift */; };
 		2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA7382B290ADFAA007ACEB9 /* TestApp.swift */; };
 /* End PBXBuildFile section */
@@ -43,6 +44,7 @@
 		2F6D139928F5F386007C25D6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2F6D13AC28F5F386007C25D6 /* TestAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F7E292F2AAD5E29000458CE /* TestAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAppDelegate.swift; sourceTree = "<group>"; };
+		2F7E29312AAE61DB000458CE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		2F8A431229130A8C005D2B8F /* TestAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAppUITests.swift; sourceTree = "<group>"; };
 		2FA7382B290ADFAA007ACEB9 /* TestApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestApp.swift; sourceTree = "<group>"; };
 		2FB0758A299DDB9000C0B37F /* TestApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestApp.xctestplan; sourceTree = "<group>"; };
@@ -92,6 +94,7 @@
 			isa = PBXGroup;
 			children = (
 				2FA7382B290ADFAA007ACEB9 /* TestApp.swift */,
+				2F7E29312AAE61DB000458CE /* ContentView.swift */,
 				2F7E292F2AAD5E29000458CE /* TestAppDelegate.swift */,
 				2F6D139928F5F386007C25D6 /* Assets.xcassets */,
 			);
@@ -218,6 +221,7 @@
 			files = (
 				2F7E29302AAD5E29000458CE /* TestAppDelegate.swift in Sources */,
 				2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */,
+				2F7E29322AAE61DB000458CE /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -74,7 +74,7 @@ public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
         case .customAlphanumeric:
             return LocalizedStringResource("CODE_OPTIONS_CUSTOM_ALPHANUMERIC_DIGIT", bundle: .atURL(from: .module))
         default:
-            return LocalizedStringResource("CODE_OPTIONS_DEFAULT_DIGIT", bundle: .atURL(from: .module))
+            return LocalizedStringResource("CODE_OPTIONS_UNKNOWN", bundle: .atURL(from: .module))
         }
     }
     

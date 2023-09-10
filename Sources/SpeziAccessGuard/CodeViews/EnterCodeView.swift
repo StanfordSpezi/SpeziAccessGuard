@@ -28,7 +28,8 @@ struct EnterCodeView: View {
                             try await viewModel.checkAccessCode(code)
                         } catch {
                             wrongCodeCounter += 1
-                            errorMessage = String(localized: "ACCESS_CODE_PASSCODE_ERROR \(wrongCodeCounter)", bundle: .module)
+                            let errorMessageTemplate = NSLocalizedString("ACCESS_CODE_PASSCODE_ERROR %@", bundle: .module, comment: "")
+                            errorMessage = String(format: errorMessageTemplate, "\(wrongCodeCounter)")
                             throw error
                         }
                     }

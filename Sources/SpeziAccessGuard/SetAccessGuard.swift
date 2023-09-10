@@ -13,28 +13,23 @@ import SwiftUI
 public struct SetAccessGuard: View {
     @EnvironmentObject private var accessGuard: AccessGuard
     
-    private let configuration: AccessGuardConfiguration
-    private let identifier: String
+    private let identifier: AccessGuardConfiguration.Identifier
+    private let action: @MainActor () async -> Void
     
     
     public var body: some View {
-        SetCodeView(
-            viewModel: accessGuard.viewModel(
-                for: identifier,
-                configuration: configuration
-            )
-        )
+        SetCodeView(viewModel: accessGuard.viewModel(for: identifier), action: action)
     }
     
     
     /// - Parameters:
-    ///   - configuration: The access code configuration that defines the behaviour of the view. See ``AccessGuardConfiguration`` for more information.
-    ///   - identifier: The identifier of the credentials that should be used to guard this view.
+    ///   - identifier: The identifier of the access guard configuration that should be used to guard this view.
+    ///   - action: An action that should be performed once the password has been set.
     public init(
-        configuration: AccessGuardConfiguration = .code,
-        identifier: String
+        identifier: AccessGuardConfiguration.Identifier,
+        action: (@MainActor () async -> Void)? = nil
     ) {
-        self.configuration = configuration
         self.identifier = identifier
+        self.action = action ?? {}
     }
 }

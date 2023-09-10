@@ -57,7 +57,7 @@ struct CodeView: View {
                     focused = true
                 }
             }
-            .onAppear {
+            .task {
                 focused = true
                 oldKeyBoardType = codeOption.keyBoardType
             }
@@ -98,6 +98,7 @@ struct CodeView: View {
     private func checkCode() async {
         focused = false
         viewState = .processing
+        
         do {
             try await action(code)
         } catch {
@@ -106,7 +107,6 @@ struct CodeView: View {
         }
         
         viewState = .idle
-        
         try? await Task.sleep(for: .seconds(0.05))
         focused = true
     }

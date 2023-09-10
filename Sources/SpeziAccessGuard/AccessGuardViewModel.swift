@@ -22,16 +22,18 @@ final class AccessGuardViewModel: ObservableObject {
     @MainActor @Published private(set) var locked = true
     
     let configuration: AccessGuardConfiguration
-    private var identifier: String
-    private var fixedCode: String?
     private var accessCode: AccessCode?
     private weak var accessGuard: AccessGuard?
     private let secureStorage: SecureStorage
     private var cancellables: Set<AnyCancellable> = []
     
     
+    var setup: Bool {
+        accessCode != nil || configuration.fixedCode != nil
+    }
+    
     var codeOption: CodeOptions? {
-        if fixedCode != nil {
+        if configuration.fixedCode != nil {
             return configuration.codeOptions
         } else {
             return accessCode?.codeOption
@@ -39,14 +41,13 @@ final class AccessGuardViewModel: ObservableObject {
     }
     
     
-    init(_ identifier: String, fixedCode: String? = nil, accessGuard: AccessGuard, secureStorage: SecureStorage, configuration: AccessGuardConfiguration) {
+    @MainActor
+    init(accessGuard: AccessGuard, secureStorage: SecureStorage, configuration: AccessGuardConfiguration) {
         self.configuration = configuration
         self.accessGuard = accessGuard
         self.secureStorage = secureStorage
-        self.identifier = identifier
-        self.fixedCode = fixedCode
         
-        if let credentials = try? secureStorage.retrieveCredentials(identifier),
+        if let credentials = try? secureStorage.retrieveCredentials(configuration.identifier),
            let accessCode = try? JSONDecoder().decode(AccessCode.self, from: Data(credentials.password.utf8)),
            accessCode.codeOption.verifyStructore(ofCode: accessCode.code) {
             self.accessCode = accessCode
@@ -54,29 +55,44 @@ final class AccessGuardViewModel: ObservableObject {
             self.accessCode = nil
         }
         
+        self.locked = setup
+        
         accessGuard.objectWillChange
             .sink {
-                self.updateState()
+                self.lockAfterInactivity()
                 self.objectWillChange.send()
             }
             .store(in: &cancellables)
     }
     
     
-    private func updateState() {
+    private func lockAfterInactivity() {
         Task { @MainActor in
-            if let lastEnteredBackground = accessGuard?.lastEnteredBackground, lastEnteredBackground.addingTimeInterval(configuration.timeout) >= .now {
-                locked = false
-            } else {
+            if let lastEnteredBackground = accessGuard?.lastEnteredBackground, 
+               lastEnteredBackground.addingTimeInterval(configuration.timeout) < .now {
                 locked = true
             }
         }
     }
     
+    @MainActor
+    func resetAccessCode() throws {
+        guard configuration.fixedCode == nil else {
+            return
+        }
+        
+        do {
+            try secureStorage.deleteCredentials(configuration.identifier)
+            accessCode = nil
+            self.locked = setup
+        } catch {
+            print("Error resetting access code: \(error)")
+        }
+    }
     
     func checkAccessCode(_ code: String) async throws {
         try await MainActor.run {
-            if let fixedCode, code == fixedCode {
+            if let fixedCode = configuration.fixedCode, code == fixedCode {
                 locked = false
                 return
             }
@@ -90,7 +106,7 @@ final class AccessGuardViewModel: ObservableObject {
     }
     
     func setAccessCode(_ code: String, codeOption: CodeOptions) async throws {
-        guard fixedCode == nil else {
+        guard configuration.fixedCode == nil else {
             throw AccessGuardError.storeCodeError
         }
         
@@ -100,7 +116,7 @@ final class AccessGuardViewModel: ObservableObject {
             throw AccessGuardError.storeCodeError
         }
         
-        try secureStorage.store(credentials: Credentials(username: identifier, password: accessCodeData))
+        try secureStorage.store(credentials: Credentials(username: configuration.identifier, password: accessCodeData))
         
         await MainActor.run {
             locked = true

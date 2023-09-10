@@ -14,7 +14,12 @@ import SwiftUI
 class TestAppDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
-            AccessGuard()
+            AccessGuard(
+                [
+                    .code(identifier: "TestIdentifier"),
+                    .fixed(identifier: "TestFixedIdentifier", code: "1234")
+                ]
+            )
         }
     }
 }

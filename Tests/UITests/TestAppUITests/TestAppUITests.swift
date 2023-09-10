@@ -17,9 +17,12 @@ class TestAppUITests: XCTestCase {
     }
     
     
-    func testSpeziAccessGuard() throws {
+    func testFixedCode() throws {
         let app = XCUIApplication()
         app.launch()
-        XCTAssert(app.staticTexts["Stanford University"].waitForExistence(timeout: 0.1))
+        
+        app.buttons["Access Guarded Fixed"].tap()
+        
+        
     }
 }

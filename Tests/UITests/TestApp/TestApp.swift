@@ -6,7 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-import SpeziAccessGuard
 import SwiftUI
 
 
@@ -17,29 +16,7 @@ struct UITestsApp: App {
     
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                List {
-                    NavigationLink("Access Guarded") {
-                        AccessGuarded(configuration: .code(timeout: 5), identifier: "TestIdentifier") {
-                            Color.green
-                                .overlay {
-                                    Text("Secured ...")
-                                }
-                        }
-                    }
-                    NavigationLink("Access Guarded Fixed") {
-                        AccessGuarded(fixedCode: "1234") {
-                            Color.green
-                                .overlay {
-                                    Text("Secured with fixed code ...")
-                                }
-                        }
-                    }
-                    NavigationLink("Set Code") {
-                        SetAccessGuard(identifier: "TestIdentifier")
-                    }
-                }
-            }
+            ContentView()
                 .spezi(appDelegate)
         }
     }
