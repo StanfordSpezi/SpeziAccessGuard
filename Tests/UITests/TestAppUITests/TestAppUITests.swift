@@ -30,7 +30,7 @@ class TestAppUITests: XCTestCase {
     }
     
     
-    func testAccessCode() throws {
+    func testAccessCode() throws { // swiftlint:disable:this function_body_length
         let app = XCUIApplication()
         app.launch()
         

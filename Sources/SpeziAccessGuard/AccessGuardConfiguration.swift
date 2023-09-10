@@ -12,10 +12,14 @@ import SpeziViews
 
 /// Configures the behaviour of the ``AccessGuard`` view.
 public struct AccessGuardConfiguration {
-   public typealias Identifier = String
+    /// Unique identifier for the ``AccessGuardConfiguration``
+    public typealias Identifier = String
     
+    /// The defaults for the ``AccessGuardConfiguration``
     public enum Defaults {
+        /// Default code option, subject to change in the future.
         public static let codeOptions: CodeOptions = .fourDigitNumeric
+        /// Default timeout option, subject to change in the future.
         public static let timeout: TimeInterval = 5 * 60
     }
     

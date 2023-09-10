@@ -68,7 +68,7 @@ final class AccessGuardViewModel: ObservableObject {
     
     private func lockAfterInactivity() {
         Task { @MainActor in
-            if let lastEnteredBackground = accessGuard?.lastEnteredBackground, 
+            if let lastEnteredBackground = accessGuard?.lastEnteredBackground,
                lastEnteredBackground.addingTimeInterval(configuration.timeout) < .now {
                 locked = true
             }
