@@ -19,7 +19,7 @@ final class AccessGuardViewModel: ObservableObject {
     }
     
     
-    @Published private(set) var locked = true
+    @MainActor @Published private(set) var locked = true
     
     let configuration: AccessGuardConfiguration
     private var identifier: String
@@ -31,7 +31,11 @@ final class AccessGuardViewModel: ObservableObject {
     
     
     var codeOption: CodeOptions? {
-        accessCode?.codeOption
+        if fixedCode != nil {
+            return configuration.codeOptions
+        } else {
+            return accessCode?.codeOption
+        }
     }
     
     
@@ -60,31 +64,32 @@ final class AccessGuardViewModel: ObservableObject {
     
     
     private func updateState() {
-        if accessGuard?.inTheBackground == true {
-            locked = true
-        } else if let lastEnteredBackground = accessGuard?.lastEnteredBackground,
-                  lastEnteredBackground.addingTimeInterval(configuration.timeout) >= .now {
-            locked = false
-        } else {
-            locked = true
+        Task { @MainActor in
+            if let lastEnteredBackground = accessGuard?.lastEnteredBackground, lastEnteredBackground.addingTimeInterval(configuration.timeout) >= .now {
+                locked = false
+            } else {
+                locked = true
+            }
         }
     }
     
     
-    func checkAccessCode(_ code: String) throws {
-        if let fixedCode, code == fixedCode {
+    func checkAccessCode(_ code: String) async throws {
+        try await MainActor.run {
+            if let fixedCode, code == fixedCode {
+                locked = false
+                return
+            }
+            
+            guard code == accessCode?.code else {
+                throw AccessGuardError.wrongPasscode
+            }
+            
             locked = false
-            return
         }
-        
-        guard code == accessCode?.code else {
-            throw AccessGuardError.wrongPasscode
-        }
-        
-        locked = false
     }
     
-    func setAccessCode(_ code: String, codeOption: CodeOptions) throws {
+    func setAccessCode(_ code: String, codeOption: CodeOptions) async throws {
         guard fixedCode == nil else {
             throw AccessGuardError.storeCodeError
         }
@@ -96,5 +101,9 @@ final class AccessGuardViewModel: ObservableObject {
         }
         
         try secureStorage.store(credentials: Credentials(username: identifier, password: accessCodeData))
+        
+        await MainActor.run {
+            locked = true
+        }
     }
 }

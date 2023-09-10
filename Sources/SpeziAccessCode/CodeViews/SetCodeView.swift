@@ -23,6 +23,13 @@ struct SetCodeView: View {
     @State private var errorMessage: String?
     
     
+    private var codeOptions: [CodeOptions] {
+        CodeOptions.allCases.filter { codeOption in
+            viewModel.configuration.codeOptions.contains(codeOption)
+        }
+    }
+    
+    
     var body: some View {
         ZStack {
             Color(uiColor: .systemBackground)
@@ -39,10 +46,14 @@ struct SetCodeView: View {
                                 state = .repeatCode
                             }
                         }
-                        Menu(selectedCode.description.localizedString()) {
-                            ForEach(CodeOptions.allCases) { codeOption in
-                                Button(codeOption.description.localizedString()) {
-                                    selectedCode = codeOption
+                        Group {
+                            if codeOptions.count > 1 {
+                                Menu(selectedCode.description.localizedString()) {
+                                    ForEach(codeOptions) { codeOption in
+                                        Button(codeOption.description.localizedString()) {
+                                            selectedCode = codeOption
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -57,7 +68,7 @@ struct SetCodeView: View {
                         CodeView(codeOption: $selectedCode) { code in
                             if code == firstCode {
                                 do {
-                                    try viewModel.setAccessCode(code, codeOption: selectedCode)
+                                    try await viewModel.setAccessCode(code, codeOption: selectedCode)
                                     errorMessage = nil
                                     withAnimation {
                                         state = .success

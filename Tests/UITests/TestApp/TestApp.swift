@@ -20,7 +20,7 @@ struct UITestsApp: App {
             NavigationStack {
                 List {
                     NavigationLink("Access Guarded") {
-                        AccessGuarded(identifier: "TestIdentifier") {
+                        AccessGuarded(configuration: .code(timeout: 5), identifier: "TestIdentifier") {
                             Color.green
                                 .overlay {
                                     Text("Secured ...")

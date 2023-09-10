@@ -25,7 +25,7 @@ struct EnterCodeView: View {
                 if let codeOption = viewModel.codeOption {
                     CodeView(codeOption: codeOption) { code in
                         do {
-                            try viewModel.checkAccessCode(code)
+                            try await viewModel.checkAccessCode(code)
                         } catch {
                             wrongCodeCounter += 1
                             errorMessage = String(localized: "ACCESS_CODE_PASSCODE_ERROR \(wrongCodeCounter)", bundle: .module)

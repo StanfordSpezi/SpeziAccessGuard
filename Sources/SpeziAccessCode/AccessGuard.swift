@@ -73,7 +73,6 @@ public final class AccessGuard: Module {
             configuration: configuration
         )
         viewModels[identifier] = viewModel
-        viewModel.objectWillChange.sink(receiveValue: { self.objectWillChange.send() }).store(in: &cancellables)
         return viewModel
     }
 }
