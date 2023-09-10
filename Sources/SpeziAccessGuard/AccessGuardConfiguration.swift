@@ -12,82 +12,91 @@ import SpeziViews
 
 /// Configures the behaviour of the ``AccessGuard`` view.
 public struct AccessGuardConfiguration {
+    /// Unique identifier for the ``AccessGuardConfiguration``
+    public typealias Identifier = String
+    
+    /// The defaults for the ``AccessGuardConfiguration``
     public enum Defaults {
+        /// Default code option, subject to change in the future.
         public static let codeOptions: CodeOptions = .fourDigitNumeric
+        /// Default timeout option, subject to change in the future.
         public static let timeout: TimeInterval = 5 * 60
     }
     
     
+    let identifier: Identifier
     let guardType: GuardType
     let codeOptions: CodeOptions
     let timeout: TimeInterval
-    
-    
-    /// Enforce a code if the device is not protected with an access code.
-    ///
-    /// > Warning: Not yet implemented
-    private static var codeIfUnprotected: AccessGuardConfiguration {
-        codeIfUnprotected()
-    }
-    
-    /// Enforce a code.
-    public static var code: AccessGuardConfiguration {
-        code()
-    }
-    
-    /// Enforce a code & biometrics authentication if setup on the device.
-    ///
-    /// > Warning: Not yet implemented
-    private static var biometrics: AccessGuardConfiguration {
-        biometrics()
-    }
+    let fixedCode: String?
     
     
     init(
+        identifier: Identifier,
         guardType: GuardType,
         codeOptions: CodeOptions,
-        timeout: TimeInterval
+        timeout: TimeInterval,
+        fixedCode: String? = nil
     ) {
+        self.identifier = identifier
         self.guardType = guardType
         self.codeOptions = codeOptions
         self.timeout = timeout
+        self.fixedCode = fixedCode
     }
     
     
-    /// Enforce a code if the device is not protected with an access code.
+    /// Enforce an access code if the device is not protected with an access code.
     /// - Parameters:
     ///   - codeOptions: The code options, see ``CodeOptions``.
     ///   - timeout: The timeout when the view should be locked based on the time the scene is not in the foreground.
     ///
     /// > Warning: Not yet implemented
     private static func codeIfUnprotected(
+        identifier: Identifier,
         codeOptions: CodeOptions = Defaults.codeOptions,
         timeout: TimeInterval = Defaults.timeout
     ) -> AccessGuardConfiguration {
-        AccessGuardConfiguration(guardType: .codeIfUnprotected, codeOptions: codeOptions, timeout: timeout)
+        AccessGuardConfiguration(identifier: identifier, guardType: .codeIfUnprotected, codeOptions: codeOptions, timeout: timeout)
     }
     
-    /// Enforce a code.
+    /// Enforce an access code.
     /// - Parameters:
     ///   - codeOptions: The code options, see ``CodeOptions``.
     ///   - timeout: The timeout when the view should be locked based on the time the scene is not in the foreground.
     public static func  code(
+        identifier: Identifier,
         codeOptions: CodeOptions = .fourDigitNumeric,
         timeout: TimeInterval = Defaults.timeout
     ) -> AccessGuardConfiguration {
-        AccessGuardConfiguration(guardType: .code, codeOptions: codeOptions, timeout: timeout)
+        AccessGuardConfiguration(identifier: identifier, guardType: .code, codeOptions: codeOptions, timeout: timeout)
     }
     
-    /// Enforce a code & biometrics authentication if setup on the device.
+    /// Enforce a fixed access code.
+    /// - Parameters:
+    ///   - code: The fixed access code.
+    ///   - codeOptions: The code options, see ``CodeOptions``.
+    ///   - timeout: The timeout when the view should be locked based on the time the scene is not in the foreground.
+    public static func fixed(
+        identifier: Identifier,
+        code: String,
+        codeOptions: CodeOptions = .fourDigitNumeric,
+        timeout: TimeInterval = Defaults.timeout
+    ) -> AccessGuardConfiguration {
+        AccessGuardConfiguration(identifier: identifier, guardType: .code, codeOptions: codeOptions, timeout: timeout, fixedCode: code)
+    }
+    
+    /// Enforce an access code & biometrics authentication if setup on the device.
     /// - Parameters:
     ///   - codeOptions: The code options, see ``CodeOptions``.
     ///   - timeout: The timeout when the view should be locked based on the time the scene is not in the foreground.
     ///
     /// > Warning: Not yet implemented
     private static func  biometrics(
+        identifier: Identifier,
         codeOptions: CodeOptions = .all,
         timeout: TimeInterval = Defaults.timeout
     ) -> AccessGuardConfiguration {
-        AccessGuardConfiguration(guardType: .biometrics, codeOptions: codeOptions, timeout: timeout)
+        AccessGuardConfiguration(identifier: identifier, guardType: .biometrics, codeOptions: codeOptions, timeout: timeout)
     }
 }

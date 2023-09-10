@@ -74,12 +74,12 @@ public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
         case .customAlphanumeric:
             return LocalizedStringResource("CODE_OPTIONS_CUSTOM_ALPHANUMERIC_DIGIT", bundle: .atURL(from: .module))
         default:
-            return LocalizedStringResource("CODE_OPTIONS_DEFAULT_DIGIT", bundle: .atURL(from: .module))
+            return LocalizedStringResource("CODE_OPTIONS_UNKNOWN", bundle: .atURL(from: .module))
         }
     }
     
     var keyBoardType: UIKeyboardType {
-        if self.contains(.customAlphanumeric) {
+        if self == .customAlphanumeric {
             return .default
         } else {
             return .numberPad
@@ -99,7 +99,7 @@ public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
     func verifyStructore(ofCode code: String) -> Bool {
         switch self {
         case .fourDigitNumeric, .sixDigitNumeric:
-            return code.isEmpty && code.count == maxLength
+            return code.isNumeric && code.count == maxLength
         case .customNumeric:
             return code.isNumeric && code.count >= CodeOptions.fourDigitNumeric.maxLength
         case .customAlphanumeric:

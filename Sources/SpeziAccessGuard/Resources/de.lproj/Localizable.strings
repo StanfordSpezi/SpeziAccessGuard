@@ -1,0 +1,32 @@
+//
+// This source file is part of the Spezi open source project
+//
+// SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
+//
+// SPDX-License-Identifier: MIT
+//
+
+
+// MARK: - Code-Optionen
+"CODE_OPTIONS_FOUR_DIGIT" = "Vier Ziffern";
+"CODE_OPTIONS_SIX_DIGIT" = "Sechs Ziffern";
+"CODE_OPTIONS_CUSTOM_NUMERIC_DIGIT" = "Benutzerdefinierte Nummer";
+"CODE_OPTIONS_CUSTOM_ALPHANUMERIC_DIGIT" = "Benutzerdefiniert Alphanumerisch";
+"CODE_OPTIONS_UNKNOWN" = "Unbekannte Option";
+
+// MARK: - Passwort
+"PASSCODE_FIELD" = "Passwort Textfeld";
+"ACCESS_CODE_PASSCODE_PROMPT" = "Bitte geben Sie Ihren Code ein";
+"SET_PASSCODE_BACK_BUTTON" = "Zurücksetzen";
+"SET_PASSCODE_REPEAT_NOT_EQUAL" = "Codes stimmen nicht überein";
+"SET_PASSCODE_REPEAT_PROMPT" = "Bitte wiederholen Sie Ihren neuen Code";
+"SET_PASSCODE_PROMPT" = "Bitte geben Sie Ihren neuen Code ein";
+"PASSCODE_NOT_ACCORDING_TO_FORMAT" = "Der Code ist nicht korrekt formatiert";
+"PASSCODE_SET_SUCCESS" = "Neuen Code erfolgreich gespeichert";
+"ACCESS_CODE_PASSCODE_PROMPT" = "Bitte geben Sie Ihren Code ein";
+"ACCESS_CODE_PASSCODE_ERROR %@" = "%@ falsche Versuche";
+
+// MARK: - Fehler
+"ACCESS_GUARD_ERROR_TITLE" = "Code-Fehler";
+"ACCESS_GUARD_ERROR_WRONG_PASSCODE_REASON" = "Falscher Code";
+"ACCESS_GUARD_ERROR_STORE_CODE_ERROR_REASON" = "Der Code konnte nicht gespeichert werden.";

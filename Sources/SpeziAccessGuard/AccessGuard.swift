@@ -22,7 +22,11 @@ import SwiftUI
 /// class ExampleAppDelegate: SpeziAppDelegate {
 ///     override var configuration: Configuration {
 ///         Configuration {
-///             AccessGuard()
+///             AccessGuard(
+///                 [
+///                     .code(identifier: "TestIdentifier")
+///                 ]
+///             )
 ///             // ...
 ///         }
 ///     }
@@ -39,37 +43,59 @@ public final class AccessGuard: Module {
     @Dependency var secureStorage: SecureStorage
     @Published var inTheBackground = true
     @Published var lastEnteredBackground: Date = .now
-    @Published var viewModels: [String: AccessGuardViewModel] = [:]
+    private let configurations: [AccessGuardConfiguration]
+    private var viewModels: [String: AccessGuardViewModel] = [:]
     private var cancellables: Set<AnyCancellable> = []
     
     
-    public init() { }
+    public init(_ configurations: [AccessGuardConfiguration]) {
+        self.configurations = configurations
+    }
     
     
     public func sceneDidEnterBackground(_ scene: UIScene) {
-        inTheBackground = true
-        lastEnteredBackground = .now
+        Task { @MainActor in
+            inTheBackground = true
+            lastEnteredBackground = .now
+        }
     }
     
     public func sceneWillEnterForeground(_ scene: UIScene) {
-        inTheBackground = false
+        Task { @MainActor in
+            inTheBackground = false
+        }
     }
     
     
-    func viewModel(for identifier: String, fixedCode: String? = nil, configuration: AccessGuardConfiguration) -> AccessGuardViewModel {
-        if let viewModel = viewModels[identifier] {
+    @MainActor
+    public func resetAccessCode(for identifier: AccessGuardConfiguration.Identifier) throws {
+        try viewModel(for: identifier).resetAccessCode()
+    }
+    
+    @MainActor
+    public func setupComplete(for identifier: AccessGuardConfiguration.Identifier) -> Bool {
+        viewModel(for: identifier).setup
+    }
+    
+    
+    @MainActor
+    func viewModel(for identifier: AccessGuardConfiguration.Identifier) -> AccessGuardViewModel {
+        guard let configuration = configurations.first(where: { $0.identifier == identifier }) else {
+            preconditionFailure(
+            """
+           Did not find a AccessGuardConfiguration with the identifier `\(identifier)`.
+           
+           Please ensure that you have defined an AccessGuardConfiguration with the identifier in your `AccessGuard` configuration.
+           """
+            )
+        }
+        
+        guard let viewModel = viewModels[identifier] else {
+            let viewModel = AccessGuardViewModel(accessGuard: self, secureStorage: secureStorage, configuration: configuration)
+            viewModels[identifier] = viewModel
             return viewModel
         }
         
-        let viewModel = AccessGuardViewModel(
-            identifier,
-            fixedCode: fixedCode,
-            accessGuard: self,
-            secureStorage: secureStorage,
-            configuration: configuration
-        )
-        viewModels[identifier] = viewModel
-        viewModel.objectWillChange.sink(receiveValue: { self.objectWillChange.send() }).store(in: &cancellables)
         return viewModel
     }
 }

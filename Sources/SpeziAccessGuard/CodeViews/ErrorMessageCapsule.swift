@@ -17,6 +17,9 @@ struct ErrorMessageCapsule: View {
         Group {
             if let errorMessage {
                 Text(errorMessage)
+                    .foregroundStyle(.white)
+                    .padding(.horizontal)
+                    .padding(.vertical, 4)
                     .background {
                         RoundedRectangle(cornerRadius: 25)
                             .foregroundStyle(.red)

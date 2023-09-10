@@ -12,22 +12,22 @@ import PackageDescription
 
 
 let package = Package(
-    name: "SpeziAccessCode",
+    name: "SpeziAccessGuard",
     defaultLocalization: "en",
     platforms: [
         .iOS(.v16)
     ],
     products: [
-        .library(name: "SpeziAccessCode", targets: ["SpeziAccessCode"])
+        .library(name: "SpeziAccessGuard", targets: ["SpeziAccessGuard"])
     ],
     dependencies: [
         .package(url: "https://github.com/StanfordSpezi/Spezi", .upToNextMinor(from: "0.7.2")),
         .package(url: "https://github.com/StanfordSpezi/SpeziStorage", .upToNextMinor(from: "0.4.2")),
-        .package(url: "https://github.com/StanfordSpezi/SpeziViews", .upToNextMinor(from: "0.4.2")),
+        .package(url: "https://github.com/StanfordSpezi/SpeziViews", .upToNextMinor(from: "0.4.2"))
     ],
     targets: [
         .target(
-            name: "SpeziAccessCode",
+            name: "SpeziAccessGuard",
             dependencies: [
                 .product(name: "Spezi", package: "Spezi"),
                 .product(name: "SpeziSecureStorage", package: "SpeziStorage"),
@@ -35,9 +35,9 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "SpeziAccessCodeTests",
+            name: "SpeziAccessGuardTests",
             dependencies: [
-                .target(name: "SpeziAccessCode")
+                .target(name: "SpeziAccessGuard")
             ]
         )
     ]

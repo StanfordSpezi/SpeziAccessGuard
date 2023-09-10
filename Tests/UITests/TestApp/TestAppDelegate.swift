@@ -7,14 +7,19 @@
 //
 
 import Spezi
-import SpeziAccessCode
+import SpeziAccessGuard
 import SwiftUI
 
 
 class TestAppDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
-            AccessGuard()
+            AccessGuard(
+                [
+                    .code(identifier: "TestIdentifier", timeout: 10),
+                    .fixed(identifier: "TestFixedIdentifier", code: "1234")
+                ]
+            )
         }
     }
 }

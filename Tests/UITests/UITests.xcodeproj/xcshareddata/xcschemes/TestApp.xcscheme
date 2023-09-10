@@ -28,9 +28,9 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SpeziAccessCode"
-               BuildableName = "SpeziAccessCode"
-               BlueprintName = "SpeziAccessCode"
+               BlueprintIdentifier = "SpeziAccessGuard"
+               BuildableName = "SpeziAccessGuard"
+               BlueprintName = "SpeziAccessGuard"
                ReferencedContainer = "container:../..">
             </BuildableReference>
          </BuildActionEntry>

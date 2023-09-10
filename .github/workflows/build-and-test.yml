@@ -21,8 +21,8 @@ jobs:
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       runsonlabels: '["macOS", "self-hosted"]'
-      scheme: SpeziAccessCode
-      artifactname: SpeziAccessCode.xcresult
+      scheme: SpeziAccessGuard
+      artifactname: SpeziAccessGuard.xcresult
   ios:
     name: Build and Test iOS
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
@@ -46,4 +46,4 @@ jobs:
     needs: [packageios, ios, ipados]
     uses: StanfordSpezi/.github/.github/workflows/create-and-upload-coverage-report.yml@v2
     with:
-      coveragereports: SpeziAccessCode.xcresult TestApp.xcresult TestAppiPadOS.xcresult
+      coveragereports: SpeziAccessGuard.xcresult TestApp.xcresult TestAppiPadOS.xcresult
