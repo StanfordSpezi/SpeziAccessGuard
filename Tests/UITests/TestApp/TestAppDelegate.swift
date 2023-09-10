@@ -16,7 +16,7 @@ class TestAppDelegate: SpeziAppDelegate {
         Configuration {
             AccessGuard(
                 [
-                    .code(identifier: "TestIdentifier"),
+                    .code(identifier: "TestIdentifier", timeout: 10),
                     .fixed(identifier: "TestFixedIdentifier", code: "1234")
                 ]
             )

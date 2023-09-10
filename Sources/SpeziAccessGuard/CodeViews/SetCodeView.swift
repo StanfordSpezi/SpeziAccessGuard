@@ -126,7 +126,7 @@ struct SetCodeView: View {
                 .frame(height: 100)
                 .foregroundStyle(.green)
                 .transition(.slide)
-                .accessibilityHidden(true)
+                .accessibilityLabel(Text("PASSCODE_SET_SUCCESS", bundle: .module))
         }
     }
     

@@ -27,6 +27,7 @@ struct CodeView: View {
             .textFieldStyle(.roundedBorder)
             .focused($focused)
             .disabled(viewState == .processing)
+            .accessibilityLabel(Text("PASSCODE_FIELD", bundle: .module))
             .overlay {
                 ZStack {
                     if codeOption.maxLength == 4 {
