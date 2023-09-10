@@ -56,14 +56,19 @@ struct SetCodeView: View {
                     .font(.title2)
                     .frame(maxWidth: .infinity)
                 CodeView(codeOption: $selectedCode) { code in
+                    guard selectedCode.verifyStructore(ofCode: code) else {
+                        errorMessage = String(localized: "PASSCODE_NOT_ACCORDING_TO_FORMAT", bundle: .module)
+                        return
+                    }
+                    
                     firstCode = code
                     withAnimation {
                         state = .repeatCode
                     }
                 }
                 VStack {
+                    ErrorMessageCapsule(errorMessage: $errorMessage)
                     if codeOptions.count > 1 {
-                        Spacer()
                         Menu(selectedCode.description.localizedString()) {
                             ForEach(codeOptions) { codeOption in
                                 Button(codeOption.description.localizedString()) {

@@ -21,6 +21,7 @@
 "SET_PASSCODE_REPEAT_NOT_EQUAL" = "Codes stimmen nicht überein";
 "SET_PASSCODE_REPEAT_PROMPT" = "Bitte wiederholen Sie Ihren neuen Code";
 "SET_PASSCODE_PROMPT" = "Bitte geben Sie Ihren neuen Code ein";
+"PASSCODE_NOT_ACCORDING_TO_FORMAT" = "Der Code ist nicht korrekt formatiert";
 "PASSCODE_SET_SUCCESS" = "Neuen Code erfolgreich gespeichert";
 "ACCESS_CODE_PASSCODE_PROMPT" = "Bitte geben Sie Ihren Code ein";
 "ACCESS_CODE_PASSCODE_ERROR %@" = "%@ falsche Versuche";

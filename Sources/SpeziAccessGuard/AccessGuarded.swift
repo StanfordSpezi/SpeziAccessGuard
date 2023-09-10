@@ -12,11 +12,16 @@ import SwiftUI
 
 /// A view that guards the access to a view.
 ///
+/// > Important: You will need to register the ``AccessGuard`` module in your Spezi using the [`configuration`](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/speziappdelegate/configuration)
+/// in a [`SpeziAppDelegate`](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/speziappdelegate) as detailed in the ``AccessGuard`` documentation.
+///
 /// ```swift
-/// AccessGuarded(identifier: "MyAccessGuardIdentifier") {
+/// AccessGuarded(identifier: "TestIdentifier") {
 ///     Text("Secured View")
 /// }
 /// ```
+///
+/// > Tip: You can allow a user to set the passcode using the ``SetAccessGuard`` view.
 public struct AccessGuarded<GuardedView: View>: View {
     @EnvironmentObject private var accessGuard: AccessGuard
     

@@ -10,6 +10,7 @@ import SpeziSecureStorage
 import SwiftUI
 
 
+/// Allows a user to set a code for a ``AccessGuarded`` view.
 public struct SetAccessGuard: View {
     @EnvironmentObject private var accessGuard: AccessGuard
     
