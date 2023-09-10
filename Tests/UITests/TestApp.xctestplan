@@ -13,8 +13,8 @@
       "targets" : [
         {
           "containerPath" : "container:..\/..",
-          "identifier" : "SpeziAccessCode",
-          "name" : "SpeziAccessCode"
+          "identifier" : "SpeziAccessGuard",
+          "name" : "SpeziAccessGuard"
         }
       ]
     },

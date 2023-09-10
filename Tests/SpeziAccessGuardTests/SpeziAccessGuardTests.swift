@@ -6,12 +6,12 @@
 // SPDX-License-Identifier: MIT
 //
 
-@testable import SpeziAccessCode
+@testable import SpeziAccessGuard
 import XCTest
 
 
-final class SpeziAccessCodeTests: XCTestCase {
-    func testSpeziAccessCode() throws {
+final class SpeziAccessGuardTests: XCTestCase {
+    func testSpeziAccessGuard() throws {
         XCTAssert(true)
     }
 }

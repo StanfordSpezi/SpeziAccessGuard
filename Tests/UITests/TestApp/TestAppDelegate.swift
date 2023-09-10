@@ -7,7 +7,7 @@
 //
 
 import Spezi
-import SpeziAccessCode
+import SpeziAccessGuard
 import SwiftUI
 
 
