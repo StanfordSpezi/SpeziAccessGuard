@@ -17,11 +17,28 @@ struct UITestsApp: App {
     
     var body: some Scene {
         WindowGroup {
-            AccessGuarded {
-                Color.green
-                    .overlay {
-                        Text("Secured ...")
+            NavigationStack {
+                List {
+                    NavigationLink("Access Guarded") {
+                        AccessGuarded(identifier: "TestIdentifier") {
+                            Color.green
+                                .overlay {
+                                    Text("Secured ...")
+                                }
+                        }
                     }
+                    NavigationLink("Access Guarded Fixed") {
+                        AccessGuarded(fixedCode: "1234") {
+                            Color.green
+                                .overlay {
+                                    Text("Secured with fixed code ...")
+                                }
+                        }
+                    }
+                    NavigationLink("Set Code") {
+                        SetAccessGuard(identifier: "TestIdentifier")
+                    }
+                }
             }
                 .spezi(appDelegate)
         }

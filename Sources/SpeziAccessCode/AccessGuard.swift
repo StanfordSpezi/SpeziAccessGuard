@@ -39,7 +39,7 @@ public final class AccessGuard: Module {
     @Dependency var secureStorage: SecureStorage
     @Published var inTheBackground = true
     @Published var lastEnteredBackground: Date = .now
-    @Published var viewModels: [String: AccessGuardViewModel] = [:]
+    var viewModels: [String: AccessGuardViewModel] = [:]
     private var cancellables: Set<AnyCancellable> = []
     
     
@@ -47,12 +47,16 @@ public final class AccessGuard: Module {
     
     
     public func sceneDidEnterBackground(_ scene: UIScene) {
-        inTheBackground = true
-        lastEnteredBackground = .now
+        Task { @MainActor in
+            inTheBackground = true
+            lastEnteredBackground = .now
+        }
     }
     
     public func sceneWillEnterForeground(_ scene: UIScene) {
-        inTheBackground = false
+        Task { @MainActor in
+            inTheBackground = false
+        }
     }
     
     

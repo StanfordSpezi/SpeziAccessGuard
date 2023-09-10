@@ -33,7 +33,7 @@ struct SetCodeView: View {
                         Text("SET_PASSCODE_PROMPT", bundle: .module)
                             .font(.title2)
                             .frame(maxWidth: .infinity)
-                        CodeView(codeOption: selectedCode) { code in
+                        CodeView(codeOption: $selectedCode) { code in
                             firstCode = code
                             withAnimation {
                                 state = .repeatCode
@@ -48,16 +48,17 @@ struct SetCodeView: View {
                         }
                             .frame(height: 60)
                     }
-                        .transition(.slide)
+                        .transition(.navigate)
                 case .repeatCode:
                     Group {
                         Text("SET_PASSCODE_REPEAT_PROMPT", bundle: .module)
                             .font(.title2)
                             .frame(maxWidth: .infinity)
-                        CodeView(codeOption: selectedCode) { code in
+                        CodeView(codeOption: $selectedCode) { code in
                             if code == firstCode {
                                 do {
                                     try viewModel.setAccessCode(code, codeOption: selectedCode)
+                                    errorMessage = nil
                                     withAnimation {
                                         state = .success
                                     }
@@ -71,19 +72,26 @@ struct SetCodeView: View {
                         ErrorMessageCapsule(errorMessage: $errorMessage)
                             .frame(height: 60)
                     }
-                        .transition(.slide)
+                        .transition(.navigate)
                 case .success:
                     Image(systemName: "checkmark.circle.fill")
+                        .resizable()
+                        .aspectRatio(1.0, contentMode: .fit)
+                        .frame(height: 100)
                         .foregroundStyle(.green)
-                        .transition(.slide)
+                        .transition(.navigate)
                 }
             }
                 .toolbar {
                     if state == .repeatCode {
-                        ToolbarItem {
+                        ToolbarItem(placement: .cancellationAction) {
                             Button(
                                 action: {
-                                
+                                    withAnimation {
+                                        state = .setCode
+                                        firstCode = ""
+                                        errorMessage = nil
+                                    }
                                 }, label: {
                                     Text("SET_PASSCODE_BACK_BUTTON", bundle: .module)
                                 }

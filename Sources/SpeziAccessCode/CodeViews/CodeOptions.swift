@@ -79,7 +79,7 @@ public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
     }
     
     var keyBoardType: UIKeyboardType {
-        if self.contains(.customAlphanumeric) {
+        if self == .customAlphanumeric {
             return .default
         } else {
             return .numberPad
@@ -99,7 +99,7 @@ public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
     func verifyStructore(ofCode code: String) -> Bool {
         switch self {
         case .fourDigitNumeric, .sixDigitNumeric:
-            return code.isEmpty && code.count == maxLength
+            return code.isNumeric && code.count == maxLength
         case .customNumeric:
             return code.isNumeric && code.count >= CodeOptions.fourDigitNumeric.maxLength
         case .customAlphanumeric:

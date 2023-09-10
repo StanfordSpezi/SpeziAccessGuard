@@ -76,7 +76,7 @@ public struct AccessGuarded<GuardedView: View>: View {
     ) {
         precondition(
             codeOption.verifyStructore(ofCode: fixedCode),
-            "The provided fixed code \"\(fixedCode)\" must conform to the \(codeOption.description) code option."
+            "The provided fixed code \"\(fixedCode)\" must conform to the \(codeOption.description.localizedString()) code option."
         )
         
         self.configuration = AccessGuardConfiguration(

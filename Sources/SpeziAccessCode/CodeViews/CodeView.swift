@@ -11,14 +11,13 @@ import SwiftUI
 
 
 struct CodeView: View {
-    private let codeOption: CodeOptions
-    private let action: (String) async throws -> ()
+    @Binding private var codeOption: CodeOptions
+    private let action: (String) async throws -> Void
     @State private var code: String = ""
     @FocusState private var focused: Bool
     @State private var viewState: ViewState = .idle
     @State private var wrongCodeCounter: Int = 0
-    
-    
+    @State private var oldKeyBoardType: UIKeyboardType?
     
     
     var body: some View {
@@ -60,19 +59,38 @@ struct CodeView: View {
             }
             .onAppear {
                 focused = true
+                oldKeyBoardType = codeOption.keyBoardType
             }
-            .onChange(of: code) { newCode in
+            .onChange(of: code) { _ in
                 if code.count >= codeOption.maxLength {
                     Task { @MainActor in
                         await checkCode()
                     }
                 }
             }
+            .onChange(of: codeOption) { newCodeOption in
+                guard oldKeyBoardType != newCodeOption.keyBoardType else {
+                    return
+                }
+                
+                focused = false
+                oldKeyBoardType = newCodeOption.keyBoardType
+                
+                Task { @MainActor in
+                    try await Task.sleep(for: .seconds(0.05))
+                    focused = true
+                }
+            }
     }
     
     
-    init(codeOption: CodeOptions, action: @escaping (String) async throws -> ()) {
-        self.codeOption = codeOption
+    init(codeOption: CodeOptions, action: @escaping (String) async throws -> Void) {
+        self._codeOption = .constant(codeOption)
+        self.action = action
+    }
+    
+    init(codeOption: Binding<CodeOptions>, action: @escaping (String) async throws -> Void) {
+        self._codeOption = codeOption
         self.action = action
     }
     
@@ -89,7 +107,7 @@ struct CodeView: View {
         
         viewState = .idle
         
-        try? await Task.sleep(for: .seconds(0.1))
+        try? await Task.sleep(for: .seconds(0.05))
         focused = true
     }
 }
@@ -97,10 +115,9 @@ struct CodeView: View {
 
 struct AuthenticationView_Previews: PreviewProvider {
     static var previews: some View {
-        CodeView(codeOption: .fourDigitNumeric) { code in
+        CodeView(codeOption: .fourDigitNumeric) { _ in
             try await Task.sleep(for: .seconds(1))
         }
         .padding(.horizontal)
     }
 }
-

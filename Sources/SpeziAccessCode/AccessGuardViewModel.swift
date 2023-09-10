@@ -30,7 +30,6 @@ final class AccessGuardViewModel: ObservableObject {
     private var cancellables: Set<AnyCancellable> = []
     
     
-    
     var codeOption: CodeOptions? {
         accessCode?.codeOption
     }
@@ -74,12 +73,15 @@ final class AccessGuardViewModel: ObservableObject {
     
     func checkAccessCode(_ code: String) throws {
         if let fixedCode, code == fixedCode {
+            locked = false
             return
         }
         
         guard code == accessCode?.code else {
             throw AccessGuardError.wrongPasscode
         }
+        
+        locked = false
     }
     
     func setAccessCode(_ code: String, codeOption: CodeOptions) throws {
