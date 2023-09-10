@@ -21,9 +21,9 @@ enum AccessGuardError: LocalizedError {
     var failureReason: String {
         switch self {
         case .wrongPasscode:
-            String(localized: "ACCESS_GUARD_ERROR_WRONG_PASSCODE_REASON", bundle: .module)
+            return String(localized: "ACCESS_GUARD_ERROR_WRONG_PASSCODE_REASON", bundle: .module)
         case .storeCodeError:
-            String(localized: "ACCESS_GUARD_ERROR_STORE_CODE_ERROR_REASON", bundle: .module)
+            return String(localized: "ACCESS_GUARD_ERROR_STORE_CODE_ERROR_REASON", bundle: .module)
         }
     }
 }
