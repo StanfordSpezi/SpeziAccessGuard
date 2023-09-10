@@ -13,15 +13,26 @@ import PackageDescription
 
 let package = Package(
     name: "SpeziAccessCode",
+    defaultLocalization: "en",
     platforms: [
         .iOS(.v16)
     ],
     products: [
         .library(name: "SpeziAccessCode", targets: ["SpeziAccessCode"])
     ],
+    dependencies: [
+        .package(url: "https://github.com/StanfordSpezi/Spezi", .upToNextMinor(from: "0.7.2")),
+        .package(url: "https://github.com/StanfordSpezi/SpeziStorage", .upToNextMinor(from: "0.4.2")),
+        .package(url: "https://github.com/StanfordSpezi/SpeziViews", .upToNextMinor(from: "0.4.2")),
+    ],
     targets: [
         .target(
-            name: "SpeziAccessCode"
+            name: "SpeziAccessCode",
+            dependencies: [
+                .product(name: "Spezi", package: "Spezi"),
+                .product(name: "SpeziSecureStorage", package: "SpeziStorage"),
+                .product(name: "SpeziViews", package: "SpeziViews")
+            ]
         ),
         .testTarget(
             name: "SpeziAccessCodeTests",

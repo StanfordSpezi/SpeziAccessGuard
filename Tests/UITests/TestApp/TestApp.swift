@@ -12,9 +12,18 @@ import SwiftUI
 
 @main
 struct UITestsApp: App {
+    @UIApplicationDelegateAdaptor(TestAppDelegate.self) var appDelegate
+    
+    
     var body: some Scene {
         WindowGroup {
-            Text(SpeziAccessCode().stanford)
+            AccessGuarded {
+                Color.green
+                    .overlay {
+                        Text("Secured ...")
+                    }
+            }
+                .spezi(appDelegate)
         }
     }
 }

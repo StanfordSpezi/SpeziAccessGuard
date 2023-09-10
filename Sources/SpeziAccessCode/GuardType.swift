@@ -6,12 +6,9 @@
 // SPDX-License-Identifier: MIT
 //
 
-@testable import SpeziAccessCode
-import XCTest
 
-
-final class SpeziAccessCodeTests: XCTestCase {
-    func testSpeziAccessCode() throws {
-        XCTAssert(true)
-    }
+enum GuardType {
+    case codeIfUnprotected
+    case code
+    case biometrics
 }

@@ -6,12 +6,11 @@
 // SPDX-License-Identifier: MIT
 //
 
-@testable import SpeziAccessCode
-import XCTest
+import Foundation
 
 
-final class SpeziAccessCodeTests: XCTestCase {
-    func testSpeziAccessCode() throws {
-        XCTAssert(true)
+extension String {
+    var isNumeric: Bool {
+        CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: self))
     }
 }
