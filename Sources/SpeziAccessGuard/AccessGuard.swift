@@ -39,7 +39,7 @@ import SwiftUI
 ///
 /// You can use the ``AccessGuarded`` SwiftUI [`View`](https://developer.apple.com/documentation/swiftui/view) in your SwiftUI application to
 /// enforce a code or biometrics-based access guard to SwiftUI views.
-public final class AccessGuard: Module {
+public final class AccessGuard: Module, DefaultInitializable {
     @Dependency private var secureStorage: SecureStorage
     @Published private(set) var inTheBackground = true
     @Published private(set) var lastEnteredBackground: Date = .now
@@ -47,6 +47,10 @@ public final class AccessGuard: Module {
     private var viewModels: [String: AccessGuardViewModel] = [:]
     private var cancellables: Set<AnyCancellable> = []
     
+    
+    public convenience init() {
+        self.init([])
+    }
     
     public init(_ configurations: [AccessGuardConfiguration]) {
         self.configurations = configurations
