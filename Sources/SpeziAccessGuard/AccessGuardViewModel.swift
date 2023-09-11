@@ -105,6 +105,12 @@ final class AccessGuardViewModel: ObservableObject {
         }
     }
     
+    func lock() async {
+        await MainActor.run {
+            locked = true
+        }
+    }
+    
     func setAccessCode(_ code: String, codeOption: CodeOptions) async throws {
         guard configuration.fixedCode == nil else {
             throw AccessGuardError.storeCodeError
@@ -118,8 +124,7 @@ final class AccessGuardViewModel: ObservableObject {
         
         try secureStorage.store(credentials: Credentials(username: configuration.identifier, password: accessCodeData))
         
-        await MainActor.run {
-            locked = true
-        }
+        // Ensure that the model is in a state as if the user has just entered the access code.
+        try await checkAccessCode(code)
     }
 }

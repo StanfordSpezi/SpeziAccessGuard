@@ -10,12 +10,12 @@ import Spezi
 import SwiftUI
 
 
-public struct AccessGuardView<GuardedView: View>: View {
+struct AccessGuardView<GuardedView: View>: View {
     private let guardedView: GuardedView
     @StateObject private var viewModel: AccessGuardViewModel
     
     
-    public var body: some View {
+    var body: some View {
         guardedView
             .overlay {
                 if viewModel.locked {
