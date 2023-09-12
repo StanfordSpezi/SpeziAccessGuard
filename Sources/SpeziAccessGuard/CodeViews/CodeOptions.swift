@@ -47,7 +47,7 @@ public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
     public static let all: CodeOptions = [.fourDigitNumeric, .sixDigitNumeric, .customNumeric, .customAlphanumeric]
     
     
-    public var id: Int {
+    @_documentation(visibility: internal) public var id: Int {
         rawValue
     }
     
@@ -63,7 +63,7 @@ public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
         return Int.max
     }
     
-    public var description: LocalizedStringResource {
+    var description: LocalizedStringResource {
         switch self {
         case .fourDigitNumeric:
             return LocalizedStringResource("CODE_OPTIONS_FOUR_DIGIT", bundle: .atURL(from: .module))
@@ -86,11 +86,12 @@ public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
         }
     }
     
-    public let rawValue: Int
+    @_documentation(visibility: internal) public let rawValue: Int
     
     
     /// Raw initializer for the ``CodeOptions`` option set. Do not use this initializer.
     /// - Parameter rawValue: The raw option set value.
+    @_documentation(visibility: internal)
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }

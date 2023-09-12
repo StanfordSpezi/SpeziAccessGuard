@@ -57,21 +57,22 @@ final class AccessGuardViewModel: ObservableObject {
         
         self.locked = setup
         
-        accessGuard.objectWillChange
+        
+        self.objectWillChange
             .sink {
-                self.lockAfterInactivity()
-                self.objectWillChange.send()
+                accessGuard.objectWillChange.send()
             }
             .store(in: &cancellables)
     }
     
     
-    private func lockAfterInactivity() {
-        Task { @MainActor in
-            if let lastEnteredBackground = accessGuard?.lastEnteredBackground,
-               lastEnteredBackground.addingTimeInterval(configuration.timeout) < .now {
-                locked = true
-            }
+    @MainActor
+    func didEnterBackground() {}
+    
+    @MainActor
+    func willEnterForeground(lastEnteredBackground: Date) {
+        if lastEnteredBackground.addingTimeInterval(configuration.timeout) < .now {
+            locked = true
         }
     }
     
@@ -105,6 +106,12 @@ final class AccessGuardViewModel: ObservableObject {
         }
     }
     
+    func lock() async {
+        await MainActor.run {
+            locked = true
+        }
+    }
+    
     func setAccessCode(_ code: String, codeOption: CodeOptions) async throws {
         guard configuration.fixedCode == nil else {
             throw AccessGuardError.storeCodeError
@@ -118,8 +125,7 @@ final class AccessGuardViewModel: ObservableObject {
         
         try secureStorage.store(credentials: Credentials(username: configuration.identifier, password: accessCodeData))
         
-        await MainActor.run {
-            locked = true
-        }
+        // Ensure that the model is in a state as if the user has just entered the access code.
+        try await checkAccessCode(code)
     }
 }

@@ -39,44 +39,73 @@ import SwiftUI
 ///
 /// You can use the ``AccessGuarded`` SwiftUI [`View`](https://developer.apple.com/documentation/swiftui/view) in your SwiftUI application to
 /// enforce a code or biometrics-based access guard to SwiftUI views.
-public final class AccessGuard: Module {
-    @Dependency var secureStorage: SecureStorage
-    @Published var inTheBackground = true
-    @Published var lastEnteredBackground: Date = .now
+public final class AccessGuard: Module, DefaultInitializable {
+    @Dependency private var secureStorage: SecureStorage
+    @Published private(set) var inTheBackground = true
+    @Published private(set) var lastEnteredBackground: Date = .now
     private let configurations: [AccessGuardConfiguration]
     private var viewModels: [String: AccessGuardViewModel] = [:]
     private var cancellables: Set<AnyCancellable> = []
     
+    
+    public convenience init() {
+        self.init([])
+    }
     
     public init(_ configurations: [AccessGuardConfiguration]) {
         self.configurations = configurations
     }
     
     
+    @_documentation(visibility: internal)
     public func sceneDidEnterBackground(_ scene: UIScene) {
         Task { @MainActor in
             inTheBackground = true
             lastEnteredBackground = .now
+            
+            for viewModel in viewModels.values {
+                viewModel.didEnterBackground()
+            }
         }
     }
     
+    @_documentation(visibility: internal)
     public func sceneWillEnterForeground(_ scene: UIScene) {
         Task { @MainActor in
             inTheBackground = false
+            
+            for viewModel in viewModels.values {
+                viewModel.willEnterForeground(lastEnteredBackground: lastEnteredBackground)
+            }
         }
     }
     
     
+    /// Resets the access guard for an identifier.
+    ///
+    /// The function removes the code and all stored information.
+    /// - Parameter identifier: The identifier of the access guard.
     @MainActor
     public func resetAccessCode(for identifier: AccessGuardConfiguration.Identifier) throws {
         try viewModel(for: identifier).resetAccessCode()
     }
     
+    /// Determine the setup state of an access lock.
+    ///
+    /// Use the ``SetAccessGuard`` view to setup an access guard.
+    /// - Parameter identifier: The identifier of the access guard.
+    /// - Returns: Returns `true` of the access guard is successfully setup. False if no access guard is setup.
     @MainActor
     public func setupComplete(for identifier: AccessGuardConfiguration.Identifier) -> Bool {
         viewModel(for: identifier).setup
     }
     
+    /// Locks an access guard.
+    /// - Parameter identifier: The identifier of the access guard that should be locked.
+    @MainActor
+    public func lock(identifier: AccessGuardConfiguration.Identifier) async {
+        await viewModel(for: identifier).lock()
+    }
     
     @MainActor
     func viewModel(for identifier: AccessGuardConfiguration.Identifier) -> AccessGuardViewModel {

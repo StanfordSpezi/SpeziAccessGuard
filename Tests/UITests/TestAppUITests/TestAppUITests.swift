@@ -80,7 +80,15 @@ class TestAppUITests: XCTestCase {
         XCTAssert(app.images["Passcode set was successful"].waitForExistence(timeout: 2.0))
         app.buttons["Back"].tap()
         
+        // View should be unlocked as we just set the passcode ...
+        XCTAssert(app.buttons["Access Guarded"].waitForExistence(timeout: 2.0))
+        app.buttons["Access Guarded"].tap()
+        XCTAssert(app.staticTexts["Secured ..."].waitForExistence(timeout: 2.0))
+        XCTAssert(app.staticTexts["Secured ..."].isHittable)
+        
         // Try the new passcode
+        app.terminate()
+        app.launch()
         XCTAssert(app.buttons["Access Guarded"].waitForExistence(timeout: 2.0))
         app.buttons["Access Guarded"].tap()
         
