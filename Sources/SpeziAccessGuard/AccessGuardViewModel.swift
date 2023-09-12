@@ -57,21 +57,22 @@ final class AccessGuardViewModel: ObservableObject {
         
         self.locked = setup
         
-        accessGuard.objectWillChange
+        
+        self.objectWillChange
             .sink {
-                self.lockAfterInactivity()
-                self.objectWillChange.send()
+                accessGuard.objectWillChange.send()
             }
             .store(in: &cancellables)
     }
     
     
-    private func lockAfterInactivity() {
-        Task { @MainActor in
-            if let lastEnteredBackground = accessGuard?.lastEnteredBackground,
-               lastEnteredBackground.addingTimeInterval(configuration.timeout) < .now {
-                locked = true
-            }
+    @MainActor
+    func didEnterBackground() {}
+    
+    @MainActor
+    func willEnterForeground(lastEnteredBackground: Date) {
+        if lastEnteredBackground.addingTimeInterval(configuration.timeout) < .now {
+            locked = true
         }
     }
     

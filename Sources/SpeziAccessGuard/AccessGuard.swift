@@ -62,6 +62,10 @@ public final class AccessGuard: Module, DefaultInitializable {
         Task { @MainActor in
             inTheBackground = true
             lastEnteredBackground = .now
+            
+            for viewModel in viewModels.values {
+                viewModel.didEnterBackground()
+            }
         }
     }
     
@@ -69,6 +73,10 @@ public final class AccessGuard: Module, DefaultInitializable {
     public func sceneWillEnterForeground(_ scene: UIScene) {
         Task { @MainActor in
             inTheBackground = false
+            
+            for viewModel in viewModels.values {
+                viewModel.willEnterForeground(lastEnteredBackground: lastEnteredBackground)
+            }
         }
     }
     
