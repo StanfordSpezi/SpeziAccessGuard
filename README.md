@@ -18,9 +18,9 @@ SPDX-License-Identifier: MIT
 
 Allows developers to easily guard a SwiftUI view with an access code.
 
-|![Screenshot showing access guarded to a SwiftUI view by an access code.](Sources/SpeziAccessGuard/SpeziAccessGuard.docc/Resources/AccessGuarded.png#gh-light-mode-only)![Screenshot showing access guarded to a SwiftUI view by an access code.](Sources/SpeziAccessGuard/SpeziAccessGuard.docc/Resources/AccessGuarded-dark.png#gh-dark-mode-only)|![Screenshot showing a view for setting or resetting the access code.](Sources/SpeziAccessGuard/SpeziAccessGuard.docc/Resources/SetAccessGuard.png#gh-light-mode-only)![Screenshot showing a view for setting or resetting the access code.](Sources/SpeziAccessGuard/SpeziAccessGuard.docc/Resources/SetAccessGuard-dark.png#gh-dark-mode-only)|
-|:--:|:--:|
-|[`AccessGuarded`](https://swiftpackageindex.com/stanfordspezi/speziaccessguard/0.1.1/documentation/speziaccessguard/accessguarded)|[`SetAccessGuard`](https://swiftpackageindex.com/stanfordspezi/speziaccessguard/0.1.1/documentation/speziaccessguard/setaccessguard)|
+|![Screenshot showing access guarded to a SwiftUI view by an access code.](Sources/SpeziAccessGuard/SpeziAccessGuard.docc/Resources/AccessGuarded.png#gh-light-mode-only)![Screenshot showing access guarded to a SwiftUI view by an access code.](Sources/SpeziAccessGuard/SpeziAccessGuard.docc/Resources/AccessGuarded-dark.png#gh-dark-mode-only)|
+|:--:|
+|[`AccessGuarded`](https://swiftpackageindex.com/stanfordspezi/speziaccessguard/0.1.1/documentation/speziaccessguard/accessguarded)
 
 ## Overview
 
@@ -120,7 +120,7 @@ struct ProtectedContent: View {
 
 ### Resetting an Access Guard
 
-To remove the access code and all information from an access guard, we can use the [`resetAccessCode(for:)`](https://swiftpackageindex.com/stanfordspezi/speziaccessguard/documentation/speziaccessguard/accessguard/resetaccesscode(for:)) method. Here, we add a toolbar item with a button that will lock the access guard.
+To remove the access code and all information from an access guard, we can use the [`resetAccessCode(for:)`](https://swiftpackageindex.com/stanfordspezi/speziaccessguard/documentation/speziaccessguard/accessguard/resetaccesscode(for:)) method. Here, we add a toolbar item with a button that will reset the access guard.
 
 ```swift
 struct ProtectedContent: View {

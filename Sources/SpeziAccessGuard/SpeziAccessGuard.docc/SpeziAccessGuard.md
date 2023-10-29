@@ -22,11 +22,6 @@ The Access Guard module allows developers to guard a SwiftUI view with an access
             An ``AccessGuarded`` view guarding access to a SwiftUI view by an access code.
         }
     }
-    @Column {
-        @Image(source: "SetAccessGuard", alt: "Screenshot showing a view for setting or resetting the access code.") {
-            A ``SetAccessGuard`` view allowing the user to set or reset their access code.
-        }
-    }
 }
 
 ## Setup
