@@ -26,7 +26,7 @@ The Access Guard module allows developers to guard a SwiftUI view with an access
 
 ## Setup
 
-### Add SpeziAccessGuard as a Dependency
+### 1. Add Spezi Access Guard as a Dependency
 
 First, you will need to add the SpeziAccessGuard Swift package to
 [your app in Xcode](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app#) or
@@ -34,9 +34,9 @@ First, you will need to add the SpeziAccessGuard Swift package to
 
 > If your application is not yet configured to use Spezi, follow the [Spezi setup article](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/setup) to set up the core Spezi infrastructure.
 
-### Configuring the SpeziAccessGuard Module
+### 2. Register the Access Guard Component
 
-You can configure the ``SpeziAccessGuard`` module in the `SpeziAppDelegate`` as follows.
+You can configure the ``AccessGuard`` component in the `SpeziAppDelegate`` as follows.
 
 ```swift
 import Spezi
@@ -56,7 +56,9 @@ class ExampleDelegate: SpeziAppDelegate {
 }
 ```
 
-In the example above, we configure the ``AccessGuard`` with one guard that uses a 4-digit numerical access code and is identified by `ExampleIdentifier`. The `timeout` property defines when the view should be locked based on the time the scene is not in the foreground, in seconds.
+In the example above, we configure the ``AccessGuard`` component with one guard that uses a 4-digit numerical access code and is identified by `ExampleIdentifier`. The `timeout` property defines when the view should be locked based on the time the scene is not in the foreground, in seconds.
+
+> Tip: You can learn more about a [`Component` in the Spezi documentation](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/component).
 
 ## Examples
 

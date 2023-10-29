@@ -30,18 +30,18 @@ For more information, please refer to the [API documentation](https://swiftpacka
 
 ## Setup
 
-### Add SpeziAccessGuard as a Dependency
+### 1. Add Spezi Access Guard as a Dependency
 
 First, you will need to add the SpeziAccessGuard Swift package to
 [your app in Xcode](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app#) or
 [Swift package](https://developer.apple.com/documentation/xcode/creating-a-standalone-swift-package-with-xcode#Add-a-dependency-on-another-Swift-package).
 
-### Configuring the SpeziAccessGuard Module
+### 2. Register the Access Guard Component
 
 > [!IMPORTANT]
 > If your application is not yet configured to use Spezi, follow the [Spezi setup article](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/setup) to set up the core Spezi infrastructure.
 
-You can configure the [`SpeziAccessGuard`](https://swiftpackageindex.com/StanfordSpezi/SpeziAccessGuard/documentation/speziaccessguard) module in the [`SpeziAppDelegate`](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/speziappdelegate) as follows.
+You can configure the [`AccessGuard`](https://swiftpackageindex.com/stanfordspezi/speziaccessguard/0.1.1/documentation/speziaccessguard/accessguard) component in the [`SpeziAppDelegate`](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/speziappdelegate) as follows.
 
 ```swift
 import Spezi
@@ -61,7 +61,10 @@ class ExampleDelegate: SpeziAppDelegate {
 }
 ```
 
-In the example above, we configure the [`AccessGuard`](https://swiftpackageindex.com/stanfordspezi/speziaccessguardt/documentation/speziaccessguard/accessguard) with one guard that uses a 4-digit numerical access code and is identified by `ExampleIdentifier`. The `timeout` property defines when the view should be locked based on the time the scene is not in the foreground, in seconds.
+In the example above, we configure the [`AccessGuard`](https://swiftpackageindex.com/stanfordspezi/speziaccessguardt/documentation/speziaccessguard/accessguard) component with one access guard that uses a 4-digit numerical access code and is identified by `ExampleIdentifier`. The `timeout` property defines when the view should be locked based on the time the scene is not in the foreground, in seconds.
+
+> [!NOTE]  
+> You can learn more about a [`Component` in the Spezi documentation](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/component).
 
 ## Examples
 
@@ -140,6 +143,8 @@ struct ProtectedContent: View {
     }
 }
 ```
+
+For more information, please refer to the [API documentation](https://swiftpackageindex.com/StanfordSpezi/SpeziAccessGuard/documentation/speziaccessguard).
 
 ## Contributing
 
