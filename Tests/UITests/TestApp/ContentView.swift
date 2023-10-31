@@ -13,7 +13,7 @@ import SwiftUI
 struct ContentView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var accessGuard: AccessGuard
-    
+
     
     var body: some View {
         NavigationStack {
