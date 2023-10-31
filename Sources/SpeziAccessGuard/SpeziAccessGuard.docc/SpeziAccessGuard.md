@@ -78,7 +78,7 @@ struct SetAccessCode: View {
 
 ### Guarding Access to a SwiftUI View
 
-Now, we can use the the ``AccessGuarded`` view to guard access to a SwiftUI view with an access code.
+Now, we can use the ``AccessGuarded`` view to guard access to a SwiftUI view with an access code.
 
 ```swift
 import SpeziAccessGuard
