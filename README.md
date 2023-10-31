@@ -61,7 +61,7 @@ class ExampleDelegate: SpeziAppDelegate {
 }
 ```
 
-In the example above, we configure the [`AccessGuard`](https://swiftpackageindex.com/stanfordspezi/speziaccessguardt/documentation/speziaccessguard/accessguard) component with one access guard that uses a 4-digit numerical access code and is identified by `ExampleIdentifier`. The `timeout` property defines when the view should be locked based on the time the scene is not in the foreground, in seconds.
+In the example above, we configure the [`AccessGuard`](https://swiftpackageindex.com/stanfordspezi/speziaccessguard/documentation/speziaccessguard/accessguard) component with one access guard that uses a 4-digit numerical access code and is identified by `ExampleIdentifier`. The `timeout` property defines when the view should be locked based on the time the scene is not in the foreground, in seconds.
 
 > [!NOTE]  
 > You can learn more about a [`Component` in the Spezi documentation](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/component).
