@@ -84,7 +84,7 @@ struct SetAccessCode: View {
 
 ### Guarding Access to a SwiftUI View
 
-Now, we can use the the [`AccessGuarded`](https://swiftpackageindex.com/stanfordspezi/speziaccessguard/0.1.1/documentation/speziaccessguard/accessguarded) view to guard access to a SwiftUI view with an access code.
+Now, we can use the [`AccessGuarded`](https://swiftpackageindex.com/stanfordspezi/speziaccessguard/0.1.1/documentation/speziaccessguard/accessguarded) view to guard access to a SwiftUI view with an access code.
 
 ```swift
 import SpeziAccessGuard
