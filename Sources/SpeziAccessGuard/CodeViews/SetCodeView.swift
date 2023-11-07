@@ -37,8 +37,8 @@ struct SetCodeView: View {
         switch state {
         case .oldCode:
             EnterCodeView(viewModel: viewModel)
-                .onChange(of: viewModel.locked) { locked in
-                    if !locked {
+                .onChange(of: viewModel.locked) {
+                    if !viewModel.locked {
                         withAnimation {
                             state = .setCode
                         }
