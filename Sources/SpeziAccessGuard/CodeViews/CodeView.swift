@@ -62,20 +62,20 @@ struct CodeView: View {
                 focused = true
                 oldKeyBoardType = codeOption.keyBoardType
             }
-            .onChange(of: code) { _ in
+            .onChange(of: code) {
                 if code.count >= codeOption.maxLength {
                     Task { @MainActor in
                         await checkCode()
                     }
                 }
             }
-            .onChange(of: codeOption) { newCodeOption in
-                guard oldKeyBoardType != newCodeOption.keyBoardType else {
+            .onChange(of: codeOption) {
+                guard oldKeyBoardType != codeOption.keyBoardType else {
                     return
                 }
                 
                 focused = false
-                oldKeyBoardType = newCodeOption.keyBoardType
+                oldKeyBoardType = codeOption.keyBoardType
                 
                 Task { @MainActor in
                     try await Task.sleep(for: .seconds(0.05))
