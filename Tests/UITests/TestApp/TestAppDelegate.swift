@@ -14,7 +14,7 @@ import SwiftUI
 class TestAppDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
-            AccessGuard(
+            AccessGuardModule(
                 [
                     .code(identifier: "TestIdentifier", timeout: 10),
                     .fixed(identifier: "TestFixedIdentifier", code: "1234")

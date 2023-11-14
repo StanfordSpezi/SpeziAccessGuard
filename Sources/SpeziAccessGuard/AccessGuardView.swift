@@ -12,7 +12,7 @@ import SwiftUI
 
 struct AccessGuardView<GuardedView: View>: View {
     private let guardedView: GuardedView
-    @StateObject private var viewModel: AccessGuardViewModel
+    private let viewModel: AccessGuardViewModel
     
     
     var body: some View {
@@ -31,6 +31,6 @@ struct AccessGuardView<GuardedView: View>: View {
         guardedView: GuardedView
     ) {
         self.guardedView = guardedView
-        self._viewModel = StateObject(wrappedValue: viewModel)
+        self.viewModel = viewModel
     }
 }

@@ -6,33 +6,33 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Combine
+import Observation
 import Spezi
 import SpeziSecureStorage
 import SwiftUI
 
 
-final class AccessGuardViewModel: ObservableObject {
+@Observable
+final class AccessGuardViewModel {
     private struct AccessCode: Codable {
         let codeOption: CodeOptions
         let code: String
     }
     
     
-    @MainActor @Published private(set) var locked = true
-    
     let configuration: AccessGuardConfiguration
-    private var accessCode: AccessCode?
-    private weak var accessGuard: AccessGuard?
     private let secureStorage: SecureStorage
-    private var cancellables: Set<AnyCancellable> = []
+    
+    @MainActor private(set) var locked = true
+    @MainActor private var accessCode: AccessCode?
+    @MainActor private weak var accessGuard: AccessGuard?
     
     
-    var setup: Bool {
+    @MainActor var setup: Bool {
         accessCode != nil || configuration.fixedCode != nil
     }
     
-    var codeOption: CodeOptions? {
+    @MainActor var codeOption: CodeOptions? {
         if configuration.fixedCode != nil {
             return configuration.codeOptions
         } else {
@@ -56,13 +56,6 @@ final class AccessGuardViewModel: ObservableObject {
         }
         
         self.locked = setup
-        
-        
-        self.objectWillChange
-            .sink {
-                accessGuard.objectWillChange.send()
-            }
-            .store(in: &cancellables)
     }
     
     
@@ -112,6 +105,7 @@ final class AccessGuardViewModel: ObservableObject {
         }
     }
     
+    @MainActor
     func setAccessCode(_ code: String, codeOption: CodeOptions) async throws {
         guard configuration.fixedCode == nil else {
             throw AccessGuardError.storeCodeError

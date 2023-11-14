@@ -6,59 +6,79 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Combine
+import Foundation
+import Observation
 import Spezi
 import SpeziSecureStorage
 import SwiftUI
 
 
-/// Enforces a code or biometrics-based access guard to SwiftUI views.
+/// Provides access to manage, lock, and reset and access guard from Swift UI views.
 ///
-/// > Important: If your application is not yet configured to use Spezi, follow the [Spezi setup article](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/setup) setup the core Spezi infrastructure.
+/// The ``AccessGuard`` is injected in the SwiftUI environment and can be accessed using the [`@Environment`](https://developer.apple.com/documentation/swiftui/environment) property wrapper.
 ///
-/// The component needs to be registered in a Spezi-based application using the [`configuration`](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/speziappdelegate/configuration)
-/// in a [`SpeziAppDelegate`](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/speziappdelegate):
+/// ### Locking an Access Guard
+///
+/// The access guard will lock automatically when it times out. However, we can also lock an access guard directly using the ``AccessGuard/lock(identifier:)`` method. Here, we add a toolbar item with a button that will lock the access guard.
+/// 
 /// ```swift
-/// class ExampleAppDelegate: SpeziAppDelegate {
-///     override var configuration: Configuration {
-///         Configuration {
-///             AccessGuard(
-///                 [
-///                     .code(identifier: "TestIdentifier")
-///                 ]
-///             )
-///             // ...
+/// struct ProtectedContent: View {
+///     @Environment(AccessGuard.self) private var accessGuard
+///     
+///     var body: some View {
+///         AccessGuarded("ExampleIdentifier") {
+///             Text("Secured content...")
+///         }
+///         .toolbar {
+///             ToolbarItem {
+///                 Button("Lock Access Guard") {
+///                     try? accessGuard.lock(identifier: "ExampleIdentifier")
+///                 }
+///             }
 ///         }
 ///     }
 /// }
 /// ```
-/// > Tip: You can learn more about a [`Component` in the Spezi documentation](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/component).
-///
-///
-/// ## Usage
-///
-/// You can use the ``AccessGuarded`` SwiftUI [`View`](https://developer.apple.com/documentation/swiftui/view) in your SwiftUI application to
-/// enforce a code or biometrics-based access guard to SwiftUI views.
-public final class AccessGuard: Module, DefaultInitializable {
-    @Dependency private var secureStorage: SecureStorage
-    @Published private(set) var inTheBackground = true
-    @Published private(set) var lastEnteredBackground: Date = .now
+/// 
+/// ### Resetting an Access Guard
+/// 
+/// To remove the access code and all information from an access guard, we can use the ``AccessGuard/resetAccessCode(for:)`` method. Here, we add a toolbar item with a button that will lock the access guard.
+/// 
+/// ```swift
+/// struct ProtectedContent: View {
+///     @Environment(AccessGuard.self) private var accessGuard
+///     
+///     var body: some View {
+///         AccessGuarded("ExampleIdentifier") {
+///             Text("Secured content...")
+///         }
+///         .toolbar {
+///             ToolbarItem {
+///                 Button("Reset Access Guard") {
+///                     try? accessGuard.resetAccessCode(for: "ExampleIdentifier")
+///                 }
+///             }
+///         }
+///     }
+/// }
+/// ```
+@Observable
+public final class AccessGuard {
+    private let secureStorage: SecureStorage
+    
+    private(set) var inTheBackground = true
+    private(set) var lastEnteredBackground: Date = .now
     private let configurations: [AccessGuardConfiguration]
     private var viewModels: [String: AccessGuardViewModel] = [:]
-    private var cancellables: Set<AnyCancellable> = []
     
     
-    public convenience init() {
-        self.init([])
-    }
-    
-    public init(_ configurations: [AccessGuardConfiguration]) {
+    init(secureStorage: SecureStorage, _ configurations: [AccessGuardConfiguration]) {
+        self.secureStorage = secureStorage
         self.configurations = configurations
     }
     
     
-    @_documentation(visibility: internal)
-    public func sceneDidEnterBackground(_ scene: UIScene) {
+    func sceneDidEnterBackground(_ scene: UIScene) {
         Task { @MainActor in
             inTheBackground = true
             lastEnteredBackground = .now
@@ -69,8 +89,7 @@ public final class AccessGuard: Module, DefaultInitializable {
         }
     }
     
-    @_documentation(visibility: internal)
-    public func sceneWillEnterForeground(_ scene: UIScene) {
+    func sceneWillEnterForeground(_ scene: UIScene) {
         Task { @MainActor in
             inTheBackground = false
             
@@ -112,10 +131,10 @@ public final class AccessGuard: Module, DefaultInitializable {
         guard let configuration = configurations.first(where: { $0.identifier == identifier }) else {
             preconditionFailure(
             """
-           Did not find a AccessGuardConfiguration with the identifier `\(identifier)`.
-           
-           Please ensure that you have defined an AccessGuardConfiguration with the identifier in your `AccessGuard` configuration.
-           """
+            Did not find a AccessGuardConfiguration with the identifier `\(identifier)`.
+            
+            Please ensure that you have defined an AccessGuardConfiguration with the identifier in your `AccessGuard` configuration.
+            """
             )
         }
         

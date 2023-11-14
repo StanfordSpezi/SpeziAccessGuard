@@ -12,7 +12,7 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var accessGuard: AccessGuard
+    @Environment(AccessGuard.self) private var accessGuard
 
     
     var body: some View {
