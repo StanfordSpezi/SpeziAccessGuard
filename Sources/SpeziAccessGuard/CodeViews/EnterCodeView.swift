@@ -10,7 +10,7 @@ import SwiftUI
 
 
 struct EnterCodeView: View {
-    @ObservedObject var viewModel: AccessGuardViewModel
+    var viewModel: AccessGuardViewModel
     @State private var wrongCodeCounter: Int = 0
     @State private var errorMessage: String?
     

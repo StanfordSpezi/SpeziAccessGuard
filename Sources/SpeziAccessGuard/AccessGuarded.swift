@@ -23,7 +23,7 @@ import SwiftUI
 ///
 /// > Tip: You can allow a user to set the passcode using the ``SetAccessGuard`` view.
 public struct AccessGuarded<GuardedView: View>: View {
-    @EnvironmentObject private var accessGuard: AccessGuard
+    @Environment(AccessGuard.self) private var accessGuard
     
     private let identifier: AccessGuardConfiguration.Identifier
     private let guardedView: GuardedView

@@ -19,7 +19,7 @@ struct SetCodeView: View {
     
     let action: @MainActor () async -> Void
     
-    @ObservedObject var viewModel: AccessGuardViewModel
+    var viewModel: AccessGuardViewModel
     @State private var selectedCode: CodeOptions = .fourDigitNumeric
     @State private var firstCode: String = ""
     @State private var state: SetCodeState = .oldCode

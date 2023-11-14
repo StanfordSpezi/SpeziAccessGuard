@@ -12,7 +12,7 @@ import SwiftUI
 
 /// Allows a user to set a code for a ``AccessGuarded`` view.
 public struct SetAccessGuard: View {
-    @EnvironmentObject private var accessGuard: AccessGuard
+    @Environment(AccessGuard.self) private var accessGuard
     
     private let identifier: AccessGuardConfiguration.Identifier
     private let action: @MainActor () async -> Void

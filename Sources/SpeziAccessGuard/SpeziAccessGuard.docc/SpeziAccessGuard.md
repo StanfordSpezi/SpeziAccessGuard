@@ -34,9 +34,9 @@ First, you will need to add the SpeziAccessGuard Swift package to
 
 > If your application is not yet configured to use Spezi, follow the [Spezi setup article](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/initial-setup) to set up the core Spezi infrastructure.
 
-### 2. Register the Access Guard Component
+### 2. Register the Access Guard Module
 
-You can configure the ``AccessGuard`` component in the `SpeziAppDelegate`` as follows.
+You can configure the ``AccessGuardModule`` in the `SpeziAppDelegate`` as follows.
 
 ```swift
 import Spezi
@@ -46,7 +46,7 @@ import SpeziAccessGuard
 class ExampleDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
-            AccessGuard(
+            AccessGuardModule(
                 [
                     .code(identifier: "ExampleIdentifier", timeout: 15 * 60)
                 ]
@@ -56,9 +56,9 @@ class ExampleDelegate: SpeziAppDelegate {
 }
 ```
 
-In the example above, we configure the ``AccessGuard`` component with one guard that uses a 4-digit numerical access code and is identified by `ExampleIdentifier`. The `timeout` property defines when the view should be locked based on the time the scene is not in the foreground, in seconds.
+In the example above, we configure the ``AccessGuardModule`` with one guard that uses a 4-digit numerical access code and is identified by `ExampleIdentifier`. The `timeout` property defines when the view should be locked based on the time the scene is not in the foreground, in seconds.
 
-> Tip: You can learn more about a [`Component` in the Spezi documentation](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/component).
+> Tip: You can learn more about a [`Module` in the Spezi documentation](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/module).
 
 ## Examples
 
@@ -98,7 +98,7 @@ The access guard will lock automatically when it times out. However, we can also
 
 ```swift
 struct ProtectedContent: View {
-    @EnvironmentObject private var accessGuard: AccessGuard
+    @Environment(AccessGuard.self) private var accessGuard
     
     var body: some View {
         AccessGuarded("ExampleIdentifier") {
@@ -121,7 +121,7 @@ To remove the access code and all information from an access guard, we can use t
 
 ```swift
 struct ProtectedContent: View {
-    @EnvironmentObject private var accessGuard: AccessGuard
+    @Environment(AccessGuard.self) private var accessGuard
     
     var body: some View {
         AccessGuarded("ExampleIdentifier") {
