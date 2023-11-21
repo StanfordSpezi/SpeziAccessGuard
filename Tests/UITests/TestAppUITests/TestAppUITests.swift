@@ -34,7 +34,7 @@ class TestAppUITests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
         
-        app.buttons["Reset Access Guard"].tap()
+        app.buttons["Reset Access Guards"].tap()
         
         app.buttons["Access Guarded"].tap()
         
@@ -126,7 +126,7 @@ class TestAppUITests: XCTestCase {
         app.buttons["Back"].tap()
         
         // Check that the passcode is removed if it is no longer set.
-        app.buttons["Reset Access Guard"].tap()
+        app.buttons["Reset Access Guards"].tap()
         
         app.buttons["Access Guarded"].tap()
         

@@ -25,6 +25,8 @@
 "PASSCODE_SET_SUCCESS" = "Passcode set was successful";
 "ACCESS_CODE_PASSCODE_PROMPT" = "Please enter your passcode";
 "ACCESS_CODE_PASSCODE_ERROR %@" = "%@ wrong tries";
+"ACCESS_GUARD_ERROR_BIOMETRICS_NOT_AVAILABLE" = "Biometric authentication is not available";
+"ACCESS_GUARD_BIOMETRICS_REASON" = "Used to test biometric-based authentication.";
 
 // MARK: - Errors
 "ACCESS_GUARD_ERROR_TITLE" = "Passcode Error";

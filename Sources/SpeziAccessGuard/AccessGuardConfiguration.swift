@@ -64,7 +64,7 @@ public struct AccessGuardConfiguration {
     /// - Parameters:
     ///   - codeOptions: The code options, see ``CodeOptions``.
     ///   - timeout: The timeout when the view should be locked based on the time the scene is not in the foreground.
-    public static func  code(
+    public static func code(
         identifier: Identifier,
         codeOptions: CodeOptions = .fourDigitNumeric,
         timeout: TimeInterval = Defaults.timeout
@@ -91,10 +91,9 @@ public struct AccessGuardConfiguration {
     ///   - codeOptions: The code options, see ``CodeOptions``.
     ///   - timeout: The timeout when the view should be locked based on the time the scene is not in the foreground.
     ///
-    /// > Warning: Not yet implemented
-    private static func  biometrics(
+    public static func biometrics(
         identifier: Identifier,
-        codeOptions: CodeOptions = .all,
+        codeOptions: CodeOptions = .fourDigitNumeric,
         timeout: TimeInterval = Defaults.timeout
     ) -> AccessGuardConfiguration {
         AccessGuardConfiguration(identifier: identifier, guardType: .biometrics, codeOptions: codeOptions, timeout: timeout)

@@ -56,7 +56,7 @@ struct SetCodeView: View {
                     .font(.title2)
                     .frame(maxWidth: .infinity)
                 CodeView(codeOption: $selectedCode) { code in
-                    guard selectedCode.verifyStructore(ofCode: code) else {
+                    guard selectedCode.verifyStructure(ofCode: code) else {
                         errorMessage = String(localized: "PASSCODE_NOT_ACCORDING_TO_FORMAT", bundle: .module)
                         return
                     }

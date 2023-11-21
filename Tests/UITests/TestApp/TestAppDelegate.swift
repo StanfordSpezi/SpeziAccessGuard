@@ -16,6 +16,7 @@ class TestAppDelegate: SpeziAppDelegate {
         Configuration {
             AccessGuardModule(
                 [
+                    .biometrics(identifier: "TestBiometricsIdentifier"),
                     .code(identifier: "TestIdentifier", timeout: 10),
                     .fixed(identifier: "TestFixedIdentifier", code: "1234")
                 ]

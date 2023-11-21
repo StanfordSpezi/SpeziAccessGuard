@@ -12,6 +12,7 @@ import Foundation
 enum AccessGuardError: LocalizedError {
     case wrongPasscode
     case storeCodeError
+    case biometricsNotAvailable
     
     
     var errorDescription: String {
@@ -24,6 +25,8 @@ enum AccessGuardError: LocalizedError {
             return String(localized: "ACCESS_GUARD_ERROR_WRONG_PASSCODE_REASON", bundle: .module)
         case .storeCodeError:
             return String(localized: "ACCESS_GUARD_ERROR_STORE_CODE_ERROR_REASON", bundle: .module)
+        case .biometricsNotAvailable:
+            return String(localized: "ACCESS_GUARD_ERROR_BIOMETRICS_NOT_AVAILABLE", bundle: .module)
         }
     }
 }

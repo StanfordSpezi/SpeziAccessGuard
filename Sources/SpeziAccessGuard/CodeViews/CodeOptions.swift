@@ -97,7 +97,7 @@ public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
     }
     
     
-    func verifyStructore(ofCode code: String) -> Bool {
+    func verifyStructure(ofCode code: String) -> Bool {
         switch self {
         case .fourDigitNumeric, .sixDigitNumeric:
             return code.isNumeric && code.count == maxLength
