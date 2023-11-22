@@ -12,7 +12,7 @@ import LocalAuthentication
 
 extension LAContext {
     func evaluatePolicyAsync(_ policy: LAPolicy, localizedReason: String) async throws -> Bool {
-        return try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             self.evaluatePolicy(policy, localizedReason: localizedReason) { success, error in
                 if let error = error {
                     continuation.resume(throwing: error)

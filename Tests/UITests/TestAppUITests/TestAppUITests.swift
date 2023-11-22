@@ -132,4 +132,51 @@ class TestAppUITests: XCTestCase {
         XCTAssert(app.staticTexts["Secured ..."].waitForExistence(timeout: 2.0))
         XCTAssert(app.staticTexts["Secured ..."].isHittable)
     }
+    
+    func testAccessCodeWithBiometrics() throws {
+        // We cannot directly test FaceID or TouchID in a UI test
+        // so we will test that the access code works
+        // as a fallback to the biometrics
+        let app = XCUIApplication()
+        app.launch()
+        
+        // Reset all passcodes
+        app.buttons["Reset Access Guards"].tap()
+        
+        // Test biometrics guard without a passcode
+        app.buttons["Access Guarded Biometrics"].tap()
+        
+        XCTAssert(app.staticTexts["Secured with biometrics ..."].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["Secured with biometrics ..."].isHittable)
+        
+        app.buttons["Back"].tap()
+        
+        // Set the passcode
+        XCTAssert(app.buttons["Set Biometric Backup Code"].waitForExistence(timeout: 2))
+        app.buttons["Set Biometric Backup Code"].tap()
+        
+        XCTAssert(app.staticTexts["Please enter your new passcode"].waitForExistence(timeout: 2))
+        XCTAssert(app.secureTextFields["Passcode Field"].waitForExistence(timeout: 2))
+        app.secureTextFields["Passcode Field"].tap()
+        app.secureTextFields["Passcode Field"].typeText("1111")
+        
+        XCTAssert(app.staticTexts["Please repeat your new passcode"].waitForExistence(timeout: 2.0))
+        app.secureTextFields["Passcode Field"].typeText("1111")
+        
+        XCTAssert(app.images["Passcode set was successful"].waitForExistence(timeout: 2.0))
+        app.buttons["Back"].tap()
+        
+        // Try the passcode
+        app.terminate()
+        app.launch()
+        XCTAssert(app.buttons["Access Guarded Biometrics"].waitForExistence(timeout: 2.0))
+        app.buttons["Access Guarded Biometrics"].tap()
+        
+        XCTAssert(app.secureTextFields["Passcode Field"].waitForExistence(timeout: 2.0))
+        app.secureTextFields["Passcode Field"].tap()
+        app.secureTextFields["Passcode Field"].typeText("1111")
+        
+        XCTAssert(app.staticTexts["Secured with biometrics ..."].waitForExistence(timeout: 2.0))
+        XCTAssert(app.staticTexts["Secured with biometrics ..."].isHittable)
+    }
 }
