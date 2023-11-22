@@ -25,6 +25,8 @@
 "PASSCODE_SET_SUCCESS" = "Neuen Code erfolgreich gespeichert";
 "ACCESS_CODE_PASSCODE_PROMPT" = "Bitte geben Sie Ihren Code ein";
 "ACCESS_CODE_PASSCODE_ERROR %@" = "%@ falsche Versuche";
+"ACCESS_GUARD_ERROR_BIOMETRICS_NOT_AVAILABLE" = "Biometrische Authentifizierung ist nicht verfügbar";
+"ACCESS_GUARD_BIOMETRICS_REASON" = "Wird verwendet, um biometriebasierte Authentifizierung zu testen."
 
 // MARK: - Fehler
 "ACCESS_GUARD_ERROR_TITLE" = "Code-Fehler";
