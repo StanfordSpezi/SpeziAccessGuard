@@ -41,7 +41,7 @@ First, you will need to add the SpeziAccessGuard Swift package to
 
 ### 2. Register the Access Guard Module
 
-** Access Code **
+#### Access Code
 
 In the example below, we configure the ``AccessGuardModule`` with one access guard that uses an access code and is identified by `ExampleIdentifier`. The `codeOptions` property defines the type of code used, which in this case is a 4-digit numeric code. The `timeout` property defines when the view should be locked based on the time the scene is not in the foreground, in seconds. 
 
@@ -77,9 +77,9 @@ A similar description is required for Touch ID, but is passed at runtime. This d
 
 These entries are mandatory for apps that utilize biometrics. Failing to provide them will result in your app being unable to access these features. 
 
-** Biometric with Access Code Fallback **
+#### Biometric with Access Code Fallback
 
-The ``AccessGuardModule`` can also be configured with an access guard that uses biometrics: [Face ID](https://support.apple.com/en-us/HT208109) or [Touch ID](https://support.apple.com/en-us/HT201371). This is shown in the example below. If biometrics are not available or fail, the user will be asked to enter their access code instead.
+The ``AccessGuardModule`` can also be configured with an access guard that uses biometrics, if the user has either Face ID or Touch ID enabled on their device (see [Face ID](https://support.apple.com/en-us/HT208109) or [Touch ID](https://support.apple.com/en-us/HT201371) for more information). This is shown in the example below. If biometrics are not available or fail, the user will be asked to enter their access code instead.
 
 
 ```swift
@@ -100,7 +100,7 @@ class ExampleDelegate: SpeziAppDelegate {
 }
 ```
 
-** Fixed Code **
+#### Fixed Code
 
 The ``AccessGuardModule`` can also be configured with a fixed code passed as a string. This is shown in the example below.
 
@@ -122,7 +122,7 @@ class ExampleDelegate: SpeziAppDelegate {
 }
 ```
 
-** Multiple Guards **
+#### Multiple Guards
 
 The ``AccessGuardModule`` can also be configured with multiple access guards that use different mechanisms, as shown below. In this example, we create both a biometric-based access guard and an access guard with a fixed code that can be used on different views in the application. Note that each access guard must have a unique identifier.
 
