@@ -65,18 +65,6 @@ class ExampleDelegate: SpeziAppDelegate {
 }
 ```
 
-### 3. Configure target properties
-
-To ensure that your application has the necessary permissions for biometrics, follow the steps below to configure the target properties within your Xcode project:
-
-- Open your project settings in Xcode by selecting *PROJECT_NAME > TARGET_NAME > Info* tab.
-- You will need to add two entries to the `Custom iOS Target Properties` (so the `Info.plist` file) to provide descriptions for why your app requires these permissions:
-   - Add a key named `Privacy - Face ID Usage Description` and provide a string value that describes why your application needs access to Face ID.
-
-A similar description is required for Touch ID, but is passed at runtime. This description is defined as `ACCESS_GUARD_BIOMETRICS_REASON` in the strings file. Please make sure you update this string as needed.
-
-These entries are mandatory for apps that utilize biometrics. Failing to provide them will result in your app being unable to access these features. 
-
 #### Biometric with Access Code Fallback
 
 The ``AccessGuardModule`` can also be configured with an access guard that uses biometrics, if the user has either Face ID or Touch ID enabled on their device (see [Face ID](https://support.apple.com/en-us/HT208109) or [Touch ID](https://support.apple.com/en-us/HT201371) for more information). This is shown in the example below. If biometrics are not available or fail, the user will be asked to enter their access code instead.
@@ -146,6 +134,15 @@ class ExampleDelegate: SpeziAppDelegate {
 ```
 
 > Tip: You can learn more about a [`Module` in the Spezi documentation](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/module).
+
+### 3. Configure target properties
+
+To ensure that your application has the necessary permissions for biometrics, follow the steps below to configure the target properties within your Xcode project:
+
+- Open your project settings in Xcode by selecting *PROJECT_NAME > TARGET_NAME > Info* tab.
+- Add a key named `Privacy - Face ID Usage Description` to the `Custom iOS Target Properties` (the `Info.plist` file) and provide a string value that describes why your application needs access to Face ID.
+
+This entry is mandatory for apps that utilize biometrics. Failing to provide it will result in your app being unable to access these features. 
 
 ## Examples
 

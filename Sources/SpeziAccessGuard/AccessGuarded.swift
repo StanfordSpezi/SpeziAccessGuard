@@ -53,7 +53,7 @@ public struct AccessGuarded<GuardedView: View>: View {
 struct AccessCodeGuard_Previews: PreviewProvider {
     static var previews: some View {
         AccessGuarded("MyGuardedView") {
-            Text("Guarded View")
+            Text(verbatim: "Guarded View")
         }
     }
 }
