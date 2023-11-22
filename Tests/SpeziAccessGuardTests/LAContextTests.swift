@@ -6,13 +6,13 @@
 // SPDX-License-Identifier: MIT
 //
 
-import XCTest
-@testable import SpeziAccessGuard
 import LocalAuthentication
+@testable import SpeziAccessGuard
+import XCTest
 
 
 class MockLAContext: LAContext {
-    var shouldSucceed: Bool = true
+    var shouldSucceed = true
 
     override func evaluatePolicy(
         _ policy: LAPolicy,
@@ -42,11 +42,10 @@ class LAContextTests: XCTestCase {
         mockContext.shouldSucceed = false
 
         do {
-            let _ = try await mockContext.evaluatePolicyAsync(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Test for failure")
+            try await mockContext.evaluatePolicyAsync(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Test for failure")
             XCTFail("Policy evaluation should fail but succeeded")
         } catch {
             // Test passes if an error is thrown as expected
         }
     }
 }
-
