@@ -16,7 +16,6 @@ class TestAppUITests: XCTestCase {
         continueAfterFailure = false
     }
     
-    
     func testFixedCode() throws {
         let app = XCUIApplication()
         app.launch()

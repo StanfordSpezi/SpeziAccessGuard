@@ -71,26 +71,20 @@ final class AccessGuardViewModel {
     }
     
     @MainActor
-    func authenticateWithBiometrics() throws {
+    func authenticateWithBiometrics() async throws {
         let context = LAContext()
         var error: NSError?
-        
-        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
-            context.evaluatePolicy(
-                .deviceOwnerAuthenticationWithBiometrics,
-                localizedReason: String(localized: "ACCESS_GUARD_BIOMETRICS_REASON", bundle: .module)
-            ) { [weak self] success, _ in
-                Task {
-                    await MainActor.run {
-                        if success {
-                            self?.locked = false
-                        }
-                    }
-                }
-            }
-        } else {
+
+        guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) else {
             throw AccessGuardError.biometricsNotAvailable
         }
+
+        let success = try await context.evaluatePolicyAsync(
+            .deviceOwnerAuthenticationWithBiometrics,
+            localizedReason: String(localized: "ACCESS_GUARD_BIOMETRICS_REASON", bundle: .module)
+        )
+
+        self.locked = !success
     }
     
     @MainActor

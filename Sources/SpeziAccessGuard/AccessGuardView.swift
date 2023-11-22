@@ -25,7 +25,9 @@ struct AccessGuardView<GuardedView: View>: View {
             }
             .onAppear {
                 if viewModel.locked && viewModel.configuration.guardType == .biometrics {
-                    try? viewModel.authenticateWithBiometrics()
+                    Task {
+                        try? await viewModel.authenticateWithBiometrics()
+                    }
                 }
             }
     }
