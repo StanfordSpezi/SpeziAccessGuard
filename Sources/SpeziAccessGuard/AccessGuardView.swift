@@ -13,7 +13,7 @@ import SwiftUI
 struct AccessGuardView<GuardedView: View>: View {
     private let guardedView: GuardedView
     private let viewModel: AccessGuardViewModel
-    
+
     
     var body: some View {
         guardedView
@@ -21,6 +21,13 @@ struct AccessGuardView<GuardedView: View>: View {
                 if viewModel.locked {
                     EnterCodeView(viewModel: viewModel)
                         .ignoresSafeArea(.container)
+                }
+            }
+            .onAppear {
+                if viewModel.locked && viewModel.configuration.guardType == .biometrics {
+                    Task {
+                        try? await viewModel.authenticateWithBiometrics()
+                    }
                 }
             }
     }

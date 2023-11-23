@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import LocalAuthentication
 import Observation
 import Spezi
 import SpeziSecureStorage
@@ -49,7 +50,7 @@ final class AccessGuardViewModel {
         
         if let credentials = try? secureStorage.retrieveCredentials(configuration.identifier),
            let accessCode = try? JSONDecoder().decode(AccessCode.self, from: Data(credentials.password.utf8)),
-           accessCode.codeOption.verifyStructore(ofCode: accessCode.code) {
+           accessCode.codeOption.verifyStructure(ofCode: accessCode.code) {
             self.accessCode = accessCode
         } else {
             self.accessCode = nil
@@ -67,6 +68,23 @@ final class AccessGuardViewModel {
         if lastEnteredBackground.addingTimeInterval(configuration.timeout) < .now {
             locked = true
         }
+    }
+    
+    @MainActor
+    func authenticateWithBiometrics() async throws {
+        let context = LAContext()
+        var error: NSError?
+
+        guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) else {
+            throw AccessGuardError.biometricsNotAvailable
+        }
+
+        let success = try await context.evaluatePolicyAsync(
+            .deviceOwnerAuthenticationWithBiometrics,
+            localizedReason: String(localized: "ACCESS_GUARD_BIOMETRICS_REASON", bundle: .module)
+        )
+
+        self.locked = !success
     }
     
     @MainActor

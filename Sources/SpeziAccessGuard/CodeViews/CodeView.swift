@@ -21,7 +21,7 @@ struct CodeView: View {
     
     
     var body: some View {
-        SecureField("", text: $code)
+        SecureField(String(), text: $code)
             .textContentType(.password)
             .keyboardType(codeOption.keyBoardType)
             .textFieldStyle(.roundedBorder)

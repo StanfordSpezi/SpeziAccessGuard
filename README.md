@@ -16,15 +16,15 @@ SPDX-License-Identifier: MIT
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FStanfordSpezi%2FSpeziAccessGuard%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/StanfordSpezi/SpeziAccessGuard)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FStanfordSpezi%2FSpeziAccessGuard%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/StanfordSpezi/SpeziAccessGuard)
 
-Allows developers to easily guard a SwiftUI view with an access code.
+Allows developers to easily guard a SwiftUI view with an access code or biometrics.
 
-|![Screenshot showing access guarded to a SwiftUI view by an access code.](Sources/SpeziAccessGuard/SpeziAccessGuard.docc/Resources/AccessGuarded.png#gh-light-mode-only)![Screenshot showing access guarded to a SwiftUI view by an access code.](Sources/SpeziAccessGuard/SpeziAccessGuard.docc/Resources/AccessGuarded-dark.png#gh-dark-mode-only)|
-|:--:|
-|[`AccessGuarded`](https://swiftpackageindex.com/stanfordspezi/speziaccessguard/0.1.1/documentation/speziaccessguard/accessguarded)
+|<picture><source media="(prefers-color-scheme: dark)" srcset="Sources/SpeziAccessGuard/SpeziAccessGuard.docc/Resources/AccessGuarded-dark.png"><img src="Sources/SpeziAccessGuard/SpeziAccessGuard.docc/Resources/AccessGuarded.png" width="250" alt="Screenshot showing access guarded to a SwiftUI view by an access code." /></picture>|<picture><source media="(prefers-color-scheme: dark)" srcset="Sources/SpeziAccessGuard/SpeziAccessGuard.docc/Resources/AccessGuarded-Biometrics-dark.png"><img src="Sources/SpeziAccessGuard/SpeziAccessGuard.docc/Resources/AccessGuarded-Biometrics.png" width="250" alt="Screenshot showing access guarded to a SwiftUI view by Face ID with an access code fallback." /></picture>|
+|:--:|:--:|
+|4-digit Numeric Access Code|Face ID with Access Code Fallback|
 
 ## Overview
 
-The Access Guard module allows developers to guard a SwiftUI view with an access code view and allows users to set or reset their access codes.
+The Access Guard module allows developers to guard a SwiftUI view with an access code or biometrics and allows users to set or reset their access codes.
 
 For more information, please refer to the [API documentation](https://swiftpackageindex.com/StanfordSpezi/SpeziAccessGuard/documentation).
 
@@ -43,6 +43,10 @@ First, you will need to add the SpeziAccessGuard Swift package to
 
 You can configure the [`AccessGuardModule`](https://swiftpackageindex.com/stanfordspezi/speziaccessguard/documentation/speziaccessguard/accessguardmodule) in the [`SpeziAppDelegate`](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/speziappdelegate) as follows.
 
+#### Access Code
+
+In the example below, we configure the [`AccessGuardModule`](https://swiftpackageindex.com/stanfordspezi/speziaccessguard/documentation/speziaccessguard/accessguardmodule) with one access guard that uses an access code and is identified by `ExampleIdentifier`.  The `codeOptions` property defines the type of code used, which in this case is a 4-digit numeric code. The `timeout` property defines when the view should be locked based on the time the scene is not in the foreground, in seconds.
+
 ```swift
 import Spezi
 import SpeziAccessGuard
@@ -53,7 +57,7 @@ class ExampleDelegate: SpeziAppDelegate {
         Configuration {
             AccessGuardModule(
                 [
-                    .code(identifier: "ExampleIdentifier", timeout: 15 * 60)
+                    .code(identifier: "ExampleIdentifier", codeOptions: .fourDigitNumeric, timeout: 15 * 60)
                 ]
             )
         }
@@ -61,16 +65,90 @@ class ExampleDelegate: SpeziAppDelegate {
 }
 ```
 
-In the example above, we configure the [`AccessGuardModule`](https://swiftpackageindex.com/stanfordspezi/speziaccessguard/documentation/speziaccessguard/accessguardmodule) with one access guard that uses a 4-digit numerical access code and is identified by `ExampleIdentifier`. The `timeout` property defines when the view should be locked based on the time the scene is not in the foreground, in seconds.
+#### Biometric with Access Code Fallback
+
+The [`AccessGuardModule`](https://swiftpackageindex.com/stanfordspezi/speziaccessguard/documentation/speziaccessguard/accessguardmodule) can also be configured with an access guard that uses either Face ID or Touch ID, if the user has one of these enabled on their device (see [Face ID](https://support.apple.com/en-us/HT208109) or [Touch ID](https://support.apple.com/en-us/HT201371) for more information). This is shown in the example below. If biometrics are not available or biometric authentication fails, the user will be asked to enter their access code instead.
+
+```swift
+import Spezi
+import SpeziAccessGuard
+
+
+class ExampleDelegate: SpeziAppDelegate {
+    override var configuration: Configuration {
+        Configuration {
+            AccessGuardModule(
+                [
+                    .biometric(identifier: "ExampleIdentifier", codeOptions: .fourDigitNumeric, timeout: 15 * 60)
+                ]
+            )
+        }
+    }
+}
+```
+
+#### Fixed Code
+
+The [`AccessGuardModule`](https://swiftpackageindex.com/stanfordspezi/speziaccessguard/documentation/speziaccessguard/accessguardmodule) can also be configured with a fixed code passed as a string. This is shown in the example below.
+
+```swift
+import Spezi
+import SpeziAccessGuard
+
+
+class ExampleDelegate: SpeziAppDelegate {
+    override var configuration: Configuration {
+        Configuration {
+            AccessGuardModule(
+                [
+                    .fixed(identifier: "ExampleIdentifier", code: "1234", codeOptions: .fourDigitNumeric, timeout: 15 * 60)
+                ]
+            )
+        }
+    }
+}
+```
+
+#### Multiple Guards
+
+The [`AccessGuardModule`](https://swiftpackageindex.com/stanfordspezi/speziaccessguard/documentation/speziaccessguard/accessguardmodule) can also be configured with multiple access guards that use different mechanisms, as shown below. In this example, we create both a biometric-based access guard and an access guard with a fixed code that can be used on different views in the application. Each access guard must have a unique identifier.
+
+```swift
+import Spezi
+import SpeziAccessGuard
+
+
+class ExampleDelegate: SpeziAppDelegate {
+    override var configuration: Configuration {
+        Configuration {
+            AccessGuardModule(
+                [
+                    .biometric(identifier: "ExampleIdentifier"),
+                    .fixed(identifier: "ExampleFixedIdentifier", code: "1234")
+                ]
+            )
+        }
+    }
+}
+```
 
 > [!NOTE]  
 > You can learn more about a [`Module` in the Spezi documentation](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/module).
+
+### 3. Configure target properties
+
+To ensure that your application has the necessary permissions for biometrics, follow the steps below to configure the target properties within your Xcode project:
+
+- Open your project settings in Xcode by selecting *PROJECT_NAME > TARGET_NAME > Info* tab.
+- Add a key named `Privacy - Face ID Usage Description` to the `Custom iOS Target Properties` (the `Info.plist` file) and provide a string value that describes why your application needs access to Face ID.
+
+This entry is mandatory for apps that utilize biometrics. Failing to provide it will result in your app being unable to access these features. 
 
 ## Examples
 
 ### Setting an Access Code
 
-Using [`SetAccessGuard`](https://swiftpackageindex.com/stanfordspezi/speziaccessguard/0.1.1/documentation/speziaccessguard/setaccessguard), we can create a view that allows the user to set their access code.
+Using [`SetAccessGuard`](https://swiftpackageindex.com/stanfordspezi/speziaccessguard/0.1.1/documentation/speziaccessguard/setaccessguard), we can create a view that allows the user to set their access code. This step must be done before access guards can be used to guard a SwiftUI view, with the exception of an access guard that uses a fixed code. (Note that the access guard will be automatically unlocked after the passcode is set until it is locked or times out.)
 
 ```swift
 import SpeziAccessGuard
