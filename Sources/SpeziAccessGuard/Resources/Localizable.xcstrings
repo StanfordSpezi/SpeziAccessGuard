@@ -11,6 +11,22 @@
         }
       }
     },
+    "ACCESS_CODE_NOT_SET" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitte legen Sie einen Zugangscode fest."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please set an access code"
+          }
+        }
+      }
+    },
     "ACCESS_CODE_PASSCODE_ERROR %@" : {
       "extractionState" : "manual",
       "localizations" : {

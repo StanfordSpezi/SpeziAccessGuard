@@ -19,10 +19,10 @@ struct EnterCodeView: View {
         ZStack {
             Color(uiColor: .systemBackground)
             VStack(spacing: 32) {
-                Text("ACCESS_CODE_PASSCODE_PROMPT", bundle: .module)
-                    .font(.title2)
-                    .frame(maxWidth: .infinity)
                 if let codeOption = viewModel.codeOption {
+                    Text("ACCESS_CODE_PASSCODE_PROMPT", bundle: .module)
+                        .font(.title2)
+                        .frame(maxWidth: .infinity)
                     CodeView(codeOption: codeOption) { code in
                         do {
                             try await viewModel.checkAccessCode(code)
@@ -33,6 +33,10 @@ struct EnterCodeView: View {
                             throw error
                         }
                     }
+                } else {
+                    Text("ACCESS_CODE_NOT_SET", bundle: .module)
+                        .font(.title2)
+                        .frame(maxWidth: .infinity)
                 }
                 ErrorMessageCapsule(errorMessage: $errorMessage)
             }
