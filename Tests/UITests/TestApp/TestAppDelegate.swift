@@ -18,7 +18,8 @@ class TestAppDelegate: SpeziAppDelegate {
                 [
                     .biometrics(identifier: "TestBiometricsIdentifier"),
                     .code(identifier: "TestIdentifier", timeout: 10),
-                    .fixed(identifier: "TestFixedIdentifier", code: "1234")
+                    .fixed(identifier: "TestFixedIdentifier", code: "1234"),
+                    .codeIfUnprotected(identifier: "TestCodeIfUnprotectedIdentifier")
                 ]
             )
         }

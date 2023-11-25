@@ -14,17 +14,26 @@ struct AccessGuardView<GuardedView: View>: View {
     private let guardedView: GuardedView
     private let viewModel: AccessGuardViewModel
 
-    
+    @MainActor
+    private var shouldEnterCode: Bool {
+        !(viewModel.configuration.guardType == .codeIfUnprotected && viewModel.deviceIsProtected)
+    }
+
+    @MainActor
+    private var shouldAttemptBiometricAuthentication: Bool {
+        viewModel.configuration.guardType == .biometrics && !shouldEnterCode
+    }
+
     var body: some View {
         guardedView
             .overlay {
-                if viewModel.locked {
+                if viewModel.locked && shouldEnterCode {
                     EnterCodeView(viewModel: viewModel)
                         .ignoresSafeArea(.container)
                 }
             }
             .onAppear {
-                if viewModel.locked && viewModel.configuration.guardType == .biometrics {
+                if viewModel.locked && shouldAttemptBiometricAuthentication {
                     Task {
                         try? await viewModel.authenticateWithBiometrics()
                     }

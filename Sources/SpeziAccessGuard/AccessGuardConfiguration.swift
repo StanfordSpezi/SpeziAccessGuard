@@ -48,11 +48,10 @@ public struct AccessGuardConfiguration {
     
     /// Enforce an access code if the device is not protected with an access code.
     /// - Parameters:
+    ///   - identifier: The unique identifier for the ``AccessGuardConfiguration``.
     ///   - codeOptions: The code options, see ``CodeOptions``.
     ///   - timeout: The timeout when the view should be locked based on the time the scene is not in the foreground.
-    ///
-    /// > Warning: Not yet implemented
-    private static func codeIfUnprotected(
+    public static func codeIfUnprotected(
         identifier: Identifier,
         codeOptions: CodeOptions = Defaults.codeOptions,
         timeout: TimeInterval = Defaults.timeout
@@ -62,6 +61,7 @@ public struct AccessGuardConfiguration {
     
     /// Enforce an access code.
     /// - Parameters:
+    ///   - identifier: The unique identifier for the ``AccessGuardConfiguration``.
     ///   - codeOptions: The code options, see ``CodeOptions``.
     ///   - timeout: The timeout when the view should be locked based on the time the scene is not in the foreground.
     public static func code(
@@ -74,6 +74,7 @@ public struct AccessGuardConfiguration {
     
     /// Enforce a fixed access code.
     /// - Parameters:
+    ///   - identifier: The unique identifier for the ``AccessGuardConfiguration``
     ///   - code: The fixed access code.
     ///   - codeOptions: The code options, see ``CodeOptions``.
     ///   - timeout: The timeout when the view should be locked based on the time the scene is not in the foreground.
@@ -88,9 +89,9 @@ public struct AccessGuardConfiguration {
     
     /// Enforce an access code & biometrics authentication if setup on the device.
     /// - Parameters:
+    ///   - identifier: The unique identifier for the ``AccessGuardConfiguration``
     ///   - codeOptions: The code options, see ``CodeOptions``.
     ///   - timeout: The timeout when the view should be locked based on the time the scene is not in the foreground.
-    ///
     public static func biometrics(
         identifier: Identifier,
         codeOptions: CodeOptions = .fourDigitNumeric,

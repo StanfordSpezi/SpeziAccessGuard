@@ -42,8 +42,19 @@ struct ContentView: View {
                             }
                     }
                 }
+                NavigationLink("Access Guarded If Unprotected") {
+                    AccessGuarded("TestCodeIfUnprotectedIdentifier") {
+                        Color.green
+                            .overlay {
+                                Text("Secured with code only if unprotected ...")
+                            }
+                    }
+                }
                 NavigationLink("Set Code") {
                     SetAccessGuard(identifier: "TestIdentifier")
+                }
+                NavigationLink("Set Code If Unprotected") {
+                    SetAccessGuard(identifier: "TestCodeIfUnprotectedIdentifier")
                 }
                 NavigationLink("Set Biometric Backup Code") {
                     SetAccessGuard(identifier: "TestBiometricsIdentifier")
@@ -53,7 +64,12 @@ struct ContentView: View {
                     ToolbarItem {
                         Button("Lock Access Guards") {
                             Task {
-                                let identifiers = ["TestIdentifier", "TestFixedIdentifier", "TestBiometricsIdentifier"]
+                                let identifiers = [
+                                    "TestIdentifier",
+                                    "TestFixedIdentifier",
+                                    "TestBiometricsIdentifier",
+                                    "TestCodeIfUnprotectedIdentifier"
+                                ]
                                 for identifier in identifiers {
                                     await accessGuard.lock(identifier: identifier)
                                 }

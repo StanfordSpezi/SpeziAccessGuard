@@ -40,7 +40,11 @@ final class AccessGuardViewModel {
             return accessCode?.codeOption
         }
     }
-    
+
+    @MainActor var deviceIsProtected: Bool {
+        return LAContext().canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
+    }
+
     
     @MainActor
     init(accessGuard: AccessGuard, secureStorage: SecureStorage, configuration: AccessGuardConfiguration) {
