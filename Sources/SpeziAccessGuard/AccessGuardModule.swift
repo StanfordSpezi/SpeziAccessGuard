@@ -41,7 +41,7 @@ import SwiftUI
 /// enforce a code or biometrics-based access guard to SwiftUI views.
 public final class AccessGuardModule: Module, DefaultInitializable, LifecycleHandler {
     @Dependency private var secureStorage: SecureStorage
-    @Model private var accessGuard: AccessGuard
+    @Model public private(set) var accessGuard: AccessGuard
     
     private let configurations: [AccessGuardConfiguration]
     
