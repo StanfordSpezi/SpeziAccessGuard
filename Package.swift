@@ -1,4 +1,4 @@
-// swift-tools-version:5.9
+// swift-tools-version:5.10
 
 //
 // This source file is part of the Spezi open source project
@@ -21,9 +21,9 @@ let package = Package(
         .library(name: "SpeziAccessGuard", targets: ["SpeziAccessGuard"])
     ],
     dependencies: [
-        .package(url: "https://github.com/StanfordSpezi/Spezi", .upToNextMinor(from: "0.8.0")),
-        .package(url: "https://github.com/StanfordSpezi/SpeziStorage", .upToNextMinor(from: "0.5.0")),
-        .package(url: "https://github.com/StanfordSpezi/SpeziViews", .upToNextMinor(from: "0.6.2"))
+        .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.2.3"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziStorage", from: "1.0.2"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziViews", from: "1.3.1")
     ],
     targets: [
         .target(
