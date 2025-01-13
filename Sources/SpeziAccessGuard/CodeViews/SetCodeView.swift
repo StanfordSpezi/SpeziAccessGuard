@@ -24,6 +24,9 @@ struct SetCodeView: View {
     @State private var firstCode: String = ""
     @State private var state: SetCodeState = .oldCode
     @State private var errorMessage: String?
+    @State private var upstreamError: String?
+    @State private var validationRes: ValidationResult = .none
+    @State private var shouldSubmit: Bool = false
     
     
     private var codeOptions: [CodeOptions] {
@@ -38,6 +41,8 @@ struct SetCodeView: View {
         case .oldCode:
             EnterCodeView(viewModel: viewModel)
                 .onChange(of: viewModel.locked) {
+                    print("viewModel.locked status change: \($0)")
+                    // problem: if the user is already unlocked, the view will not change to .setCode
                     if !viewModel.locked {
                         withAnimation {
                             state = .setCode
@@ -55,15 +60,24 @@ struct SetCodeView: View {
                 Text("SET_PASSCODE_PROMPT", bundle: .module)
                     .font(.title2)
                     .frame(maxWidth: .infinity)
-                CodeView(codeOption: $selectedCode) { code in
-                    guard selectedCode.verifyStructure(ofCode: code) else {
-                        errorMessage = String(localized: "PASSCODE_NOT_ACCORDING_TO_FORMAT", bundle: .module)
-                        return
-                    }
+                CodeView(codeOption: $selectedCode,
+                         toolbarButtonLabel: String(localized: "SET_PASSCODE_NEXT_BUTTON", bundle: .module)) {
+                    code, validationRes, shouldSubmit in
                     
-                    firstCode = code
-                    withAnimation {
-                        state = .repeatCode
+                    if shouldSubmit {
+                        firstCode = code
+                        print(".setCode firstCode: \(firstCode)")
+                        withAnimation {
+                            state = .repeatCode
+                        }
+                    } else {
+                        print("Code: \(code) Validation: \(validationRes) ShouldSubmit: \(shouldSubmit)")
+                        switch validationRes {
+                        case .failure(let upstreamError):
+                            errorMessage = String(upstreamError.failureReason)
+                        default:
+                            errorMessage = nil
+                        }
                     }
                 }
                 VStack {
@@ -83,27 +97,39 @@ struct SetCodeView: View {
                 }
                     .frame(height: 80)
             }
-                .transition(.opacity)
+            .transition(.opacity)
         case .repeatCode:
             VStack(spacing: 32) {
                 Text("SET_PASSCODE_REPEAT_PROMPT", bundle: .module)
                     .font(.title2)
                     .frame(maxWidth: .infinity)
-                CodeView(codeOption: $selectedCode) { code in
-                    if code == firstCode {
-                        do {
-                            try await viewModel.setAccessCode(code, codeOption: selectedCode)
-                            errorMessage = nil
-                            await action()
-                            try await Task.sleep(for: .seconds(0.2))
-                            withAnimation {
-                                state = .success
+                CodeView(codeOption: $selectedCode,
+                         toolbarButtonLabel: String(localized: "SET_PASSCODE_CONFIRM_BUTTON", bundle: .module)) { code, validationRes, shouldSubmit in
+                    
+                    if shouldSubmit {
+                        if code == firstCode {
+                            do {
+                                try await viewModel.setAccessCode(code, codeOption: selectedCode)
+                                errorMessage = nil
+                                await action()
+                                try await Task.sleep(for: .seconds(0.2))
+                                withAnimation {
+                                    state = .success
+                                }
+                            } catch let error as AccessGuardError {
+                                errorMessage = error.failureReason
                             }
-                        } catch let error as AccessGuardError {
-                            errorMessage = error.failureReason
+                        } else {
+                            errorMessage = String(localized: "SET_PASSCODE_REPEAT_NOT_EQUAL", bundle: .module)
                         }
                     } else {
-                        errorMessage = String(localized: "SET_PASSCODE_REPEAT_NOT_EQUAL", bundle: .module)
+                        switch validationRes {
+                        case .failure(let upstreamError):
+                            errorMessage = String(upstreamError.failureReason)
+                        default:
+                            errorMessage = nil
+                            
+                        }
                     }
                 }
                 VStack {
@@ -120,10 +146,11 @@ struct SetCodeView: View {
                         }
                     )
                 }
-                    .frame(height: 80)
+                .frame(height: 80)
             }
-                .transition(.opacity)
-                .navigationBarBackButtonHidden()
+            .transition(.opacity)
+            .navigationBarBackButtonHidden()
+            
         case .success:
             Image(systemName: "checkmark.circle.fill")
                 .resizable()
@@ -134,7 +161,6 @@ struct SetCodeView: View {
                 .accessibilityLabel(Text("PASSCODE_SET_SUCCESS", bundle: .module))
         }
     }
-    
     
     init(viewModel: AccessGuardViewModel, action: @MainActor @escaping () async -> Void) {
         self.viewModel = viewModel

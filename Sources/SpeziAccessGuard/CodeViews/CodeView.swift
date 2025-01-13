@@ -12,8 +12,11 @@ import SwiftUI
 
 struct CodeView: View {
     @Binding private var codeOption: CodeOptions
-    private let action: (String) async throws -> Void
+    private let action: (String, ValidationResult, Bool) async throws -> Void
+    private var toolbarButtonLabel: String = ""
     @State private var code: String = ""
+    @State private var formerCode: String = ""
+    @State private var upstreamError: String = ""
     @FocusState private var focused: Bool
     @State private var viewState: ViewState = .idle
     @State private var wrongCodeCounter: Int = 0
@@ -30,7 +33,7 @@ struct CodeView: View {
             .accessibilityLabel(Text("PASSCODE_FIELD", bundle: .module))
             .overlay {
                 ZStack {
-                    if codeOption.maxLength == 4 {
+                    if codeOption.maxLength == 4 { // to do: change to type instead of length
                         Color(UIColor.systemBackground)
                         HStack(spacing: 32) {
                             ForEach(0..<4) { index in
@@ -63,10 +66,36 @@ struct CodeView: View {
                 oldKeyBoardType = codeOption.keyBoardType
             }
             .onChange(of: code) {
-                if code.count >= codeOption.maxLength {
+                // skip the validation, becuase the code was reset due to a failed validation.
+                if formerCode == code {
+                    print("Skipping validation")
+                    return
+                }
+                
+                let validationRes = codeOption.continousValidation(ofCode: code)
+                let autoSubmit = codeOption.shouldAutoSubmit(code)
+                
+                print("CodeView: Validation result: \(validationRes) AutoSubmit: \(autoSubmit)")
+                
+                switch validationRes {
+                case .success:
                     Task { @MainActor in
-                        await checkCode()
+                        do {
+                            try await action(code, validationRes, autoSubmit)
+                        } catch {
+                        }
                     }
+                    formerCode = code
+                case .failure(let error):
+                    print("code failed with error: \(error)")
+                    Task { @MainActor in
+                        try await action(code, validationRes, false)
+                    }
+                    code = formerCode
+                    
+                    print("Reset code to: \(code)")
+                default:
+                    formerCode = code
                 }
             }
             .onChange(of: codeOption) {
@@ -82,16 +111,37 @@ struct CodeView: View {
                     focused = true
                 }
             }
+            .toolbar {
+                if codeOption.willAutoSubmit() {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button(toolbarButtonLabel) {
+                            let validationRes = codeOption.submissionValidation(ofCode: code)
+                            focused=false
+                            Task {
+                                @MainActor in
+                                do {
+                                    try await action(code, validationRes, true)
+                                } catch {
+                                    code = ""
+                                }
+                            }
+                            focused = true
+                        }
+                    }
+                }
+            }
     }
     
     
-    init(codeOption: CodeOptions, action: @escaping (String) async throws -> Void) {
+    init(codeOption: CodeOptions, toolbarButtonLabel: String, action: @escaping (String, ValidationResult, Bool ) async throws -> Void) {
         self._codeOption = .constant(codeOption)
+        self.toolbarButtonLabel = toolbarButtonLabel
         self.action = action
     }
     
-    init(codeOption: Binding<CodeOptions>, action: @escaping (String) async throws -> Void) {
+    init(codeOption: Binding<CodeOptions>, toolbarButtonLabel: String, action: @escaping (String, ValidationResult, Bool) async throws -> Void) {
         self._codeOption = codeOption
+        self.toolbarButtonLabel = toolbarButtonLabel
         self.action = action
     }
     
@@ -101,7 +151,7 @@ struct CodeView: View {
         viewState = .processing
         
         do {
-            try await action(code)
+            try await action(code, .success, true)
         } catch {
             wrongCodeCounter += 1
             code = ""
@@ -116,7 +166,7 @@ struct CodeView: View {
 
 struct AuthenticationView_Previews: PreviewProvider {
     static var previews: some View {
-        CodeView(codeOption: .fourDigitNumeric) { _ in
+        CodeView(codeOption: .fourDigitNumeric, toolbarButtonLabel: String("")) { _,_,_ in
             try await Task.sleep(for: .seconds(1))
         }
         .padding(.horizontal)

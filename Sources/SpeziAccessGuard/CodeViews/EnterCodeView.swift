@@ -13,6 +13,8 @@ struct EnterCodeView: View {
     var viewModel: AccessGuardViewModel
     @State private var wrongCodeCounter: Int = 0
     @State private var errorMessage: String?
+    @State private var validationRes: ValidationResult = .none
+    @State private var shouldSubmit: Bool = false
     
     
     var body: some View {
@@ -23,14 +25,27 @@ struct EnterCodeView: View {
                     Text("ACCESS_CODE_PASSCODE_PROMPT", bundle: .module)
                         .font(.title2)
                         .frame(maxWidth: .infinity)
-                    CodeView(codeOption: codeOption) { code in
-                        do {
-                            try await viewModel.checkAccessCode(code)
-                        } catch {
-                            wrongCodeCounter += 1
-                            let errorMessageTemplate = NSLocalizedString("ACCESS_CODE_PASSCODE_ERROR %@", bundle: .module, comment: "")
-                            errorMessage = String(format: errorMessageTemplate, "\(wrongCodeCounter)")
-                            throw error
+                    CodeView(codeOption: codeOption,
+                             toolbarButtonLabel: String(localized: "ENTER_PASSCODE_CONFIRM_BUTTON", bundle: .module)) { code, validationRes, shouldSubmit in
+                        
+                        if shouldSubmit {
+                            do {
+                                print("EnterCodeView: \(code) checkAccessCode Called.")
+                                try await viewModel.checkAccessCode(code)
+                            } catch {
+                                wrongCodeCounter += 1
+                                let errorMessageTemplate = NSLocalizedString("ACCESS_CODE_PASSCODE_ERROR %@", bundle: .module, comment: "")
+                                errorMessage = String(format: errorMessageTemplate, "\(wrongCodeCounter)")
+                                throw error
+                            }
+                        } else {
+                            print("Code: \(code) Validation: \(validationRes) ShouldSubmit: \(shouldSubmit)")
+                            switch validationRes {
+                            case .failure(let upstreamError):
+                                errorMessage = String(upstreamError.failureReason)
+                            default:
+                                errorMessage = nil
+                            }
                         }
                     }
                 } else {
