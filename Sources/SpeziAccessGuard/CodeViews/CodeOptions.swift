@@ -118,20 +118,26 @@ public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
         return true
     }
     
+    //invoked when the user is typing
     func continousValidation(ofCode code: String) -> ValidationResult {
         if !verifyOnlyDigits(ofCode: code) {
             return .failure(.invalidCodeFormatOnlyNumericAllowed)
+        }
+    
+        if shouldAutoSubmit(code) {
+            return .submit
         }
         // Add other checks
         return .success
     }
     
-    func submissionValidation(ofCode code: String) -> ValidationResult {
+    // invoked on button press
+    func submissionValidation(ofCode code: String) -> ValidationResult {      
         switch self {
         case .fourDigitNumeric, .sixDigitNumeric:
-            return code.count == maxLength ? .success : .failure(.invalidCodeLength)
+            return code.count == maxLength ? .submit : .failure(.invalidCodeLength)
         case .customNumeric, .customAlphanumeric:
-            return code.count >= CodeOptions.fourDigitNumeric.maxLength ? .success : .failure(.invalidMinimumCodeLength)
+            return code.count >= CodeOptions.fourDigitNumeric.maxLength ? .submit : .failure(.invalidMinimumCodeLength)
         default:
             return .failure(.invalidCodeFormat)
         }
@@ -148,15 +154,21 @@ public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
             return false
         }
     }
-
+    
     func willAutoSubmit() -> Bool {
+        return self == .fourDigitNumeric || self == .sixDigitNumeric
+    }
+
+    // to do remove
+    func requiresManualSubmission() -> Bool {
         return self == .customNumeric || self == .customAlphanumeric
     }
 
 }
 
 enum ValidationResult {
-    case success
-    case failure(AccessGuardError)
     case none
+    case success
+    case submit
+    case failure(AccessGuardError)
 }
