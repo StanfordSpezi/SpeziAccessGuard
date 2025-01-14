@@ -40,7 +40,6 @@ struct SetCodeView: View {
         case .oldCode:
             EnterCodeView(viewModel: viewModel)
                 .onChange(of: viewModel.locked) {
-                    print("viewModel.locked status change: \($0)")
                     // problem: if the user is already unlocked, the view will not change to .setCode
                     if !viewModel.locked {
                         withAnimation {
@@ -50,6 +49,11 @@ struct SetCodeView: View {
                 }
                 .task {
                     if !viewModel.setup {
+                        state = .setCode
+                    }
+                    
+                    // if the user is already unlocked, the user can directly set new passcode
+                    if !viewModel.locked {
                         state = .setCode
                     }
                 }
@@ -64,16 +68,14 @@ struct SetCodeView: View {
                     code, validationRes in
                     
                     switch validationRes {
+                        case .valid:
+                            errorMessage = nil
                         case .failure(let upstreamError):
                             errorMessage = String(upstreamError.failureReason)
-                            print("Send error message: \(errorMessage)")
-                        case .success:
-                            print("SetCodeView: reset error message")
-                            errorMessage = nil
                         default:
                             errorMessage = nil
                             firstCode = code
-                            print(".setCode firstCode: \(firstCode)")
+                        
                             withAnimation {
                                 state = .repeatCode
                             }
@@ -106,10 +108,10 @@ struct SetCodeView: View {
                          toolbarButtonLabel: String(localized: "SET_PASSCODE_CONFIRM_BUTTON", bundle: .module)) { code, validationRes in
                     
                     switch validationRes {
+                        case .valid:
+                            errorMessage = nil
                         case .failure(let upstreamError):
                             errorMessage = String(upstreamError.failureReason)
-                        case .success:
-                            errorMessage = nil
                         default:
                             if code == firstCode {
                                 do {
@@ -122,7 +124,6 @@ struct SetCodeView: View {
                                         state = .success
                                     }
                                 } catch let error as AccessGuardError {
-                                    print("there is a problem with the code")
                                     errorMessage = String(error.failureReason)
                                     throw error
                                 }

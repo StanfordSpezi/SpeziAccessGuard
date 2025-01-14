@@ -14,7 +14,6 @@ struct EnterCodeView: View {
     @State private var wrongCodeCounter: Int = 0
     @State private var errorMessage: String?
     @State private var validationRes: ValidationResult = .none
-
     
     
     var body: some View {
@@ -29,22 +28,21 @@ struct EnterCodeView: View {
                              toolbarButtonLabel: String(localized: "ENTER_PASSCODE_CONFIRM_BUTTON", bundle: .module)) { code, validationRes in
                         
                         switch validationRes {
+                            case .valid:
+                                errorMessage = nil
                             case .failure(let upstreamError):
                                 errorMessage = String(upstreamError.failureReason)
-                            case .success:
-                                errorMessage = nil
                             default:
                                 errorMessage = nil
                                 do {
-                                    print("EnterCodeView: \(code) checkAccessCode Called.")
                                     try await viewModel.checkAccessCode(code)
                                 } catch {
                                     wrongCodeCounter += 1
                                     let errorMessageTemplate = NSLocalizedString("ACCESS_CODE_PASSCODE_ERROR %@", bundle: .module, comment: "")
                                     errorMessage = String(format: errorMessageTemplate, "\(wrongCodeCounter)")
-                                    throw error
+                                    throw error // throw error to reset code in CodeView
                                 }
-                            }
+                        }
                     }
                 } else {
                     Text("ACCESS_CODE_NOT_SET", bundle: .module)

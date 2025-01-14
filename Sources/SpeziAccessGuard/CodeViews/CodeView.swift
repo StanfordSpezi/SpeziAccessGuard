@@ -16,7 +16,6 @@ struct CodeView: View {
     private var toolbarButtonLabel: String = ""
     @State private var code: String = ""
     @State private var formerCode: String = ""
-    @State private var upstreamError: String = ""
     @FocusState private var focused: Bool
     @State private var viewState: ViewState = .idle
     @State private var wrongCodeCounter: Int = 0
@@ -67,33 +66,26 @@ struct CodeView: View {
                 oldKeyBoardType = codeOption.keyBoardType
             }
             .onChange(of: code) {
-                // skip the validation, becuase the code was reset due to a failed validation.
+                ///Validation is skipped, when code was reset or modified after an error
                 if formerCode == code || code == "" {
-                    print("CodeView: Skipping validation")
                     return
                 }
                 
                 let validationRes = codeOption.continousValidation(ofCode: code)
                 
-                print("CodeView: Validation result: \(validationRes)")
+                Task { @MainActor in
+                    do {
+                        try await action(code, validationRes)
+                    } catch {
+                        code = ""
+                    }
+                }
                 
                 switch validationRes {
-                case .failure(let error):
-                    print("CodeView: failed with error: \(error)")
-                    Task { @MainActor in
-                        try await action(code, validationRes)
-                    }
-                    code = formerCode
-                    print("CodeView: Reset code to: \(code)")
-                default:
-                    formerCode = code
-                    Task { @MainActor in
-                        do {
-                            try await action(code, validationRes)
-                        } catch {
-                            code = ""
-                        }
-                    }
+                    case .failure(_):
+                        code = formerCode
+                    default:
+                        formerCode = code
                 }
             }
             .onChange(of: codeOption) {
@@ -114,8 +106,6 @@ struct CodeView: View {
                     ToolbarItem(placement: .primaryAction) {
                         Button(toolbarButtonLabel) {
                             let validationRes = codeOption.submissionValidation(ofCode: code)
-                            //focused=false
-                            print("CodeView: Submission Validation result: \(validationRes)")
                             Task {
                                 @MainActor in
                                 do {
@@ -141,23 +131,6 @@ struct CodeView: View {
         self._codeOption = codeOption
         self.toolbarButtonLabel = toolbarButtonLabel
         self.action = action
-    }
-    
-    
-    private func checkCode() async {
-        focused = false
-        viewState = .processing
-        
-        do {
-            try await action(code, .success)
-        } catch {
-            wrongCodeCounter += 1
-            code = ""
-        }
-        
-        viewState = .idle
-        try? await Task.sleep(for: .seconds(0.05))
-        focused = true
     }
 }
 

@@ -13,7 +13,6 @@ enum AccessGuardError: LocalizedError {
     case wrongPasscode
     case storeCodeError
     case biometricsNotAvailable
-    case invalidCodeFormat
     case invalidCodeFormatOnlyNumericAllowed
     case invalidCodeLength
     case invalidMinimumCodeLength
@@ -31,8 +30,6 @@ enum AccessGuardError: LocalizedError {
             return String(localized: "ACCESS_GUARD_ERROR_STORE_CODE_ERROR_REASON", bundle: .module)
         case .biometricsNotAvailable:
             return String(localized: "ACCESS_GUARD_ERROR_BIOMETRICS_NOT_AVAILABLE", bundle: .module)
-        case .invalidCodeFormat:
-            return String(localized: "ACCESS_GUARD_ERROR_INVALID_CODE_FORMAT", bundle: .module)
         case .invalidCodeFormatOnlyNumericAllowed:
             return String(localized: "ACCESS_GUARD_ERROR_INVALID_CODE_FORMAT_ONLY_NUMERIC_ALLOWED", bundle: .module)
         case .invalidCodeLength:

@@ -85,9 +85,6 @@
         }
       }
     },
-    "ACCESS_GUARD_ERROR_INVALID_CODE_FORMAT" : {
-      "extractionState" : "manual"
-    },
     "ACCESS_GUARD_ERROR_INVALID_CODE_FORMAT_ONLY_NUMERIC_ALLOWED" : {
       "extractionState" : "manual",
       "localizations" : {
