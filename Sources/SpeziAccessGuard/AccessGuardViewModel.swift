@@ -147,5 +147,5 @@ final class AccessGuardViewModel {
 
 
 extension CredentialsTag {
-    static let accessGuard = Self.genericPassword(forService: "accessGuard")
+    static let accessGuard = Self.genericPassword(forService: "edu.stanford.spezi.accessGuard")
 }
