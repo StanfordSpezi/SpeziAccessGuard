@@ -39,7 +39,7 @@ jobs:
       path: 'Tests/UITests'
       scheme: TestApp
       resultBundle: TestAppiPadOS.xcresult
-      destination: 'platform=iOS Simulator,name=iPad mini (6th generation)'
+      destination: 'platform=iOS Simulator,name=iPad mini (A17 Pro)'
       artifactname: TestAppiPadOS.xcresult
   uploadcoveragereport:
     name: Upload Coverage Report
