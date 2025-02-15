@@ -137,13 +137,13 @@ final class AccessGuardViewModel {
         
         try keychainStorage.store(
             Credentials(username: configuration.identifier, password: accessCodeData),
-            for: .accessGuard)
+            for: .accessGuard
+        )
         
         // Ensure that the model is in a state as if the user has just entered the access code.
         try await checkAccessCode(code)
     }
 }
-
 
 
 extension CredentialsTag {
