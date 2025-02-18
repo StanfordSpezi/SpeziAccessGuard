@@ -22,7 +22,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.2.3"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziStorage", from: "1.0.2"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziStorage", from: "2.0.0"),
         .package(url: "https://github.com/StanfordSpezi/SpeziViews", from: "1.3.1")
     ],
     targets: [
@@ -30,7 +30,7 @@ let package = Package(
             name: "SpeziAccessGuard",
             dependencies: [
                 .product(name: "Spezi", package: "Spezi"),
-                .product(name: "SpeziSecureStorage", package: "SpeziStorage"),
+                .product(name: "SpeziKeychainStorage", package: "SpeziStorage"),
                 .product(name: "SpeziViews", package: "SpeziViews")
             ]
         ),

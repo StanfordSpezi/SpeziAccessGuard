@@ -9,7 +9,7 @@
 import LocalAuthentication
 import Observation
 import Spezi
-import SpeziSecureStorage
+import SpeziKeychainStorage
 import SwiftUI
 
 
@@ -22,7 +22,7 @@ final class AccessGuardViewModel {
     
     
     let configuration: AccessGuardConfiguration
-    private let secureStorage: SecureStorage
+    private let keychainStorage: KeychainStorage
     
     @MainActor private(set) var locked = true
     @MainActor private var accessCode: AccessCode?
@@ -43,12 +43,12 @@ final class AccessGuardViewModel {
     
     
     @MainActor
-    init(accessGuard: AccessGuard, secureStorage: SecureStorage, configuration: AccessGuardConfiguration) {
+    init(accessGuard: AccessGuard, keychainStorage: KeychainStorage, configuration: AccessGuardConfiguration) {
         self.configuration = configuration
         self.accessGuard = accessGuard
-        self.secureStorage = secureStorage
+        self.keychainStorage = keychainStorage
         
-        if let credentials = try? secureStorage.retrieveCredentials(configuration.identifier),
+        if let credentials = try? keychainStorage.retrieveCredentials(withUsername: configuration.identifier, for: .accessGuard),
            let accessCode = try? JSONDecoder().decode(AccessCode.self, from: Data(credentials.password.utf8)),
            accessCode.codeOption.verifyStructure(ofCode: accessCode.code) {
             self.accessCode = accessCode
@@ -94,7 +94,7 @@ final class AccessGuardViewModel {
         }
         
         do {
-            try secureStorage.deleteCredentials(configuration.identifier)
+            try keychainStorage.deleteCredentials(withUsername: configuration.identifier, for: .accessGuard)
             accessCode = nil
             self.locked = setup
         } catch {
@@ -135,9 +135,17 @@ final class AccessGuardViewModel {
             throw AccessGuardError.storeCodeError
         }
         
-        try secureStorage.store(credentials: Credentials(username: configuration.identifier, password: accessCodeData))
+        try keychainStorage.store(
+            Credentials(username: configuration.identifier, password: accessCodeData),
+            for: .accessGuard
+        )
         
         // Ensure that the model is in a state as if the user has just entered the access code.
         try await checkAccessCode(code)
     }
+}
+
+
+extension CredentialsTag {
+    static let accessGuard = Self.genericPassword(forService: "edu.stanford.spezi.accessGuard")
 }

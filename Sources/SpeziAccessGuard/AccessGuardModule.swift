@@ -8,7 +8,7 @@
 
 import Combine
 import Spezi
-import SpeziSecureStorage
+import SpeziKeychainStorage
 import SwiftUI
 
 
@@ -40,7 +40,7 @@ import SwiftUI
 /// You can use the ``AccessGuarded`` SwiftUI [`View`](https://developer.apple.com/documentation/swiftui/view) in your SwiftUI application to
 /// enforce a code or biometrics-based access guard to SwiftUI views.
 public final class AccessGuardModule: Module, DefaultInitializable, LifecycleHandler {
-    @Dependency private var secureStorage: SecureStorage
+    @Dependency(KeychainStorage.self) private var keychainStorage
     /// Shared ``AccessGuard`` type used to lock, reset, and inspect access control mechanisms.
     @Model public private(set) var accessGuard: AccessGuard
     
@@ -58,7 +58,7 @@ public final class AccessGuardModule: Module, DefaultInitializable, LifecycleHan
     
     @_documentation(visibility: internal)
     public func configure() {
-        accessGuard = AccessGuard(secureStorage: secureStorage, configurations)
+        accessGuard = AccessGuard(keychainStorage: keychainStorage, configurations)
     }
     
     

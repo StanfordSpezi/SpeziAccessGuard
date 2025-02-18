@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-import SpeziSecureStorage
+import SpeziKeychainStorage
 import SwiftUI
 
 
