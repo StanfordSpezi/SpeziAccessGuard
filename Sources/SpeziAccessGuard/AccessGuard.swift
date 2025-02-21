@@ -69,7 +69,7 @@ public final class AccessGuard {
     private(set) var inTheBackground = true
     private(set) var lastEnteredBackground: Date = .now
     private let configurations: [AccessGuardConfiguration]
-    private var viewModels: [String: AccessGuardViewModel] = [:]
+    private var viewModels: [AccessGuardIdentifier: AccessGuardViewModel] = [:]
     
     
     init(keychainStorage: KeychainStorage, _ configurations: [AccessGuardConfiguration]) {
@@ -105,7 +105,7 @@ public final class AccessGuard {
     /// The function removes the code and all stored information.
     /// - Parameter identifier: The identifier of the access guard.
     @MainActor
-    public func resetAccessCode(for identifier: AccessGuardConfiguration.Identifier) throws {
+    public func resetAccessCode(for identifier: AccessGuardIdentifier) throws {
         try viewModel(for: identifier).resetAccessCode()
     }
     
@@ -115,19 +115,19 @@ public final class AccessGuard {
     /// - Parameter identifier: The identifier of the access guard.
     /// - Returns: Returns `true` of the access guard is successfully setup. False if no access guard is setup.
     @MainActor
-    public func setupComplete(for identifier: AccessGuardConfiguration.Identifier) -> Bool {
+    public func setupComplete(for identifier: AccessGuardIdentifier) -> Bool {
         viewModel(for: identifier).setup
     }
     
     /// Locks an access guard.
     /// - Parameter identifier: The identifier of the access guard that should be locked.
     @MainActor
-    public func lock(identifier: AccessGuardConfiguration.Identifier) async {
+    public func lock(identifier: AccessGuardIdentifier) async {
         await viewModel(for: identifier).lock()
     }
     
     @MainActor
-    func viewModel(for identifier: AccessGuardConfiguration.Identifier) -> AccessGuardViewModel {
+    func viewModel(for identifier: AccessGuardIdentifier) -> AccessGuardViewModel {
         guard let configuration = configurations.first(where: { $0.identifier == identifier }) else {
             preconditionFailure(
             """
