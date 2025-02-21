@@ -16,7 +16,7 @@ import SwiftUI
 /// in a [`SpeziAppDelegate`](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/speziappdelegate) as detailed in the ``AccessGuard`` documentation.
 ///
 /// ```swift
-/// AccessGuarded(identifier: "TestIdentifier") {
+/// AccessGuarded(identifier: .accessGuardIdentifier) {
 ///     Text("Secured View")
 /// }
 /// ```

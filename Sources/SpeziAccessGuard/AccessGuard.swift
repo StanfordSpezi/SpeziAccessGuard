@@ -26,17 +26,21 @@ import SwiftUI
 ///     @Environment(AccessGuard.self) private var accessGuard
 ///     
 ///     var body: some View {
-///         AccessGuarded("ExampleIdentifier") {
+///         AccessGuarded(.myAccessGuard) {
 ///             Text("Secured content...")
 ///         }
 ///         .toolbar {
 ///             ToolbarItem {
 ///                 Button("Lock Access Guard") {
-///                     try? accessGuard.lock(identifier: "ExampleIdentifier")
+///                     try? accessGuard.lock(identifier: .myAccessGuard)
 ///                 }
 ///             }
 ///         }
 ///     }
+/// }
+///
+/// extension AccessGuardIdentifier {
+///     static let myAccessGuard = Self("edu.stanford.spezi.myAccessGuard")
 /// }
 /// ```
 /// 
@@ -49,13 +53,13 @@ import SwiftUI
 ///     @Environment(AccessGuard.self) private var accessGuard
 ///     
 ///     var body: some View {
-///         AccessGuarded("ExampleIdentifier") {
+///         AccessGuarded(.myAccessGuard) {
 ///             Text("Secured content...")
 ///         }
 ///         .toolbar {
 ///             ToolbarItem {
 ///                 Button("Reset Access Guard") {
-///                     try? accessGuard.resetAccessCode(for: "ExampleIdentifier")
+///                     try? accessGuard.resetAccessCode(for: .myAccessGuard)
 ///                 }
 ///             }
 ///         }
