@@ -9,7 +9,7 @@
 import Foundation
 import Observation
 import Spezi
-import SpeziSecureStorage
+import SpeziKeychainStorage
 import SwiftUI
 
 
@@ -64,7 +64,7 @@ import SwiftUI
 /// ```
 @Observable
 public final class AccessGuard {
-    private let secureStorage: SecureStorage
+    private let keychainStorage: KeychainStorage
     
     private(set) var inTheBackground = true
     private(set) var lastEnteredBackground: Date = .now
@@ -72,8 +72,8 @@ public final class AccessGuard {
     private var viewModels: [String: AccessGuardViewModel] = [:]
     
     
-    init(secureStorage: SecureStorage, _ configurations: [AccessGuardConfiguration]) {
-        self.secureStorage = secureStorage
+    init(keychainStorage: KeychainStorage, _ configurations: [AccessGuardConfiguration]) {
+        self.keychainStorage = keychainStorage
         self.configurations = configurations
     }
     
@@ -139,7 +139,7 @@ public final class AccessGuard {
         }
         
         guard let viewModel = viewModels[identifier] else {
-            let viewModel = AccessGuardViewModel(accessGuard: self, secureStorage: secureStorage, configuration: configuration)
+            let viewModel = AccessGuardViewModel(accessGuard: self, keychainStorage: keychainStorage, configuration: configuration)
             viewModels[identifier] = viewModel
             return viewModel
         }
