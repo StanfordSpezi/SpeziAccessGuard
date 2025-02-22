@@ -17,7 +17,7 @@ class MockLAContext: LAContext {
     override func evaluatePolicy(
         _ policy: LAPolicy,
         localizedReason: String,
-        reply: @escaping (Bool, Error?) -> Void
+        reply: @escaping (Bool, (any Error)?) -> Void
     ) {
         if shouldSucceed {
             reply(true, nil)
@@ -32,7 +32,6 @@ class LAContextTests: XCTestCase {
     func testEvaluatePolicyAsyncSuccess() async throws {
         let mockContext = MockLAContext()
         mockContext.shouldSucceed = true
-
         let result = try await mockContext.evaluatePolicyAsync(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Test for success")
         XCTAssertTrue(result, "Policy evaluation should succeed")
     }
@@ -40,7 +39,6 @@ class LAContextTests: XCTestCase {
     func testEvaluatePolicyAsyncFailure() async throws {
         let mockContext = MockLAContext()
         mockContext.shouldSucceed = false
-
         do {
             try await mockContext.evaluatePolicyAsync(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Test for failure")
             XCTFail("Policy evaluation should fail but succeeded")
