@@ -21,9 +21,10 @@ let package = Package(
         .library(name: "SpeziAccessGuard", targets: ["SpeziAccessGuard"])
     ],
     dependencies: [
-        .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.2.3"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziStorage", from: "2.0.0"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziViews", from: "1.3.1")
+        .package(url: "https://github.com/StanfordSpezi/Spezi.git", from: "1.2.3"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziStorage.git", from: "2.0.0"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziViews.git", from: "1.3.1"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziFoundation.git", branch: "lukas/new-stuff")
     ],
     targets: [
         .target(
@@ -31,14 +32,17 @@ let package = Package(
             dependencies: [
                 .product(name: "Spezi", package: "Spezi"),
                 .product(name: "SpeziKeychainStorage", package: "SpeziStorage"),
-                .product(name: "SpeziViews", package: "SpeziViews")
-            ]
+                .product(name: "SpeziViews", package: "SpeziViews"),
+                .product(name: "SpeziFoundation", package: "SpeziFoundation")
+            ],
+            swiftSettings: [.enableUpcomingFeature("ExistentialAny")]
         ),
         .testTarget(
             name: "SpeziAccessGuardTests",
             dependencies: [
                 .target(name: "SpeziAccessGuard")
-            ]
+            ],
+            swiftSettings: [.enableUpcomingFeature("ExistentialAny")]
         )
     ]
 )

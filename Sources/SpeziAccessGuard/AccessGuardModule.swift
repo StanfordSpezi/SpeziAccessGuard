@@ -8,6 +8,7 @@
 
 import Combine
 import Spezi
+import SpeziFoundation
 import SpeziKeychainStorage
 import SwiftUI
 
@@ -22,9 +23,9 @@ import SwiftUI
 /// class ExampleAppDelegate: SpeziAppDelegate {
 ///     override var configuration: Configuration {
 ///         Configuration {
-///             AccessGuardModule([
-///                 .code(identifier: .exampleAccessGuard)
-///             ])
+///             AccessGuardModule {
+///                 CodeAccessGuard(.exampleAccessGuard)
+///             }
 ///             // ...
 ///         }
 ///     }
@@ -46,11 +47,11 @@ public final class AccessGuardModule: Module, DefaultInitializable, LifecycleHan
     
     
     public convenience init() {
-        self.init([])
+        self.init { /* empty config */ }
     }
     
-    public init(_ configurations: [AccessGuardConfiguration]) {
-        self.configurations = configurations
+    public init(@ArrayBuilder<AccessGuardConfiguration> _ configurations: () -> [AccessGuardConfiguration]) {
+        self.configurations = configurations()
     }
     
     

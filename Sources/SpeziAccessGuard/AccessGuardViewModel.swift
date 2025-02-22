@@ -65,7 +65,7 @@ final class AccessGuardViewModel {
     
     @MainActor
     func willEnterForeground(lastEnteredBackground: Date) {
-        if lastEnteredBackground.addingTimeInterval(configuration.timeout) < .now {
+        if lastEnteredBackground.addingTimeInterval(configuration.timeout.timeInterval) < .now {
             locked = true
         }
     }

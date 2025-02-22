@@ -54,9 +54,9 @@ import SpeziAccessGuard
 class ExampleDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
-            AccessGuardModule([
-                .code(identifier: .exampleAccessGuard, codeOptions: .fourDigitNumeric, timeout: 15 * 60)
-            ])
+            AccessGuardModule {
+                CodeAccessGuard(.exampleAccessGuard, codeOptions: .fourDigitNumeric, timeout: .minutes(15))
+            }
         }
     }
 }
@@ -75,9 +75,9 @@ import SpeziAccessGuard
 class ExampleDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
-            AccessGuardModule([
-                .biometric(identifier: .exampleAccessGuard, codeOptions: .fourDigitNumeric, timeout: 15 * 60)
-            ])
+            AccessGuardModule {
+                BiometricsAccessGuard(.exampleAccessGuard, codeOptions: .fourDigitNumeric, timeout: .minutes(15))
+            }
         }
     }
 }
@@ -95,9 +95,9 @@ import SpeziAccessGuard
 class ExampleDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
-            AccessGuardModule([
-                .fixed(identifier: .exampleAccessGuard, code: "1234")
-            ])
+            AccessGuardModule {
+                FixedAccessGuard(.exampleAccessGuard, code: "1234")
+            }
         }
     }
 }
@@ -115,10 +115,10 @@ import SpeziAccessGuard∂
 class ExampleDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
-            AccessGuardModule([
-                .biometric(identifier: .accessGuard1),
-                .fixed(identifier: .accessGuard2, code: "1234")
-            ])
+            AccessGuardModule {
+                BiometricsAccessGuard(.accessGuard1)
+                FixedAccessGuard(.accessGuard2, code: "1234")
+            }
         }
     }
 }
