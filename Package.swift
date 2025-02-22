@@ -24,7 +24,7 @@ let package = Package(
         .package(url: "https://github.com/StanfordSpezi/Spezi.git", from: "1.8.0"),
         .package(url: "https://github.com/StanfordSpezi/SpeziStorage.git", from: "2.1.0"),
         .package(url: "https://github.com/StanfordSpezi/SpeziViews.git", from: "1.9.0"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziFoundation.git", branch: "lukas/new-stuff")
+        .package(url: "https://github.com/StanfordSpezi/SpeziFoundation.git", from: "2.1.1")
     ],
     targets: [
         .target(
