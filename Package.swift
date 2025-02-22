@@ -21,9 +21,9 @@ let package = Package(
         .library(name: "SpeziAccessGuard", targets: ["SpeziAccessGuard"])
     ],
     dependencies: [
-        .package(url: "https://github.com/StanfordSpezi/Spezi.git", from: "1.2.3"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziStorage.git", from: "2.0.0"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziViews.git", from: "1.3.1"),
+        .package(url: "https://github.com/StanfordSpezi/Spezi.git", from: "1.8.0"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziStorage.git", from: "2.1.0"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziViews.git", from: "1.9.0"),
         .package(url: "https://github.com/StanfordSpezi/SpeziFoundation.git", branch: "lukas/new-stuff")
     ],
     targets: [
