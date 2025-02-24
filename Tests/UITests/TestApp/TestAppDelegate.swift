@@ -14,13 +14,18 @@ import SwiftUI
 class TestAppDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
-            AccessGuardModule(
-                [
-                    .biometrics(identifier: "TestBiometricsIdentifier"),
-                    .code(identifier: "TestIdentifier", timeout: 10),
-                    .fixed(identifier: "TestFixedIdentifier", code: "1234")
-                ]
-            )
+            AccessGuardModule {
+                BiometricsAccessGuard(.testBiometrics)
+                CodeAccessGuard(.test, timeout: .seconds(10))
+                FixedAccessGuard(.testFixed, code: "1234")
+            }
         }
     }
+}
+
+
+extension AccessGuardIdentifier {
+    static let test = Self("edu.stanford.spezi.accessguardtests.1.test")
+    static let testFixed = Self("edu.stanford.spezi.accessguardtests.1.testFixed")
+    static let testBiometrics = Self("edu.stanford.spezi.accessguardtests.1.testBiometrics")
 }
