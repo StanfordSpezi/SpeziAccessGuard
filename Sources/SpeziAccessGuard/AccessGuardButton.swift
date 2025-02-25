@@ -59,16 +59,6 @@ public struct AccessGuardButton<Locked: View, Unlocked: View>: View {
     private let unlocked: () -> Unlocked
     @State private var isShowingUnlockSheet = false
     
-    init(
-        _ identifier: AccessGuardIdentifier,
-        @ViewBuilder locked: @escaping () -> Locked,
-        @ViewBuilder unlocked: @escaping () -> Unlocked
-    ) {
-        self.identifier = identifier
-        self.locked = locked
-        self.unlocked = unlocked
-    }
-    
     public var body: some View {
         if accessGuard.isLocked(identifier: identifier) {
             Button {
@@ -88,6 +78,22 @@ public struct AccessGuardButton<Locked: View, Unlocked: View>: View {
             unlocked()
         }
     }
+    
+    /// Creates a new `AccessGuardButton`.
+    /// - Parameters:
+    ///   - identifier: The unique identifier for the access guard.
+    ///   - locked: The label of the button displayed when access is locked.
+    ///   - unlocked: The content displayed when access is unlocked.
+    public init(
+        _ identifier: AccessGuardIdentifier,
+        @ViewBuilder locked: @escaping () -> Locked,
+        @ViewBuilder unlocked: @escaping () -> Unlocked
+    ) {
+        self.identifier = identifier
+        self.locked = locked
+        self.unlocked = unlocked
+    }
+    
 }
 
 #if DEBUG
