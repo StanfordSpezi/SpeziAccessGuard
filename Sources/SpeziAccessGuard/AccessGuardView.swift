@@ -18,6 +18,7 @@ struct AccessGuardView<GuardedView: View>: View {
     var body: some View {
         if viewModel.locked {
             VStack { }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .overlay {
                     if viewModel.locked {
                         EnterCodeView(viewModel: viewModel)

@@ -67,11 +67,21 @@ public struct AccessGuardButton<Locked: View, Unlocked: View>: View {
                 locked()
             }
             .sheet(isPresented: $isShowingUnlockSheet) {
-                AccessGuarded(identifier) {
-                    VStack { }
-                        .onAppear {
-                            isShowingUnlockSheet = false
+                NavigationStack {
+                    AccessGuarded(identifier) {
+                        VStack { }
+                            .onAppear {
+                                isShowingUnlockSheet = false
+                            }
+                    }
+                    .navigationTitle(NSLocalizedString("UNLOCK_TITLE", bundle: .module, comment: ""))
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button(NSLocalizedString("CANCEL", bundle: .module, comment: ""), role: .cancel) {
+                                isShowingUnlockSheet = false
+                            }
                         }
+                    }
                 }
             }
         } else {
