@@ -93,7 +93,6 @@ public struct AccessGuardButton<Locked: View, Unlocked: View>: View {
         self.locked = locked
         self.unlocked = unlocked
     }
-    
 }
 
 #if DEBUG
