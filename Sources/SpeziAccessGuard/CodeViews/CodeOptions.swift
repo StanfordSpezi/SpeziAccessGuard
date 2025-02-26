@@ -143,7 +143,7 @@ public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
         }
     }
     
-    ///Tells the caller wether the selected code option can submit automatically
+    /// Tells the caller wether the selected code option can submit automatically
     func willAutoSubmit() -> Bool {
         return self == .fourDigitNumeric || self == .sixDigitNumeric
     }
