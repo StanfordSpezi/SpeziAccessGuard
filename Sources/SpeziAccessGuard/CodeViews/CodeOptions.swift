@@ -90,7 +90,7 @@ public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
     }
 
     /// Verifies that the code is only digits for numeric code types
-    private func verifyOnlyDigits(ofCode code: String) -> Bool {
+    private func verifyAllowedCharacters(ofCode code: String) -> Bool {
         if (self == .fourDigitNumeric || self == .sixDigitNumeric || self == .customNumeric) {
             return code.isNumeric
         }
