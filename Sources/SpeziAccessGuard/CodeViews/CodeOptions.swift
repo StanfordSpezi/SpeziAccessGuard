@@ -109,7 +109,7 @@ public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
         }
     }
     
-    ///Performs all possible checks on a given code to verify if it is valid
+    /// Performs all possible checks on a given code to verify if it is valid
     func verifyStructure(ofCode code: String) -> Bool {
         return verifyOnlyDigits(ofCode: code) && verifyCodeLength(ofCode: code)
     }
