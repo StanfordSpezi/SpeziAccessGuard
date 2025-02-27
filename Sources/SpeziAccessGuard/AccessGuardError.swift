@@ -38,4 +38,8 @@ enum AccessGuardError: LocalizedError {
             return String(localized: "ACCESS_GUARD_ERROR_INVALID_CODE_LENGTH_TOO_SHORT", bundle: .module)
         }
     }
+
+    var failureMessage: String {
+        failureReason
+    }
 }
