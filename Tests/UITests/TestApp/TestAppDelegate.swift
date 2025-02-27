@@ -17,9 +17,11 @@ class TestAppDelegate: SpeziAppDelegate {
             AccessGuardModule(
                 [
                     .biometrics(identifier: "TestBiometricsIdentifier"),
-                    .code(identifier: "TestIdentifier",
-                          codeOptions: [.all],
-                          timeout: 10),
+                    .code(
+                        identifier: "TestIdentifier",
+                        codeOptions: [.all],
+                        timeout: 10
+                    ),
                     .fixed(identifier: "TestFixedIdentifier", code: "1234")
                 ]
             )
