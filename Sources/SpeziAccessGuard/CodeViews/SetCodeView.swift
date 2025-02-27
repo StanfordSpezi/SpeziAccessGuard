@@ -85,7 +85,7 @@ struct SetCodeView: View {
                 }
                     .frame(height: 80)
             }
-            .transition(.opacity)
+                .transition(.opacity)
         case .repeatCode:
             VStack(spacing: 32) {
                 Text("SET_PASSCODE_REPEAT_PROMPT", bundle: .module)

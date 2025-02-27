@@ -46,9 +46,9 @@ struct CodeView: View {
                         }
                     }
                 }
-                .onTapGesture {
-                    focused = true
-                }
+                    .onTapGesture {
+                        focused = true
+                    }
             }
             .task {
                 focused = true
@@ -138,6 +138,6 @@ struct AuthenticationView_Previews: PreviewProvider {
         CodeView(codeOption: .fourDigitNumeric, toolbarButtonLabel: String("")) { _, _ in
             try await Task.sleep(for: .seconds(1))
         }
-        .padding(.horizontal)
+            .padding(.horizontal)
     }
 }
