@@ -34,6 +34,34 @@ struct SetCodeView: View {
         }
     }
     
+    private func handleRepeatCodeValidation(code: String, validationRes: ValidationResult) async throws {
+        switch validationRes {
+        case .valid:
+            errorMessage = nil
+        case .failure(let upstreamError):
+            errorMessage = String(upstreamError.failureReason)
+        default:
+            if code == firstCode {
+                do {
+                    try await viewModel.setAccessCode(code, codeOption: selectedCode)
+                    errorMessage = nil
+                    await action()
+                    try await Task.sleep(for: .seconds(0.2))
+                    
+                    withAnimation {
+                        state = .success
+                    }
+                } catch let error as AccessGuardError {
+                    errorMessage = String(error.failureReason)
+                    throw error
+                }
+            } else {
+                print("Passcodes are not equal")
+                errorMessage = String(localized: "SET_PASSCODE_REPEAT_NOT_EQUAL", bundle: .module)
+                throw AccessGuardError.wrongPasscode
+            }
+        }
+    }
     
     var body: some View {
         switch state {
@@ -64,21 +92,20 @@ struct SetCodeView: View {
                     .font(.title2)
                     .frame(maxWidth: .infinity)
                 CodeView(codeOption: $selectedCode,
-                         toolbarButtonLabel: String(localized: "SET_PASSCODE_NEXT_BUTTON", bundle: .module)) {
-                    code, validationRes in
+                         toolbarButtonLabel: String(localized: "SET_PASSCODE_NEXT_BUTTON", bundle: .module)) { code, validationRes in
+                    switch validationRes
+                    {
+                    case .valid:
+                        errorMessage = nil
+                    case .failure(let upstreamError):
+                        errorMessage = String(upstreamError.failureReason)
+                    default:
+                        errorMessage = nil
+                        firstCode = code
                     
-                    switch validationRes {
-                        case .valid:
-                            errorMessage = nil
-                        case .failure(let upstreamError):
-                            errorMessage = String(upstreamError.failureReason)
-                        default:
-                            errorMessage = nil
-                            firstCode = code
-                        
-                            withAnimation {
-                                state = .repeatCode
-                            }
+                        withAnimation {
+                            state = .repeatCode
+                        }
                     }
                 }
                 VStack {
@@ -106,35 +133,8 @@ struct SetCodeView: View {
                     .frame(maxWidth: .infinity)
                 CodeView(codeOption: $selectedCode,
                          toolbarButtonLabel: String(localized: "SET_PASSCODE_CONFIRM_BUTTON", bundle: .module)) { code, validationRes in
-                    
-                    switch validationRes {
-                        case .valid:
-                            errorMessage = nil
-                        case .failure(let upstreamError):
-                            errorMessage = String(upstreamError.failureReason)
-                        default:
-                            if code == firstCode {
-                                do {
-                                    try await viewModel.setAccessCode(code, codeOption: selectedCode)
-                                    errorMessage = nil
-                                    await action()
-                                    try await Task.sleep(for: .seconds(0.2))
-                                    
-                                    withAnimation {
-                                        state = .success
-                                    }
-                                } catch let error as AccessGuardError {
-                                    errorMessage = String(error.failureReason)
-                                    throw error
-                                }
-                            } else {
-                                print("Passcodes are not equal")
-                                errorMessage = String(localized: "SET_PASSCODE_REPEAT_NOT_EQUAL", bundle: .module)
-                                throw AccessGuardError.wrongPasscode
-                            }
-                        }
-                    }
-                
+                    try await handleRepeatCodeValidation(code: code, validationRes: validationRes)
+                }
                 VStack {
                     ErrorMessageCapsule(errorMessage: $errorMessage)
                     Button(

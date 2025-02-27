@@ -11,7 +11,16 @@ import UIKit
 
 /// An [option set](https://developer.apple.com/documentation/swift/optionset) of access code options.
 public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
-    public static var allCases: [CodeOptions] = [
+    /// Represents the result of a code validation
+    enum ValidationResult {
+        case none
+        case valid
+        case submit
+        case failure(AccessGuardError)
+    }
+    
+    // MARK: - Static Properties
+    public static let allCases: [CodeOptions] = [
         .fourDigitNumeric,
         .sixDigitNumeric,
         .customNumeric,
@@ -37,13 +46,12 @@ public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
     public static let numeric: CodeOptions = [.fourDigitNumeric, .sixDigitNumeric, .customNumeric]
     
     /// A numeric or alphanumeric code.
-    public static let all: CodeOptions = [.fourDigitNumeric, .sixDigitNumeric, .customNumeric, .customAlphanumeric]
+    public static let all = CodeOptions(allCases)
     
-    
+    // MARK: - Instance Properties
     @_documentation(visibility: internal) public var id: Int {
         rawValue
     }
-    
     var maxLength: Int {
         if self.contains(CodeOptions.customNumeric) || self.contains(CodeOptions.customAlphanumeric) {
             return Int.max
@@ -79,9 +87,15 @@ public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
         }
     }
     
+    /// Computed property if the specified code option allows for automatic submission by code length
+    var willAutoSubmit: Bool {
+        self.isSubset(of: .finiteNumeric)
+    }
+    
     @_documentation(visibility: internal) public let rawValue: Int
     
     
+    // MARK: - Initializers
     /// Raw initializer for the ``CodeOptions`` option set. Do not use this initializer.
     /// - Parameter rawValue: The raw option set value.
     @_documentation(visibility: internal)
@@ -89,9 +103,10 @@ public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
         self.rawValue = rawValue
     }
 
+    // MARK: - Methods
     /// Verifies that the code is only digits for numeric code types
     private func verifyAllowedCharacters(ofCode code: String) -> Bool {
-        if (self == .fourDigitNumeric || self == .sixDigitNumeric || self == .customNumeric) {
+        if self == .fourDigitNumeric || self == .sixDigitNumeric || self == .customNumeric {
             return code.isNumeric
         }
         return true
@@ -100,23 +115,23 @@ public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
     /// Verifies that the code has the correct length
     private func verifyCodeLength(ofCode code: String) -> Bool {
         switch self {
-            case .customNumeric, .customAlphanumeric:
-                return code.count >= CodeOptions.fourDigitNumeric.maxLength
-            case .fourDigitNumeric, .sixDigitNumeric:
-                return code.count == self.maxLength
-            default:
-                return false
+        case .customNumeric, .customAlphanumeric:
+            return code.count >= CodeOptions.fourDigitNumeric.maxLength
+        case .fourDigitNumeric, .sixDigitNumeric:
+            return code.count == self.maxLength
+        default:
+            return false
         }
     }
     
     /// Performs all possible checks on a given code to verify if it is valid
     func verifyStructure(ofCode code: String) -> Bool {
-        return verifyOnlyDigits(ofCode: code) && verifyCodeLength(ofCode: code)
+        verifyAllowedCharacters(ofCode: code) && verifyCodeLength(ofCode: code)
     }
     
     /// Check for correct letters and for auto submission while user is typing
     func continousValidation(ofCode code: String) -> ValidationResult {
-        if !verifyOnlyDigits(ofCode: code) {
+        if !verifyAllowedCharacters(ofCode: code) {
             return .failure(.invalidCodeFormatOnlyNumericAllowed)
         }
         if shouldAutoSubmit(code) {
@@ -135,23 +150,6 @@ public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
 
     /// Check if the code is long enough to auto submit
     func shouldAutoSubmit(_ code: String) -> Bool {
-        switch self {
-        case .fourDigitNumeric, .sixDigitNumeric:
-            return code.count == maxLength
-        default:
-            return false
-        }
+        willAutoSubmit && code.count == maxLength
     }
-    
-    /// Tells the caller wether the selected code option can submit automatically
-    func willAutoSubmit() -> Bool {
-        return self == .fourDigitNumeric || self == .sixDigitNumeric
-    }
-}
-
-enum ValidationResult {
-    case none
-    case valid
-    case submit
-    case failure(AccessGuardError)
 }

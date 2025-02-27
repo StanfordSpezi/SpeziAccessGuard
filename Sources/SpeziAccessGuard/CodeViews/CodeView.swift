@@ -66,7 +66,7 @@ struct CodeView: View {
                 oldKeyBoardType = codeOption.keyBoardType
             }
             .onChange(of: code) {
-                ///Validation is skipped, when code was reset or modified after an error
+                // Validation is skipped, when code was reset or modified after an error
                 if formerCode == code || code == "" {
                     return
                 }
@@ -82,7 +82,7 @@ struct CodeView: View {
                 }
                 
                 switch validationRes {
-                    case .failure(_):
+                    case .failure:
                         code = formerCode
                     default:
                         formerCode = code
@@ -137,7 +137,7 @@ struct CodeView: View {
 
 struct AuthenticationView_Previews: PreviewProvider {
     static var previews: some View {
-        CodeView(codeOption: .fourDigitNumeric, toolbarButtonLabel: String("")) { _,_ in
+        CodeView(codeOption: .fourDigitNumeric, toolbarButtonLabel: String("")) { _, _ in
             try await Task.sleep(for: .seconds(1))
         }
         .padding(.horizontal)

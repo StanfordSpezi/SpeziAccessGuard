@@ -3,16 +3,17 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2F68C3C8292EA52000B3E12C /* SpeziAccessGuard in Frameworks */ = {isa = PBXBuildFile; productRef = 2F68C3C7292EA52000B3E12C /* SpeziAccessGuard */; };
 		2F6D139A28F5F386007C25D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F6D139928F5F386007C25D6 /* Assets.xcassets */; };
 		2F7E29302AAD5E29000458CE /* TestAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7E292F2AAD5E29000458CE /* TestAppDelegate.swift */; };
 		2F7E29322AAE61DB000458CE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7E29312AAE61DB000458CE /* ContentView.swift */; };
 		2F8A431329130A8C005D2B8F /* TestAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8A431229130A8C005D2B8F /* TestAppUITests.swift */; };
 		2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA7382B290ADFAA007ACEB9 /* TestApp.swift */; };
+		F644BFC72D2EBDA10068EB00 /* SpeziAccessGuard in Frameworks */ = {isa = PBXBuildFile; productRef = F644BFC62D2EBDA10068EB00 /* SpeziAccessGuard */; };
+		F644BFCA2D2EBE1D0068EB00 /* SpeziAccessGuard in Frameworks */ = {isa = PBXBuildFile; productRef = F644BFC92D2EBE1D0068EB00 /* SpeziAccessGuard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,7 +56,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2F68C3C8292EA52000B3E12C /* SpeziAccessGuard in Frameworks */,
+				F644BFCA2D2EBE1D0068EB00 /* SpeziAccessGuard in Frameworks */,
+				F644BFC72D2EBDA10068EB00 /* SpeziAccessGuard in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,7 +137,8 @@
 			);
 			name = TestApp;
 			packageProductDependencies = (
-				2F68C3C7292EA52000B3E12C /* SpeziAccessGuard */,
+				F644BFC62D2EBDA10068EB00 /* SpeziAccessGuard */,
+				F644BFC92D2EBE1D0068EB00 /* SpeziAccessGuard */,
 			);
 			productName = Example;
 			productReference = 2F6D139228F5F384007C25D6 /* TestApp.app */;
@@ -187,6 +190,9 @@
 				Base,
 			);
 			mainGroup = 2F6D138928F5F384007C25D6;
+			packageReferences = (
+				F644BFC82D2EBE1D0068EB00 /* XCLocalSwiftPackageReference "../../../SpeziAccessGuard" */,
+			);
 			productRefGroup = 2F6D139328F5F384007C25D6 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -391,7 +397,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = 637867499T;
+				DEVELOPMENT_TEAM = FGUV46TD47;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -429,7 +435,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = 637867499T;
+				DEVELOPMENT_TEAM = FGUV46TD47;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -576,7 +582,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = 637867499T;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -664,8 +670,19 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		F644BFC82D2EBE1D0068EB00 /* XCLocalSwiftPackageReference "../../../SpeziAccessGuard" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../../SpeziAccessGuard;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
-		2F68C3C7292EA52000B3E12C /* SpeziAccessGuard */ = {
+		F644BFC62D2EBDA10068EB00 /* SpeziAccessGuard */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziAccessGuard;
+		};
+		F644BFC92D2EBE1D0068EB00 /* SpeziAccessGuard */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziAccessGuard;
 		};

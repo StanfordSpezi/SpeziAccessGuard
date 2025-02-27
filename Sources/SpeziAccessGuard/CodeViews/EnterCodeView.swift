@@ -26,7 +26,6 @@ struct EnterCodeView: View {
                         .frame(maxWidth: .infinity)
                     CodeView(codeOption: codeOption,
                              toolbarButtonLabel: String(localized: "ENTER_PASSCODE_CONFIRM_BUTTON", bundle: .module)) { code, validationRes in
-                        
                         switch validationRes {
                             case .valid:
                                 errorMessage = nil
