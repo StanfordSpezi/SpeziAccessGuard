@@ -13,7 +13,6 @@ import UIKit
 public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
     /// Represents the result of a code validation
     enum ValidationResult {
-        case none
         case valid
         case submit
         case failure(AccessGuardError)

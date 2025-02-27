@@ -12,10 +12,10 @@ import SwiftUI
 
 struct CodeView: View {
     @Binding private var codeOption: CodeOptions
-    private let action: (String, ValidationResult) async throws -> Void
-    private var toolbarButtonLabel: String = ""
+    private let action: (String, CodeOptions.ValidationResult) async throws -> Void
+    private let toolbarButtonLabel: String
     @State private var code: String = ""
-    @State private var formerCode: String = ""
+    @State private var lastValidCode: String = ""
     @FocusState private var focused: Bool
     @State private var viewState: ViewState = .idle
     @State private var wrongCodeCounter: Int = 0
@@ -33,25 +33,14 @@ struct CodeView: View {
             .frame(height: 44)
             .overlay {
                 ZStack {
-                    if codeOption.maxLength == 4 { // to do: change to type instead of length
+                    if codeOption.isSubset(of: .finiteNumeric) {
                         Color(UIColor.systemBackground)
-                        HStack(spacing: 32) {
-                            ForEach(0..<4) { index in
-                                if code.count <= index {
-                                    Image(systemName: "circle")
-                                } else {
+                        HStack(spacing: 48 - (Double(codeOption.maxLength) * 4)) {
+                            ForEach(Array(0..<codeOption.maxLength), id: \.self) { index in
+                                if code.count > index {
                                     Image(systemName: "circle.fill")
-                                }
-                            }
-                        }
-                    } else if codeOption.maxLength == 6 {
-                        Color(UIColor.systemBackground)
-                        HStack(spacing: 24) {
-                            ForEach(0..<6) { index in
-                                if code.count <= index {
-                                    Image(systemName: "circle")
                                 } else {
-                                    Image(systemName: "circle.fill")
+                                    Image(systemName: "circle")
                                 }
                             }
                         }
@@ -67,10 +56,11 @@ struct CodeView: View {
             }
             .onChange(of: code) {
                 // Validation is skipped, when code was reset or modified after an error
-                if formerCode == code || code == "" {
+                if lastValidCode == code || code.isEmpty {
+                    lastValidCode = code
                     return
                 }
-                
+                    
                 let validationRes = codeOption.continousValidation(ofCode: code)
                 
                 Task { @MainActor in
@@ -82,10 +72,10 @@ struct CodeView: View {
                 }
                 
                 switch validationRes {
-                    case .failure:
-                        code = formerCode
-                    default:
-                        formerCode = code
+                case .failure:
+                    code = lastValidCode
+                default:
+                    lastValidCode = code
                 }
             }
             .onChange(of: codeOption) {
@@ -102,7 +92,7 @@ struct CodeView: View {
                 }
             }
             .toolbar {
-                if !codeOption.willAutoSubmit() {
+                if !codeOption.willAutoSubmit {
                     ToolbarItem(placement: .primaryAction) {
                         Button(toolbarButtonLabel) {
                             let validationRes = codeOption.submissionValidation(ofCode: code)
@@ -121,13 +111,21 @@ struct CodeView: View {
     }
     
     
-    init(codeOption: CodeOptions, toolbarButtonLabel: String, action: @escaping (String, ValidationResult ) async throws -> Void) {
+    init(
+        codeOption: CodeOptions,
+        toolbarButtonLabel: String,
+        action: @escaping (String, CodeOptions.ValidationResult) async throws -> Void
+    ) {
         self._codeOption = .constant(codeOption)
         self.toolbarButtonLabel = toolbarButtonLabel
         self.action = action
     }
     
-    init(codeOption: Binding<CodeOptions>, toolbarButtonLabel: String, action: @escaping (String, ValidationResult) async throws -> Void) {
+    init(
+        codeOption: Binding<CodeOptions>,
+        toolbarButtonLabel: String,
+        action: @escaping (String, CodeOptions.ValidationResult) async throws -> Void
+    ) {
         self._codeOption = codeOption
         self.toolbarButtonLabel = toolbarButtonLabel
         self.action = action

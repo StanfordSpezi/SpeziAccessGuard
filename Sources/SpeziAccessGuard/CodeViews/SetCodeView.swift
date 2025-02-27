@@ -25,41 +25,12 @@ struct SetCodeView: View {
     @State private var state: SetCodeState = .oldCode
     @State private var errorMessage: String?
     @State private var upstreamError: String?
-    @State private var validationRes: ValidationResult = .none
+    @State private var validationRes: CodeOptions.ValidationResult?
     
     
     private var codeOptions: [CodeOptions] {
         CodeOptions.allCases.filter { codeOption in
             viewModel.configuration.codeOptions.contains(codeOption)
-        }
-    }
-    
-    private func handleRepeatCodeValidation(code: String, validationRes: ValidationResult) async throws {
-        switch validationRes {
-        case .valid:
-            errorMessage = nil
-        case .failure(let upstreamError):
-            errorMessage = String(upstreamError.failureReason)
-        default:
-            if code == firstCode {
-                do {
-                    try await viewModel.setAccessCode(code, codeOption: selectedCode)
-                    errorMessage = nil
-                    await action()
-                    try await Task.sleep(for: .seconds(0.2))
-                    
-                    withAnimation {
-                        state = .success
-                    }
-                } catch let error as AccessGuardError {
-                    errorMessage = String(error.failureReason)
-                    throw error
-                }
-            } else {
-                print("Passcodes are not equal")
-                errorMessage = String(localized: "SET_PASSCODE_REPEAT_NOT_EQUAL", bundle: .module)
-                throw AccessGuardError.wrongPasscode
-            }
         }
     }
     
@@ -91,22 +62,11 @@ struct SetCodeView: View {
                 Text("SET_PASSCODE_PROMPT", bundle: .module)
                     .font(.title2)
                     .frame(maxWidth: .infinity)
-                CodeView(codeOption: $selectedCode,
-                         toolbarButtonLabel: String(localized: "SET_PASSCODE_NEXT_BUTTON", bundle: .module)) { code, validationRes in
-                    switch validationRes
-                    {
-                    case .valid:
-                        errorMessage = nil
-                    case .failure(let upstreamError):
-                        errorMessage = String(upstreamError.failureReason)
-                    default:
-                        errorMessage = nil
-                        firstCode = code
-                    
-                        withAnimation {
-                            state = .repeatCode
-                        }
-                    }
+                CodeView(
+                    codeOption: $selectedCode,
+                    toolbarButtonLabel: String(localized: "SET_PASSCODE_NEXT_BUTTON", bundle: .module)
+                ) { code, validationRes in
+                    handleSetCodeValidation(code: code, validationRes: validationRes)
                 }
                 VStack {
                     ErrorMessageCapsule(errorMessage: $errorMessage)
@@ -131,8 +91,10 @@ struct SetCodeView: View {
                 Text("SET_PASSCODE_REPEAT_PROMPT", bundle: .module)
                     .font(.title2)
                     .frame(maxWidth: .infinity)
-                CodeView(codeOption: $selectedCode,
-                         toolbarButtonLabel: String(localized: "SET_PASSCODE_CONFIRM_BUTTON", bundle: .module)) { code, validationRes in
+                CodeView(
+                    codeOption: $selectedCode,
+                    toolbarButtonLabel: String(localized: "SET_PASSCODE_CONFIRM_BUTTON", bundle: .module)
+                ) { code, validationRes in
                     try await handleRepeatCodeValidation(code: code, validationRes: validationRes)
                 }
                 VStack {
@@ -151,9 +113,8 @@ struct SetCodeView: View {
                 }
                 .frame(height: 80)
             }
-            .transition(.opacity)
-            .navigationBarBackButtonHidden()
-            
+                .transition(.opacity)
+                .navigationBarBackButtonHidden()
         case .success:
             Image(systemName: "checkmark.circle.fill")
                 .resizable()
@@ -168,5 +129,57 @@ struct SetCodeView: View {
     init(viewModel: AccessGuardViewModel, action: @MainActor @escaping () async -> Void) {
         self.viewModel = viewModel
         self.action = action
+    }
+    
+    /// Handle the validation result of the repeated passcode
+    private func handleRepeatCodeValidation(
+        code: String,
+        validationRes: CodeOptions.ValidationResult
+    ) async throws {
+        switch validationRes {
+        case .valid:
+            errorMessage = nil
+        case .failure(let upstreamError):
+            errorMessage = String(upstreamError.failureReason)
+        default:
+            if code == firstCode {
+                do {
+                    try await viewModel.setAccessCode(code, codeOption: selectedCode)
+                    errorMessage = nil
+                    await action()
+                    try await Task.sleep(for: .seconds(0.2))
+                    
+                    withAnimation {
+                        state = .success
+                    }
+                } catch let error as AccessGuardError {
+                    errorMessage = String(error.failureReason)
+                    throw error
+                }
+            } else {
+                print("Passcodes are not equal")
+                errorMessage = String(localized: "SET_PASSCODE_REPEAT_NOT_EQUAL", bundle: .module)
+                throw AccessGuardError.wrongPasscode
+            }
+        }
+    }
+    
+    /// Handle the validation result of the first passcode
+    private func handleSetCodeValidation(
+        code: String,
+        validationRes: CodeOptions.ValidationResult
+    ) {
+        switch validationRes {
+        case .valid:
+            errorMessage = nil
+        case .failure(let upstreamError):
+            errorMessage = upstreamError.failureMessage
+        default:
+            errorMessage = nil
+            firstCode = code
+            withAnimation {
+                state = .repeatCode
+            }
+        }
     }
 }
