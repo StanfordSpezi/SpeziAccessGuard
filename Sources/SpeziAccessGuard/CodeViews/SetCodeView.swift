@@ -111,7 +111,7 @@ struct SetCodeView: View {
                         }
                     )
                 }
-                .frame(height: 80)
+                    .frame(height: 80)
             }
                 .transition(.opacity)
                 .navigationBarBackButtonHidden()
