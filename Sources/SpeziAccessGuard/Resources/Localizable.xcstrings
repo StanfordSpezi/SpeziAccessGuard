@@ -86,8 +86,14 @@
       }
     },
     "ACCESS_GUARD_ERROR_INVALID_CODE_FORMAT_ONLY_NUMERIC_ALLOWED" : {
-      "extractionState" : "manual",
+      "extractionState" : "automatic",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur Zahlen erlaubt"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -97,8 +103,14 @@
       }
     },
     "ACCESS_GUARD_ERROR_INVALID_CODE_LENGTH" : {
-      "extractionState" : "manual",
+      "extractionState" : "automatic",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ungültige Code-Länge"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -256,8 +268,14 @@
     },
     "ENTER_PASSCODE_CONFIRM_BUTTON" : {
       "comment" : "To confirm alphanumeric or custom numeric passcodes",
-      "extractionState" : "manual",
+      "extractionState" : "automatic",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -336,8 +354,14 @@
     },
     "SET_PASSCODE_CONFIRM_BUTTON" : {
       "comment" : "To save passcode after repeating the code",
-      "extractionState" : "manual",
+      "extractionState" : "automatic",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speichern"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -348,8 +372,14 @@
     },
     "SET_PASSCODE_NEXT_BUTTON" : {
       "comment" : "To continue to the passcode repeat view",
-      "extractionState" : "manual",
+      "extractionState" : "automatic",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weiter"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
