@@ -101,7 +101,8 @@ final class AccessGuardViewModel {
             print("Error resetting access code: \(error)")
         }
     }
-    
+
+    @MainActor
     func checkAccessCode(_ code: String) async throws {
         try await MainActor.run {
             if let fixedCode = configuration.fixedCode, code == fixedCode {
@@ -116,7 +117,8 @@ final class AccessGuardViewModel {
             locked = false
         }
     }
-    
+
+    @MainActor
     func lock() async {
         await MainActor.run {
             locked = true

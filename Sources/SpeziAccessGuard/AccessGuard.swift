@@ -81,7 +81,7 @@ public final class AccessGuard {
         self.configurations = configurations
     }
     
-    
+    @MainActor
     func sceneDidEnterBackground(_ scene: UIScene) {
         Task { @MainActor in
             inTheBackground = true
@@ -92,7 +92,8 @@ public final class AccessGuard {
             }
         }
     }
-    
+
+    @MainActor
     func sceneWillEnterForeground(_ scene: UIScene) {
         Task { @MainActor in
             inTheBackground = false
