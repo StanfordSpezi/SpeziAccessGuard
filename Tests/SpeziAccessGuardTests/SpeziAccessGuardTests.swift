@@ -7,11 +7,12 @@
 //
 
 @testable import SpeziAccessGuard
-import XCTest
+import Testing
 
 
-final class SpeziAccessGuardTests: XCTestCase {
-    func testSpeziAccessGuard() throws {
-        XCTAssert(true)
+struct SpeziAccessGuardTests {
+    @Test
+    func speziAccessGuardWorks() throws {
+        #expect(true)
     }
 }
