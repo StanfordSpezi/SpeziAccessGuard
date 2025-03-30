@@ -28,17 +28,18 @@ class MockLAContext: LAContext {
     }
 }
 
+@Suite("Local Authentication Context Tests")
 struct LAContextTests {
     let mockContext = MockLAContext()
 
-    @Test
+    @Test("Evaluate Policy Async Success")
     func evaluatePolicyAsyncSuccess() async throws {
         mockContext.shouldSucceed = true
         let result = try await mockContext.evaluatePolicyAsync(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Test for success")
         #expect(result == true, "Policy evaluation should succeed")
     }
 
-    @Test
+    @Test("Evaluate Policy Async Failure")
     func evaluatePolicyAsyncFailure() async throws {
         mockContext.shouldSucceed = false
         do {

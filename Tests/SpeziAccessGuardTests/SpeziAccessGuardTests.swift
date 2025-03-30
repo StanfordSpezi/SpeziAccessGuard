@@ -10,9 +10,7 @@
 import Testing
 
 
-struct SpeziAccessGuardTests {
-    @Test
-    func speziAccessGuardWorks() throws {
-        #expect(true)
-    }
+@Test("Spezi Access Guard Works")
+func speziAccessGuardWorks() throws {
+    #expect(true)
 }
