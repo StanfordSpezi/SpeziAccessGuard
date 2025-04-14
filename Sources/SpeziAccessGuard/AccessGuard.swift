@@ -67,13 +67,13 @@ import SwiftUI
 /// }
 /// ```
 @Observable
-public final class AccessGuard: Sendable {
+public final class AccessGuard {
     private let keychainStorage: KeychainStorage
     
-    @MainActor private(set) var inTheBackground = true
-    @MainActor private(set) var lastEnteredBackground: Date = .now
+    private(set) var inTheBackground = true
+    private(set) var lastEnteredBackground: Date = .now
     private let configurations: [AccessGuardConfiguration]
-    @MainActor private var viewModels: [AccessGuardIdentifier: AccessGuardViewModel] = [:]
+    private var viewModels: [AccessGuardIdentifier: AccessGuardViewModel] = [:]
 
     
     init(keychainStorage: KeychainStorage, _ configurations: [AccessGuardConfiguration]) {
@@ -81,24 +81,24 @@ public final class AccessGuard: Sendable {
         self.configurations = configurations
     }
 
-    func sceneDidEnterBackground(_ scene: UIScene) {
-        Task { @MainActor in
-            inTheBackground = true
-            lastEnteredBackground = .now
 
-            for viewModel in viewModels.values {
-                viewModel.didEnterBackground()
-            }
+    @MainActor
+    func sceneDidEnterBackground(_ scene: UIScene) {
+        inTheBackground = true
+        lastEnteredBackground = .now
+
+        for viewModel in viewModels.values {
+            viewModel.didEnterBackground()
         }
     }
 
+
+    @MainActor
     func sceneWillEnterForeground(_ scene: UIScene) {
-        Task { @MainActor in
-            inTheBackground = false
-            
-            for viewModel in viewModels.values {
-                viewModel.willEnterForeground(lastEnteredBackground: lastEnteredBackground)
-            }
+        inTheBackground = false
+
+        for viewModel in viewModels.values {
+            viewModel.willEnterForeground(lastEnteredBackground: lastEnteredBackground)
         }
     }
     
