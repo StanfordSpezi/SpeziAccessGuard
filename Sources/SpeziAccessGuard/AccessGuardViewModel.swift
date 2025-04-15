@@ -98,7 +98,7 @@ final class AccessGuardViewModel {
         }
     }
 
-    func checkAccessCode(_ code: String) async throws {
+    func checkAccessCode(_ code: String) throws {
         if let fixedCode = configuration.fixedCode, code == fixedCode {
             locked = false
             return
@@ -115,7 +115,7 @@ final class AccessGuardViewModel {
         locked = true
     }
 
-    func setAccessCode(_ code: String, codeOption: CodeOptions) async throws {
+    func setAccessCode(_ code: String, codeOption: CodeOptions) throws {
         guard configuration.fixedCode == nil else {
             throw AccessGuardError.storeCodeError
         }
@@ -132,7 +132,7 @@ final class AccessGuardViewModel {
         )
         
         // Ensure that the model is in a state as if the user has just entered the access code.
-        try await checkAccessCode(code)
+        try checkAccessCode(code)
     }
 }
 
