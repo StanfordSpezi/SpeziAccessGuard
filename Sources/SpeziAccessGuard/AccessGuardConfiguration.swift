@@ -12,7 +12,7 @@ import SpeziViews
 
 
 /// Configures the behaviour of the ``AccessGuard`` view.
-public struct AccessGuardConfiguration: Sendable {
+public struct AccessGuardConfiguration {
     let identifier: AccessGuardIdentifier
     let guardType: GuardType
     let codeOptions: CodeOptions
