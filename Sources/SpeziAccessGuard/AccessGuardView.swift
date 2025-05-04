@@ -16,20 +16,19 @@ struct AccessGuardView<GuardedView: View>: View {
 
     
     var body: some View {
-        guardedView
-            .overlay {
-                if viewModel.locked {
-                    EnterCodeView(viewModel: viewModel)
-                        .ignoresSafeArea(.container)
-                }
-            }
-            .onAppear {
-                if viewModel.locked && viewModel.configuration.guardType == .biometrics {
-                    Task {
-                        try? await viewModel.authenticateWithBiometrics()
+        if viewModel.locked {
+            EnterCodeView(viewModel: viewModel)
+                .onAppear {
+                    if viewModel.configuration.guardType == .biometrics {
+                        Task {
+                            try? await viewModel.authenticateWithBiometrics()
+                        }
                     }
                 }
-            }
+                .ignoresSafeArea(.container)
+        } else {
+            guardedView
+        }
     }
     
     
