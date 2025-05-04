@@ -24,7 +24,8 @@ let package = Package(
         .package(url: "https://github.com/StanfordSpezi/Spezi.git", from: "1.8.0"),
         .package(url: "https://github.com/StanfordSpezi/SpeziStorage.git", from: "2.1.0"),
         .package(url: "https://github.com/StanfordSpezi/SpeziViews.git", from: "1.9.0"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziFoundation.git", from: "2.1.1")
+        .package(url: "https://github.com/StanfordSpezi/SpeziFoundation.git", from: "2.1.1"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.17.0")
     ],
     targets: [
         .target(
@@ -40,7 +41,11 @@ let package = Package(
         .testTarget(
             name: "SpeziAccessGuardTests",
             dependencies: [
-                .target(name: "SpeziAccessGuard")
+                .target(name: "SpeziAccessGuard"),
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
+            ],
+            resources: [
+                .process("Snapshots")
             ],
             swiftSettings: [.enableUpcomingFeature("ExistentialAny")]
         )

@@ -102,6 +102,7 @@ struct CodeView: View {
         
         do {
             try await action(code)
+            focused = false
         } catch {
             wrongCodeCounter += 1
             code = ""
