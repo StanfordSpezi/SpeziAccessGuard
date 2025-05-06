@@ -179,4 +179,44 @@ class TestAppUITests: XCTestCase {
         XCTAssert(app.staticTexts["Secured with biometrics ..."].waitForExistence(timeout: 2.0))
         XCTAssert(app.staticTexts["Secured with biometrics ..."].isHittable)
     }
+    
+    
+    func testAccessGuardButton() throws {
+        let app = XCUIApplication()
+        app.launch()
+        
+        // Test locked state and unlock flow
+        XCTAssert(app.buttons["Access Guard Button"].waitForExistence(timeout: 2.0))
+        app.buttons["Access Guard Button"].tap()
+        
+        XCTAssert(app.buttons["Unlock me"].waitForExistence(timeout: 2.0))
+        app.buttons["Unlock me"].tap()
+        
+        // Verify the unlock sheet appears with passcode field
+        XCTAssert(app.secureTextFields["Passcode Field"].waitForExistence(timeout: 2.0))
+        app.secureTextFields["Passcode Field"].tap()
+        app.secureTextFields["Passcode Field"].typeText("1234")
+        
+        // Verify unlocked content is displayed after successful unlock
+        XCTAssert(app.staticTexts["Success"].waitForExistence(timeout: 2.0))
+        XCTAssert(app.staticTexts["Success"].isHittable)
+        
+        XCTAssert(app.buttons["Back"].waitForExistence(timeout: 2.0))
+        app.buttons["Back"].tap()
+        
+        XCTAssert(app.buttons["Lock Access Guards"].waitForExistence(timeout: 2.0))
+        app.buttons["Lock Access Guards"].tap()
+        
+        XCTAssert(app.buttons["Access Guard Button"].waitForExistence(timeout: 2.0))
+        app.buttons["Access Guard Button"].tap()
+        
+        XCTAssert(app.buttons["Unlock me"].waitForExistence(timeout: 2.0))
+        app.buttons["Unlock me"].tap()
+        
+        XCTAssert(app.buttons["Cancel"].waitForExistence(timeout: 2.0))
+        app.buttons["Cancel"].tap()
+        
+        // Verify we're back at the main screen with the locked button
+        XCTAssert(app.buttons["Unlock me"].waitForExistence(timeout: 2.0))
+    }
 }
