@@ -31,7 +31,6 @@ struct AccessGuardView<GuardedView: View>: View {
         }
     }
     
-    
     init(
         viewModel: AccessGuardViewModel,
         guardedView: GuardedView
