@@ -92,7 +92,7 @@ struct SetCodeView: View {
                 CodeView(codeOption: $selectedCode) { code in
                     if code == firstCode {
                         do {
-                            try await viewModel.setAccessCode(code, codeOption: selectedCode)
+                            try viewModel.setAccessCode(code, codeOption: selectedCode)
                             errorMessage = nil
                             await action()
                             try await Task.sleep(for: .seconds(0.2))

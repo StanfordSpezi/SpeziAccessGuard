@@ -25,7 +25,7 @@ struct EnterCodeView: View {
                         .frame(maxWidth: .infinity)
                     CodeView(codeOption: codeOption) { code in
                         do {
-                            try await viewModel.checkAccessCode(code)
+                            try viewModel.checkAccessCode(code)
                         } catch {
                             wrongCodeCounter += 1
                             let errorMessageTemplate = NSLocalizedString("ACCESS_CODE_PASSCODE_ERROR %@", bundle: .module, comment: "")
