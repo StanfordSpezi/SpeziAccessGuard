@@ -8,7 +8,7 @@
 
 import LocalAuthentication
 @testable import SpeziAccessGuard
-import XCTest
+import Testing
 
 
 class MockLAContext: LAContext {
@@ -28,20 +28,23 @@ class MockLAContext: LAContext {
     }
 }
 
-class LAContextTests: XCTestCase {
-    func testEvaluatePolicyAsyncSuccess() async throws {
-        let mockContext = MockLAContext()
+@Suite("Local Authentication Context Tests")
+struct LAContextTests {
+    let mockContext = MockLAContext()
+
+    @Test("Evaluate Policy Async Success")
+    func evaluatePolicyAsyncSuccess() async throws {
         mockContext.shouldSucceed = true
         let result = try await mockContext.evaluatePolicyAsync(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Test for success")
-        XCTAssertTrue(result, "Policy evaluation should succeed")
+        #expect(result == true, "Policy evaluation should succeed")
     }
 
-    func testEvaluatePolicyAsyncFailure() async throws {
-        let mockContext = MockLAContext()
+    @Test("Evaluate Policy Async Failure")
+    func evaluatePolicyAsyncFailure() async throws {
         mockContext.shouldSucceed = false
         do {
-            try await mockContext.evaluatePolicyAsync(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Test for failure")
-            XCTFail("Policy evaluation should fail but succeeded")
+            _ = try await mockContext.evaluatePolicyAsync(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Test for failure")
+            Issue.record("Policy evaluation should fail but succeeded")
         } catch {
             // Test passes if an error is thrown as expected
         }
