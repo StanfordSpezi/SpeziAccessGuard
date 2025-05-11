@@ -44,9 +44,6 @@ let package = Package(
                 .target(name: "SpeziAccessGuard"),
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
-            resources: [
-                .process("Snapshots")
-            ],
             swiftSettings: [.enableUpcomingFeature("ExistentialAny")]
         )
     ]
