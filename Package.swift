@@ -1,4 +1,4 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.0
 
 //
 // This source file is part of the Spezi open source project
@@ -45,7 +45,7 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             resources: [
-                .process("Snapshots")
+                .process("__Snapshots__")
             ],
             swiftSettings: [.enableUpcomingFeature("ExistentialAny")]
         )

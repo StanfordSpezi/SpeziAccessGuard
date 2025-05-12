@@ -43,7 +43,7 @@ struct AccessGuardViewSnapshotTests {
         if config.isLocked {
             await viewModel.lock()
         } else {
-            try await viewModel.checkAccessCode("0218")
+            try viewModel.checkAccessCode("0218")
         }
 
         let accessGuardView = AccessGuardView(

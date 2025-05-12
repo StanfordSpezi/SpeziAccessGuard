@@ -10,8 +10,8 @@ import UIKit
 
 
 /// An [option set](https://developer.apple.com/documentation/swift/optionset) of access code options.
-public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable {
-    public static var allCases: [CodeOptions] = [
+public struct CodeOptions: OptionSet, Codable, CaseIterable, Identifiable, Sendable {
+    public static let allCases: [CodeOptions] = [
         .fourDigitNumeric,
         .sixDigitNumeric,
         .customNumeric,

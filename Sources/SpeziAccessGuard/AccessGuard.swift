@@ -74,32 +74,31 @@ public final class AccessGuard {
     private(set) var lastEnteredBackground: Date = .now
     private let configurations: [AccessGuardConfiguration]
     private var viewModels: [AccessGuardIdentifier: AccessGuardViewModel] = [:]
-    
+
     
     init(keychainStorage: KeychainStorage, _ configurations: [AccessGuardConfiguration]) {
         self.keychainStorage = keychainStorage
         self.configurations = configurations
     }
-    
-    
+
+
+    @MainActor
     func sceneDidEnterBackground(_ scene: UIScene) {
-        Task { @MainActor in
-            inTheBackground = true
-            lastEnteredBackground = .now
-            
-            for viewModel in viewModels.values {
-                viewModel.didEnterBackground()
-            }
+        inTheBackground = true
+        lastEnteredBackground = .now
+
+        for viewModel in viewModels.values {
+            viewModel.didEnterBackground()
         }
     }
-    
+
+
+    @MainActor
     func sceneWillEnterForeground(_ scene: UIScene) {
-        Task { @MainActor in
-            inTheBackground = false
-            
-            for viewModel in viewModels.values {
-                viewModel.willEnterForeground(lastEnteredBackground: lastEnteredBackground)
-            }
+        inTheBackground = false
+
+        for viewModel in viewModels.values {
+            viewModel.willEnterForeground(lastEnteredBackground: lastEnteredBackground)
         }
     }
     

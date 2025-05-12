@@ -14,6 +14,7 @@ import SwiftUI
 
 
 @Observable
+@MainActor
 final class AccessGuardViewModel {
     private struct AccessCode: Codable {
         let codeOption: CodeOptions
@@ -24,16 +25,16 @@ final class AccessGuardViewModel {
     let configuration: AccessGuardConfiguration
     private let keychainStorage: KeychainStorage
     
-    @MainActor private(set) var locked = true
-    @MainActor private var accessCode: AccessCode?
-    @MainActor private weak var accessGuard: AccessGuard?
+    private(set) var locked = true
+    private var accessCode: AccessCode?
+    private weak var accessGuard: AccessGuard?
     
     
-    @MainActor var setup: Bool {
+    var setup: Bool {
         accessCode != nil || configuration.fixedCode != nil
     }
     
-    @MainActor var codeOption: CodeOptions? {
+    var codeOption: CodeOptions? {
         if configuration.fixedCode != nil {
             return configuration.codeOptions
         } else {
@@ -41,8 +42,7 @@ final class AccessGuardViewModel {
         }
     }
     
-    
-    @MainActor
+
     init(accessGuard: AccessGuard, keychainStorage: KeychainStorage, configuration: AccessGuardConfiguration) {
         self.configuration = configuration
         self.accessGuard = accessGuard
@@ -59,18 +59,15 @@ final class AccessGuardViewModel {
         self.locked = setup
     }
     
-    
-    @MainActor
+
     func didEnterBackground() {}
-    
-    @MainActor
+
     func willEnterForeground(lastEnteredBackground: Date) {
         if lastEnteredBackground.addingTimeInterval(configuration.timeout.timeInterval) < .now {
             locked = true
         }
     }
-    
-    @MainActor
+
     func authenticateWithBiometrics() async throws {
         let context = LAContext()
         var error: NSError?
@@ -86,8 +83,7 @@ final class AccessGuardViewModel {
 
         self.locked = !success
     }
-    
-    @MainActor
+
     func resetAccessCode() throws {
         guard configuration.fixedCode == nil else {
             return
@@ -101,30 +97,25 @@ final class AccessGuardViewModel {
             print("Error resetting access code: \(error)")
         }
     }
-    
-    func checkAccessCode(_ code: String) async throws {
-        try await MainActor.run {
-            if let fixedCode = configuration.fixedCode, code == fixedCode {
-                locked = false
-                return
-            }
-            
-            guard code == accessCode?.code else {
-                throw AccessGuardError.wrongPasscode
-            }
-            
+
+    func checkAccessCode(_ code: String) throws {
+        if let fixedCode = configuration.fixedCode, code == fixedCode {
             locked = false
+            return
         }
+
+        guard code == accessCode?.code else {
+            throw AccessGuardError.wrongPasscode
+        }
+
+        locked = false
     }
-    
+
     func lock() async {
-        await MainActor.run {
-            locked = true
-        }
+        locked = true
     }
-    
-    @MainActor
-    func setAccessCode(_ code: String, codeOption: CodeOptions) async throws {
+
+    func setAccessCode(_ code: String, codeOption: CodeOptions) throws {
         guard configuration.fixedCode == nil else {
             throw AccessGuardError.storeCodeError
         }
@@ -141,7 +132,7 @@ final class AccessGuardViewModel {
         )
         
         // Ensure that the model is in a state as if the user has just entered the access code.
-        try await checkAccessCode(code)
+        try checkAccessCode(code)
     }
 }
 
