@@ -235,16 +235,16 @@ class TestAppUITests: XCTestCase {
         app.buttons["Consumable Codes"].tap()
         
         func expect(available: [Int], consumed: [Int]) {
-            if available.isEmpty {
-                XCTAssert(app.staticTexts["Available, []"].waitForExistence(timeout: 2))
-            } else {
-                XCTAssert(app.staticTexts["Available, \(available.map(\.description).joined(separator: ", "))"].waitForExistence(timeout: 2))
-            }
-            if consumed.isEmpty {
-                XCTAssert(app.staticTexts["Consumed, []"].waitForExistence(timeout: 2))
-            } else {
-                XCTAssert(app.staticTexts["Consumed, \(consumed.map(\.description).joined(separator: ", "))"].waitForExistence(timeout: 2))
-            }
+            let availableValue = available.isEmpty ? "[]" : available.map(\.description).joined(separator: ", ")
+            let consumedValue = consumed.isEmpty ? "[]" : consumed.map(\.description).joined(separator: ", ")
+            XCTAssert(
+                app.staticTexts["Available, \(availableValue)"].waitForExistence(timeout: 2),
+                "Failed to find 'Available' row for numbers \(available)"
+            )
+            XCTAssert(
+                app.staticTexts["Consumed, \(consumedValue)"].waitForExistence(timeout: 2),
+                "Failed to find 'Consumed' row for numbers \(consumed)"
+            )
         }
         
         func unlock(withCode code: Int, expect expectedBehaviour: ExpectedUnlockBehaviour) {
@@ -281,6 +281,6 @@ class TestAppUITests: XCTestCase {
         expect(available: [2222], consumed: [1111, 3333, 4444])
         
         unlock(withCode: 2222, expect: .success)
-        expect(available: [], consumed: [1111, 3333, 4444, 2222])
+        expect(available: [], consumed: [1111, 2222, 3333, 4444])
     }
 }
