@@ -89,7 +89,7 @@ public final class _PasscodeAccessGuardModel: _AnyAccessGuardModel { // swiftlin
                 .invalid
             }
         case .custom(_, _, let validate):
-            validate(code)
+            await validate(code)
         }
     }
     

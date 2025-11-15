@@ -220,4 +220,67 @@ class TestAppUITests: XCTestCase {
         // Verify we're back at the main screen with the locked button
         XCTAssert(app.buttons["Unlock me"].waitForExistence(timeout: 2.0))
     }
+    
+    
+    func testCustomCodeBehaviour() {
+        enum ExpectedUnlockBehaviour {
+            case success
+            case usedCode
+            case unknownCode
+        }
+        
+        let app = XCUIApplication()
+        app.launch()
+        
+        app.buttons["Consumable Codes"].tap()
+        
+        func expect(available: [Int], consumed: [Int]) {
+            if available.isEmpty {
+                XCTAssert(app.staticTexts["Available, []"].waitForExistence(timeout: 2))
+            } else {
+                XCTAssert(app.staticTexts["Available, \(available.map(\.description).joined(separator: ", "))"].waitForExistence(timeout: 2))
+            }
+            if consumed.isEmpty {
+                XCTAssert(app.staticTexts["Consumed, []"].waitForExistence(timeout: 2))
+            } else {
+                XCTAssert(app.staticTexts["Consumed, \(consumed.map(\.description).joined(separator: ", "))"].waitForExistence(timeout: 2))
+            }
+        }
+        
+        func unlock(withCode code: Int, expect expectedBehaviour: ExpectedUnlockBehaviour) {
+            app.buttons["Open Secret View"].tap()
+            XCTAssert(app.staticTexts["Enter Passcode"].waitForExistence(timeout: 2))
+            app.secureTextFields["Passcode Field"].tap()
+            app.secureTextFields["Passcode Field"].typeText(String(code))
+            switch expectedBehaviour {
+            case .success:
+                XCTAssert(app.staticTexts["Congrats! You made it!!"].waitForExistence(timeout: 2))
+            case .usedCode:
+                XCTAssert(app.staticTexts["Already Consumed"].waitForExistence(timeout: 2))
+            case .unknownCode:
+                XCTAssert(app.staticTexts["1 Failed Attempt"].waitForExistence(timeout: 2))
+            }
+            app.navigationBars.buttons["Close"].tap()
+        }
+        
+        expect(available: [1111, 2222, 3333, 4444], consumed: [])
+        
+        unlock(withCode: 1111, expect: .success)
+        expect(available: [2222, 3333, 4444], consumed: [1111])
+        
+        unlock(withCode: 3333, expect: .success)
+        expect(available: [2222, 4444], consumed: [1111, 3333])
+        
+        unlock(withCode: 1111, expect: .usedCode)
+        expect(available: [2222, 4444], consumed: [1111, 3333])
+        
+        unlock(withCode: 4444, expect: .success)
+        expect(available: [2222], consumed: [1111, 3333, 4444])
+        
+        unlock(withCode: 2211, expect: .unknownCode)
+        expect(available: [2222], consumed: [1111, 3333, 4444])
+        
+        unlock(withCode: 2222, expect: .success)
+        expect(available: [], consumed: [1111, 3333, 4444, 2222])
+    }
 }

@@ -38,7 +38,7 @@ import SwiftUI
 ///
 /// You can use the ``AccessGuarded`` SwiftUI [`View`](https://developer.apple.com/documentation/swiftui/view) in your SwiftUI application to
 /// enforce a code or biometrics-based access guard to SwiftUI views.
-public final class AccessGuardModule: Module, DefaultInitializable, LifecycleHandler {
+public final class AccessGuardModule: Module, LifecycleHandler {
     @Dependency(KeychainStorage.self) private var keychainStorage
     /// Shared ``AccessGuard`` type used to lock, reset, and inspect access control mechanisms.
     @Model public private(set) var accessGuard: AccessGuard

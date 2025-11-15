@@ -51,8 +51,8 @@ private struct BiometricsUnlockView: View {
     var body: some View {
         VStack {
             switch state {
-            case nil: // still running
-                Text(verbatim: "Unlock via Face ID")
+            case nil: // currently running
+                Text("Unlock via Face ID")
                     .onAppear {
                         unlock()
                     }

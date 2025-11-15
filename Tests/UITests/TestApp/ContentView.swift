@@ -63,6 +63,9 @@ struct ContentView: View {
                             Text("Success")
                         }
                     }
+                    NavigationLink("Consumable Codes") {
+                        ConsumableCodesView()
+                    }
                 }
             }
         }
