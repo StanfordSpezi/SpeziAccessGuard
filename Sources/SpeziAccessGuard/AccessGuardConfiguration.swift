@@ -6,73 +6,32 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Foundation
-import SpeziFoundation
-import SpeziViews
+import SwiftUI
 
 
-/// Configures the behaviour of the ``AccessGuard`` view.
-public struct AccessGuardConfiguration {
-    let identifier: AccessGuardIdentifier
-    let guardType: GuardType
-    let codeOptions: CodeOptions
-    let timeout: Duration
-    let fixedCode: String?
-}
-
-
-/// Enforce an access code.
-/// - Parameters:
-///   - codeOptions: The code options, see ``CodeOptions``.
-///   - timeout: The timeout when the view should be locked based on the time the scene is not in the foreground.
-public func CodeAccessGuard( // swiftlint:disable:this identifier_name
-    _ identifier: AccessGuardIdentifier,
-    codeOptions: CodeOptions = .fourDigitNumeric,
-    timeout: Duration = .minutes(5)
-) -> AccessGuardConfiguration {
-    AccessGuardConfiguration(identifier: identifier, guardType: .code, codeOptions: codeOptions, timeout: timeout, fixedCode: nil)
-}
-
-
-/// Enforce a fixed access code.
-/// - Parameters:
-///   - code: The fixed access code.
-///   - codeOptions: The code options, see ``CodeOptions``.
-///   - timeout: The timeout when the view should be locked based on the time the scene is not in the foreground.
-public func FixedAccessGuard( // swiftlint:disable:this identifier_name
-    _ identifier: AccessGuardIdentifier,
-    code: String,
-    codeOptions: CodeOptions = .fourDigitNumeric,
-    timeout: Duration = .minutes(5)
-) -> AccessGuardConfiguration {
-    AccessGuardConfiguration(identifier: identifier, guardType: .code, codeOptions: codeOptions, timeout: timeout, fixedCode: code)
-}
-
-/// Enforce an access code & biometrics authentication if setup on the device.
-/// - Parameters:
-///   - codeOptions: The code options, see ``CodeOptions``.
-///   - timeout: The timeout when the view should be locked based on the time the scene is not in the foreground.
-///
-public func BiometricsAccessGuard( // swiftlint:disable:this identifier_name
-    _ identifier: AccessGuardIdentifier,
-    codeOptions: CodeOptions = .fourDigitNumeric,
-    timeout: Duration = .minutes(5)
-) -> AccessGuardConfiguration {
-    AccessGuardConfiguration(identifier: identifier, guardType: .biometrics, codeOptions: codeOptions, timeout: timeout, fixedCode: nil)
-}
+/// Access Guard Configuration
+@_documentation(visibility: internal)
+public protocol _AccessGuardConfigurationProtocol: Sendable, Identifiable { // swiftlint:disable:this type_name
+    /// The view used to unlock the access guard
+    associatedtype _UnlockView: View // swiftlint:disable:this type_name
+    /// This access guard's associated model type
+    associatedtype _Model: _AnyAccessGuardModel where _Model.Config == Self // swiftlint:disable:this type_name
     
+    /// The access guard's identifier
+    var id: AccessGuardIdentifier<Self> { get }
+    /// The access guard's timeout
+    var timeout: Duration { get }
     
-/// Enforce an access code if the device is not protected with an access code.
-/// - Parameters:
-///   - codeOptions: The code options, see ``CodeOptions``.
-///   - timeout: The timeout when the view should be locked based on the time the scene is not in the foreground.
-///
-/// > Warning: Not yet implemented
-@available(*, unavailable, message: "Not yet implemented")
-public func CodeIfUnprotectedAccessGuard( // swiftlint:disable:this identifier_name
-    _ identifier: AccessGuardIdentifier,
-    codeOptions: CodeOptions = .fourDigitNumeric,
-    timeout: Duration = .minutes(5)
-) -> AccessGuardConfiguration {
-    AccessGuardConfiguration(identifier: identifier, guardType: .codeIfUnprotected, codeOptions: codeOptions, timeout: timeout, fixedCode: nil)
+    /// The access guard's unlock view
+    @_spi(Internal)
+    @MainActor
+    @ViewBuilder
+    func _makeUnlockView(model: _Model) -> _UnlockView // swiftlint:disable:this identifier_name
+}
+
+
+extension _AccessGuardConfigurationProtocol {
+    var typeErasedId: any _AnyAccessGuardIdentifier {
+        id
+    }
 }

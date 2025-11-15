@@ -43,21 +43,21 @@ public final class AccessGuardModule: Module, DefaultInitializable, LifecycleHan
     /// Shared ``AccessGuard`` type used to lock, reset, and inspect access control mechanisms.
     @Model public private(set) var accessGuard: AccessGuard
     
-    private let configurations: [AccessGuardConfiguration]
+    private let initialConfigs: [any _AccessGuardConfigurationProtocol]
     
     
     public convenience init() {
         self.init { /* empty config */ }
     }
     
-    public init(@ArrayBuilder<AccessGuardConfiguration> _ configurations: () -> [AccessGuardConfiguration]) {
-        self.configurations = configurations()
+    public init(@ArrayBuilder<any _AccessGuardConfigurationProtocol> _ configurations: () -> [any _AccessGuardConfigurationProtocol]) {
+        self.initialConfigs = configurations()
     }
     
     
     @_documentation(visibility: internal)
     public func configure() {
-        accessGuard = AccessGuard(keychainStorage: keychainStorage, configurations)
+        accessGuard = AccessGuard(keychain: keychainStorage, configs: initialConfigs)
     }
     
     

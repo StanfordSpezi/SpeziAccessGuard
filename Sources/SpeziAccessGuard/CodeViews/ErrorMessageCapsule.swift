@@ -10,30 +10,17 @@ import SwiftUI
 
 
 struct ErrorMessageCapsule: View {
-    @Binding private var errorMessage: String?
-    
+    let errorMessage: LocalizedStringResource
     
     var body: some View {
-        Group {
-            if let errorMessage {
-                Text(errorMessage)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal)
-                    .padding(.vertical, 4)
-                    .background {
-                        RoundedRectangle(cornerRadius: 25)
-                            .foregroundStyle(.red)
-                    }
-            } else {
-                Rectangle()
-                    .foregroundStyle(.clear)
+        Text(errorMessage)
+            .foregroundStyle(.white)
+            .padding(.horizontal)
+            .padding(.vertical, 4)
+            .background {
+                RoundedRectangle(cornerRadius: 25)
+                    .foregroundStyle(.red)
             }
-        }
             .frame(height: 40)
-    }
-    
-    
-    init(errorMessage: Binding<String?>) {
-        self._errorMessage = errorMessage
     }
 }

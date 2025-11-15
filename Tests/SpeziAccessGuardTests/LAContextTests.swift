@@ -35,7 +35,7 @@ struct LAContextTests {
     @Test("Evaluate Policy Async Success")
     func evaluatePolicyAsyncSuccess() async throws {
         mockContext.shouldSucceed = true
-        let result = try await mockContext.evaluatePolicyAsync(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Test for success")
+        let result = try await mockContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Test for success")
         #expect(result == true, "Policy evaluation should succeed")
     }
 
@@ -43,7 +43,7 @@ struct LAContextTests {
     func evaluatePolicyAsyncFailure() async throws {
         mockContext.shouldSucceed = false
         do {
-            _ = try await mockContext.evaluatePolicyAsync(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Test for failure")
+            _ = try await mockContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Test for failure")
             Issue.record("Policy evaluation should fail but succeeded")
         } catch {
             // Test passes if an error is thrown as expected

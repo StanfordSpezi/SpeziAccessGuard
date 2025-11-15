@@ -45,22 +45,22 @@ import SwiftUI
 ///     }
 /// }
 ///
-/// extension AccessGuardIdentifier {
-///     static let myAccessGuard = Self("edu.stanford.spezi.myAccessGuard")
+/// extension AccessGuardIdentifier where AccessGuard == CodeAccessGuard {
+///     static let myAccessGuard: Self = .passcode("edu.stanford.spezi.myAccessGuard")
 /// }
 /// ```
 ///
 /// The `AccessGuardButton` offers a declarative and reusable way to control access to secure content in SwiftUI apps,
 /// integrating seamlessly with the environment-based dependency injection of an `AccessGuard`.
-public struct AccessGuardButton<Locked: View, Unlocked: View>: View {
+public struct AccessGuardButton<Locked: View, Unlocked: View, Configuration: _AccessGuardConfigurationProtocol>: View {
     @Environment(AccessGuard.self) private var accessGuard
-    private let identifier: AccessGuardIdentifier
+    private let identifier: AccessGuardIdentifier<Configuration>
     private let locked: () -> Locked
     private let unlocked: () -> Unlocked
     @State private var isShowingUnlockSheet = false
     
     public var body: some View {
-        if accessGuard.isLocked(identifier: identifier) {
+        if accessGuard.isLocked(identifier) {
             Button {
                 isShowingUnlockSheet = true
             } label: {
@@ -99,7 +99,7 @@ public struct AccessGuardButton<Locked: View, Unlocked: View>: View {
     ///   - locked: The label of the button displayed when access is locked.
     ///   - unlocked: The content displayed when access is unlocked.
     public init(
-        _ identifier: AccessGuardIdentifier,
+        _ identifier: AccessGuardIdentifier<Configuration>,
         @ViewBuilder locked: @escaping () -> Locked,
         @ViewBuilder unlocked: @escaping () -> Unlocked
     ) {
@@ -109,9 +109,10 @@ public struct AccessGuardButton<Locked: View, Unlocked: View>: View {
     }
 }
 
+
 #if DEBUG
 #Preview {
-    let identifier = AccessGuardIdentifier("edu.stanford.spezi.myView")
+    let identifier = AccessGuardIdentifier.passcode("edu.stanford.spezi.myView")
     AccessGuardButton(identifier) {
         Text("Unlock")
     } unlocked: {
@@ -119,7 +120,7 @@ public struct AccessGuardButton<Locked: View, Unlocked: View>: View {
     }
     .previewWith {
         AccessGuardModule {
-            FixedAccessGuard(identifier, code: "1234")
+            CodeAccessGuard(identifier, fixed: "1234")
         }
     }
 }

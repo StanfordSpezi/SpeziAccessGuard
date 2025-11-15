@@ -15,17 +15,20 @@ class TestAppDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
             AccessGuardModule {
-                BiometricsAccessGuard(.testBiometrics)
-                CodeAccessGuard(.test, timeout: .seconds(10))
-                FixedAccessGuard(.testFixed, code: "1234")
+                BiometricAccessGuard(.testBiometrics)
+                CodeAccessGuard(.test, codeFormat: .numeric(4), isOptional: true, timeout: .seconds(10))
+                CodeAccessGuard(.testFixed, fixed: "1234")
             }
         }
     }
 }
 
 
-extension AccessGuardIdentifier {
-    static let test = Self("edu.stanford.spezi.accessguardtests.1.test")
-    static let testFixed = Self("edu.stanford.spezi.accessguardtests.1.testFixed")
-    static let testBiometrics = Self("edu.stanford.spezi.accessguardtests.1.testBiometrics")
+extension AccessGuardIdentifier where AccessGuard == CodeAccessGuard {
+    static let test: Self = .passcode("edu.stanford.spezi.accessguardtests.1.test")
+    static let testFixed: Self = .passcode("edu.stanford.spezi.accessguardtests.1.testFixed")
+}
+
+extension AccessGuardIdentifier where AccessGuard == BiometricAccessGuard {
+    static let testBiometrics: Self = .biometric("edu.stanford.spezi.accessguardtests.1.testBiometrics")
 }

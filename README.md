@@ -61,8 +61,8 @@ class ExampleDelegate: SpeziAppDelegate {
     }
 }
 
-extension AccessGuardIdentifier {
-    static let exampleAccessGuard = Self("edu.stanford.spezi.exampleAccessGuard")
+extension AccessGuardIdentifier where AccessGuard == CodeAccessGuard {
+    static let exampleAccessGuard: Self = .passcode("edu.stanford.spezi.exampleAccessGuard")
 }
 ```
 
@@ -79,7 +79,7 @@ class ExampleDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
             AccessGuardModule {
-                BiometricsAccessGuard(.exampleAccessGuard, codeOptions: .fourDigitNumeric, timeout: .minutes(15))
+                BiometricAccessGuard(.exampleAccessGuard, codeOptions: .fourDigitNumeric, timeout: .minutes(15))
             }
         }
     }
@@ -99,7 +99,7 @@ class ExampleDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
             AccessGuardModule {
-                FixedAccessGuard(.exampleAccessGuard, code: "1234", codeOptions: .fourDigitNumeric, timeout: .minutes(15))
+                CodeAccessGuard(.exampleAccessGuard, fixed: "1234", timeout: .minutes(15))
             }
         }
     }
@@ -119,16 +119,19 @@ class ExampleDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
             AccessGuardModule {
-                BiometricsAccessGuard(.accessGuard1)
-                FixedAccessGuard(.accessGuard2, code: "1234")
+                BiometricAccessGuard(.accessGuard1)
+                CodeAccessGuard(.accessGuard2, fixed: "1234")
             }
         }
     }
 }
 
-extension AccessGuardIdentifier {
-    static let accessGuard1 = Self("edu.stanford.spezi.exampleAccessGuard1")
-    static let accessGuard2 = Self("edu.stanford.spezi.exampleAccessGuard2")
+extension AccessGuardIdentifier where AccessGuard == BiometricAccessGuard {
+    static let accessGuard1: Self = .biometric("edu.stanford.spezi.exampleAccessGuard1")
+}
+
+extension AccessGuardIdentifier where AccessGuard == CodeAccessGuard {
+    static let accessGuard2: Self = .passcode("edu.stanford.spezi.exampleAccessGuard2")
 }
 ```
 

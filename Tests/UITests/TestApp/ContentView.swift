@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable closure_body_length
+
 import SpeziAccessGuard
 import SwiftUI
 
@@ -13,69 +15,69 @@ import SwiftUI
 struct ContentView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(AccessGuard.self) private var accessGuard
-
-    // swiftlint:disable closure_body_length
+    
+    private let allIdentifiers: [any _AnyAccessGuardIdentifier] = [
+        AccessGuardIdentifier.test,
+        AccessGuardIdentifier.testFixed,
+        AccessGuardIdentifier.testBiometrics
+    ]
+    
     var body: some View {
         NavigationStack {
-            List {
-                NavigationLink("Access Guarded") {
-                    AccessGuarded(.test) {
-                        Color.green
-                            .overlay {
+            Form {
+                Section {
+                    actions
+                }
+                Section {
+                    NavigationLink("Access Guarded") {
+                        AccessGuarded(.test) {
+                            Color.green.overlay {
                                 Text("Secured ...")
                             }
+                        }
                     }
-                }
-                NavigationLink("Access Guarded Fixed") {
-                    AccessGuarded(.testFixed) {
-                        Color.green
-                            .overlay {
+                    NavigationLink("Access Guarded Fixed") {
+                        AccessGuarded(.testFixed) {
+                            Color.green.overlay {
                                 Text("Secured with fixed code ...")
                             }
+                        }
                     }
-                }
-                NavigationLink("Access Guarded Biometrics") {
-                    AccessGuarded(.testBiometrics) {
-                        Color.green
-                            .overlay {
+                    NavigationLink("Access Guarded Biometrics") {
+                        AccessGuarded(.testBiometrics) {
+                            Color.green.overlay {
                                 Text("Secured with biometrics ...")
                             }
+                        }
                     }
-                }
-                NavigationLink("Set Code") {
-                    SetAccessGuard(identifier: .test)
-                }
-                NavigationLink("Set Biometric Backup Code") {
-                    SetAccessGuard(identifier: .testBiometrics)
-                }
-                NavigationLink("Access Guard Button") {
-                    AccessGuardButton(.testFixed) {
-                        Text("Unlock me")
-                    } unlocked: {
-                        Text("Success")
+                    NavigationLink("Set Code") {
+                        SetAccessGuard(identifier: .test)
+                    }
+                    NavigationLink("Set Biometric Backup Code") {
+                        SetAccessGuard(identifier: AccessGuardIdentifier.testBiometrics.passcodeFallback)
+                    }
+                    NavigationLink("Access Guard Button") {
+                        AccessGuardButton(.testFixed) {
+                            Text("Unlock me")
+                        } unlocked: {
+                            Text("Success")
+                        }
                     }
                 }
             }
-                .toolbar {
-                    ToolbarItem {
-                        Button("Lock Access Guards") {
-                            Task {
-                                let identifiers: [AccessGuardIdentifier] = [.test, .testFixed, .testBiometrics]
-                                for identifier in identifiers {
-                                    await accessGuard.lock(identifier: identifier)
-                                }
-                            }
-                        }
-                    }
-                    ToolbarItem {
-                        Button("Reset Access Guards") {
-                            let identifiers: [AccessGuardIdentifier] = [.test, .testBiometrics]
-                            for identifier in identifiers {
-                                try? accessGuard.resetAccessCode(for: identifier)
-                            }
-                        }
-                    }
-                }
+        }
+    }
+    
+    @ViewBuilder private var actions: some View {
+        Button("Lock Access Guards") {
+            for identifier in allIdentifiers {
+                accessGuard.lock(identifier)
+            }
+        }
+        Button("Reset Access Guards") {
+            for identifier in allIdentifiers {
+                try? accessGuard.resetAccessCode(for: identifier)
+            }
         }
     }
 }

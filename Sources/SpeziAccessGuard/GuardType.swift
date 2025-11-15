@@ -8,7 +8,7 @@
 
 
 enum GuardType {
-    case codeIfUnprotected
+//    case codeIfUnprotected
     case code
     case biometrics
 }

@@ -1,38 +1,39 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "ACCESS_CODE_NOT_SET" : {
+    "%lld Failed Attempts" : {
       "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bitte legen Sie einen Zugangscode fest."
-          }
-        },
         "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Please set an access code"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Failed Attempt"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Failed Attempts"
+                }
+              }
+            }
           }
         }
       }
     },
-    "ACCESS_CODE_PASSCODE_ERROR %@" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ falsche Versuche"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ wrong tries"
-          }
-        }
-      }
+    "%lld-Digit Alphanumeric Code" : {
+
+    },
+    "%lld-Digit Numeric Code" : {
+
+    },
+    "%lld+-Digit Alphanumeric Code" : {
+
+    },
+    "%lld+-Digit Numeric Code" : {
+
     },
     "ACCESS_CODE_PASSCODE_PROMPT" : {
       "extractionState" : "manual",
@@ -136,6 +137,12 @@
         }
       }
     },
+    "Biometric" : {
+
+    },
+    "Biometric Unlock Failed" : {
+
+    },
     "CANCEL" : {
       "localizations" : {
         "de" : {
@@ -237,6 +244,12 @@
         }
       }
     },
+    "Enter Passcode" : {
+
+    },
+    "Error: %@" : {
+
+    },
     "PASSCODE_FIELD" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -287,6 +300,15 @@
           }
         }
       }
+    },
+    "Repeat Code" : {
+
+    },
+    "Retry" : {
+
+    },
+    "Set Code" : {
+
     },
     "SET_PASSCODE_BACK_BUTTON" : {
       "extractionState" : "manual",
@@ -355,6 +377,9 @@
           }
         }
       }
+    },
+    "Successfully Unlocked" : {
+
     },
     "UNLOCK_TITLE" : {
       "localizations" : {
