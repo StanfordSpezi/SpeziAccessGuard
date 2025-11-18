@@ -41,7 +41,6 @@ public struct AccessGuarded<GuardedView: View, Config: _AccessGuardConfig>: View
         _ identifier: AccessGuardIdentifier<Config>,
         @ViewBuilder guarded: @escaping @MainActor () -> GuardedView
     ) {
-//        self.identifier = identifier
         _accessGuard = .init(identifier)
         self.guarded = guarded
     }

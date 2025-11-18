@@ -59,7 +59,6 @@ public struct BiometricAccessGuard: _AccessGuardConfig {
 
 
 private struct BiometricsUnlockView: View {
-    //    let didUnlock: @MainActor () -> Void
     var model: _BiometricAccessGuardModel
     private let context = LAContext()
     

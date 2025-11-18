@@ -102,7 +102,6 @@ public struct AccessGuardButton<Locked: View, Unlocked: View, Config: _AccessGua
         @ViewBuilder locked: @escaping @MainActor () -> Locked,
         @ViewBuilder unlocked: @escaping @MainActor () -> Unlocked
     ) {
-//        self.identifier = identifier
         _accessGuard = .init(identifier)
         self.locked = locked
         self.unlocked = unlocked

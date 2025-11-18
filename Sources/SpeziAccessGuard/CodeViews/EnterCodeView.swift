@@ -20,7 +20,6 @@ struct EnterCodeView<Header: View>: View {
     private let codeFormat: PasscodeFormat
     private let header: Header
     private let evaluateCode: EvaluateCode
-//    private let onCompletion: @MainActor (String) async -> Void
     @State private var numFailedAttempts: Int = 0
     @State private var errorMessage: ErrorMessage?
     
@@ -62,32 +61,16 @@ struct EnterCodeView<Header: View>: View {
         format: PasscodeFormat,
         @ViewBuilder header: () -> Header,
         evaluateCode: @escaping EvaluateCode,
-//        onCompletion: @escaping @MainActor (String) async -> Void
     ) {
         self.codeFormat = format
         self.header = header()
         self.evaluateCode = evaluateCode
-//        self.onCompletion = onCompletion
     }
-    
-//    init(
-//        format: PasscodeFormat,
-//        evaluateCode: @escaping EvaluateCode,
-////        onCompletion: @escaping @MainActor (String) async -> Void
-//    ) where Header == Text {
-//        self.init(
-//            format: format,
-//            title: LocalizedStringResource("ACCESS_CODE_PASSCODE_PROMPT", bundle: .module),
-//            evaluateCode: evaluateCode,
-////            onCompletion: onCompletion
-//        )
-//    }
     
     init(
         format: PasscodeFormat,
         title: LocalizedStringResource? = nil,
-        evaluateCode: @escaping EvaluateCode,
-//        onCompletion: @escaping @MainActor (String) async -> Void
+        evaluateCode: @escaping EvaluateCode
     ) where Header == Text {
         self.init(
             format: format,
@@ -95,8 +78,7 @@ struct EnterCodeView<Header: View>: View {
                 Text(title ?? LocalizedStringResource("Enter Passcode", bundle: .module))
                     .font(.title2)
             },
-            evaluateCode: evaluateCode,
-//            onCompletion: onCompletion
+            evaluateCode: evaluateCode
         )
     }
 }
