@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Foundation
+public import Foundation
 import enum UIKit.UIKeyboardType
 
 

@@ -14,7 +14,7 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(AccessGuard.self) private var accessGuard
+    @Environment(AccessGuards.self) private var accessGuards
     
     private let allIdentifiers: [any _AnyAccessGuardIdentifier] = [
         AccessGuardIdentifier.test,
@@ -51,10 +51,10 @@ struct ContentView: View {
                         }
                     }
                     NavigationLink("Set Code") {
-                        SetAccessGuard(identifier: .test)
+                        SetAccessGuard(.test)
                     }
                     NavigationLink("Set Biometric Backup Code") {
-                        SetAccessGuard(identifier: AccessGuardIdentifier.testBiometrics.passcodeFallback)
+                        SetAccessGuard(AccessGuardIdentifier.testBiometrics.passcodeFallback)
                     }
                     NavigationLink("Access Guard Button") {
                         AccessGuardButton(.testFixed) {
@@ -74,12 +74,12 @@ struct ContentView: View {
     @ViewBuilder private var actions: some View {
         Button("Lock Access Guards") {
             for identifier in allIdentifiers {
-                accessGuard.lock(identifier)
+                accessGuards.lock(identifier)
             }
         }
         Button("Reset Access Guards") {
             for identifier in allIdentifiers {
-                try? accessGuard.resetAccessCode(for: identifier)
+                try? accessGuards.resetAccessCode(for: identifier)
             }
         }
     }

@@ -16,7 +16,7 @@ class TestAppDelegate: SpeziAppDelegate {
         Configuration {
             let consumableCodes = ConsumableCodesModule()
             consumableCodes
-            AccessGuardModule {
+            AccessGuards {
                 BiometricAccessGuard(.testBiometrics)
                 CodeAccessGuard(.test, codeFormat: .numeric(4), isOptional: true, timeout: .seconds(10))
                 CodeAccessGuard(.testFixed, fixed: "1234")

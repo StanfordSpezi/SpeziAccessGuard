@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Observation
+public import Observation
 import SpeziKeychainStorage
 
 
@@ -40,7 +40,7 @@ public final class _PasscodeAccessGuardModel: _AnyAccessGuardModel { // swiftlin
         }
     }
     
-    public init(config: CodeAccessGuard, context: AccessGuard) {
+    public init(config: CodeAccessGuard, context: AccessGuards) {
         self.config = config
         self.keychain = context.keychain
         setInitialLockedState()

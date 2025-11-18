@@ -36,12 +36,16 @@ let package = Package(
                 .product(name: "SpeziViews", package: "SpeziViews"),
                 .product(name: "SpeziFoundation", package: "SpeziFoundation")
             ],
-            swiftSettings: [.enableUpcomingFeature("ExistentialAny")]
+            swiftSettings: [
+                .enableUpcomingFeature("ExistentialAny"),
+                .enableUpcomingFeature("InternalImportsByDefault")
+            ]
         ),
         .testTarget(
             name: "SpeziAccessGuardTests",
             dependencies: [
                 .target(name: "SpeziAccessGuard"),
+                .product(name: "SpeziTesting", package: "Spezi"),
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             resources: [

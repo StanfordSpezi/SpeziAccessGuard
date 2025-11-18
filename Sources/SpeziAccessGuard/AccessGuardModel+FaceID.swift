@@ -6,10 +6,10 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Foundation
-import LocalAuthentication
-import Observation
-import SpeziKeychainStorage
+private import Foundation
+private import LocalAuthentication
+public import Observation
+private import SpeziKeychainStorage
 
 
 @Observable
@@ -32,7 +32,7 @@ public final class _BiometricAccessGuardModel: _AnyAccessGuardModel { // swiftli
         (try? context.canEvaluate(.deviceOwnerAuthenticationWithBiometrics)) == true
     }
     
-    public init(config: BiometricAccessGuard, context: AccessGuard) {
+    public init(config: BiometricAccessGuard, context: AccessGuards) {
         self.config = config
         self.fallback = config.fallback.flatMap { fallbackKind in
             do {
@@ -71,7 +71,7 @@ public final class _BiometricAccessGuardModel: _AnyAccessGuardModel { // swiftli
 extension AccessGuardIdentifier where AccessGuard == BiometricAccessGuard {
     /// The identifier of the biometric access guard's passcode fallback.
     ///
-    /// - Important: Only use this property if you wish to reset the fallback passcode associated with a Biometric Access Guard.
+    /// - Important: Only use this property if you wish to reset the fallback passcode associated with a Biometric Access Guard (via ``AccessGuards/resetAccessCode(for:)``).
     ///     Do not use it for anything else; the behaviour in that case is undefined.
     public var passcodeFallback: AccessGuardIdentifier<CodeAccessGuard> {
         AccessGuardIdentifier<CodeAccessGuard>(value: self.value + "~codeFallback")
@@ -80,7 +80,7 @@ extension AccessGuardIdentifier where AccessGuard == BiometricAccessGuard {
 
 
 extension LAContext {
-    func canEvaluate(_ policy: LAPolicy) throws(LAError) -> Bool {
+    fileprivate func canEvaluate(_ policy: LAPolicy) throws(LAError) -> Bool {
         var error: NSError?
         let result = self.canEvaluatePolicy(policy, error: &error)
         if let error {

@@ -6,13 +6,30 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Foundation
-import SpeziFoundation
-import SpeziViews
-import SwiftUI
+public import Foundation
+public import SpeziFoundation
+public import SwiftUI
 
 
-public struct CodeAccessGuard: _AccessGuardConfigurationProtocol {
+/// An Access Guard that is unlocked by the user entering a passcode.
+///
+/// ## Topics
+///
+/// ### Regular Access Guards
+/// - ``init(_:codeFormat:isOptional:timeout:)``
+///
+/// ### Fixed-Code Access Guards
+/// - ``init(_:fixed:timeout:)``
+/// - ``PasscodeFormat``
+///
+/// ### Custom-Validation Code Access Guards
+/// - ``init(_:timeout:message:format:validate:)``
+/// - ``ValidationResult``
+///
+/// ### Instance Properties
+/// - ``id``
+/// - ``timeout``
+public struct CodeAccessGuard: _AccessGuardConfig {
     public enum ValidationResult: Sendable {
         case valid
         case invalid(message: LocalizedStringResource?)
@@ -76,7 +93,7 @@ public struct CodeAccessGuard: _AccessGuardConfigurationProtocol {
 
 
 extension CodeAccessGuard {
-    /// Creates a Passcode Access Guard
+    /// Creates a passcode-based Access Guard
     public init(
         _ id: AccessGuardIdentifier<Self>,
         codeFormat: PasscodeFormat,
@@ -89,7 +106,7 @@ extension CodeAccessGuard {
         self.kind = .regular(format: codeFormat)
     }
     
-    /// Creates a Passcode Access Guard with a fixed code
+    /// Creates a passcode-based Access Guard that uses a fixed code
     public init(
         _ id: AccessGuardIdentifier<Self>,
         fixed fixedCode: String,
@@ -101,7 +118,7 @@ extension CodeAccessGuard {
         self.kind = .fixed(format: .automatic(forFixedCode: fixedCode), code: fixedCode)
     }
     
-    /// Creates a Passcode Access Guard that uses a custom validation closure
+    /// Creates a passcode-based Access Guard with customizable code validation
     public init(
         _ id: AccessGuardIdentifier<Self>,
         timeout: Duration = .minutes(5),

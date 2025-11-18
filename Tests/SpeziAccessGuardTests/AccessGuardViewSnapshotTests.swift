@@ -9,6 +9,7 @@
 import SnapshotTesting
 @testable import SpeziAccessGuard
 import SpeziKeychainStorage
+import SpeziTesting
 import SwiftUI
 import Testing
 
@@ -38,7 +39,15 @@ struct AccessGuardViewSnapshotTests {
 
     @MainActor
     private func performSnapshotTest(with config: TestConfiguration) async throws {
-        let model = _PasscodeAccessGuardModel.default
+        let module = AccessGuards {
+            CodeAccessGuard.testConfig
+        }
+        withDependencyResolution {
+            KeychainStorage()
+            module
+        }
+        let model = module.model(for: AccessGuardIdentifier.fixedCodeTest)
+        
         if config.isLocked {
             model.lock()
         } else {
@@ -60,13 +69,6 @@ struct AccessGuardViewSnapshotTests {
     }
 }
 
-extension _PasscodeAccessGuardModel {
-    @MainActor static var `default`: _PasscodeAccessGuardModel {
-        let keychainStorage = KeychainStorage()
-        let accessGuard = AccessGuard(keychain: keychainStorage, configs: [CodeAccessGuard.testConfig])
-        return accessGuard.model(for: AccessGuardIdentifier.fixedCodeTest)
-    }
-}
 
 extension AccessGuardIdentifier where AccessGuard == CodeAccessGuard {
     static let fixedCodeTest: Self = .passcode("test.accessguard")

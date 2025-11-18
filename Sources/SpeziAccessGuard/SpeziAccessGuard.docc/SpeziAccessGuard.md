@@ -41,182 +41,109 @@ First, you will need to add the SpeziAccessGuard Swift package to
 
 ### 2. Register the Access Guard Module
 
-#### Access Code
+#### Code-Based Access Guards
 
-In the example below, we configure the ``AccessGuardModule`` with one access guard that uses an access code and is identified by `ExampleIdentifier`. The `codeOptions` property defines the type of code used, which in this case is a 4-digit numeric code. The `timeout` property defines when the view should be locked based on the time the scene is not in the foreground, in seconds.
-
-
-```swift
-import Spezi
-import SpeziAccessGuard
-
-
-class ExampleDelegate: SpeziAppDelegate {
-    override var configuration: Configuration {
-        Configuration {
-            AccessGuardModule {
-                CodeAccessGuard(.exampleAccessGuard, codeOptions: .fourDigitNumeric, timeout: .minutes(15))
-            }
-        }
-    }
-}
-```
-
-#### Biometric with Access Code Fallback
-
-The ``AccessGuardModule`` can also be configured with an access guard that uses either Face ID or Touch ID, if the user has one of these enabled on their device (see [Face ID](https://support.apple.com/en-us/HT208109) or [Touch ID](https://support.apple.com/en-us/HT201371) for more information). This is shown in the example below. If biometrics are not available or biometric authentication fails, the user will be asked to enter their access code instead.
+In the example below, we configure the ``AccessGuards`` module with one access guard that uses an access code and is identified by `exampleAccessGuard`.
+The `codeFormat` parameter defines the type of code used, which in this case is a 4-digit numeric code.
+The `timeout` property defines when the view should be locked based on the time the scene is not in the foreground.
 
 
 ```swift
 import Spezi
 import SpeziAccessGuard
 
-
 class ExampleDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
-            AccessGuardModule {
-                BiometricAccessGuard(.exampleAccessGuard, codeOptions: .fourDigitNumeric, timeout: .minutes(15))
+            AccessGuards {
+                CodeAccessGuard(.exampleAccessGuard, codeFormat: .numeric(4), isOptional: true, timeout: .seconds(10))
             }
         }
     }
 }
+
+extension AccessGuardIdentifier where AccessGuard == CodeAccessGuard {
+    static let accessGuard1: Self = .passcode("edu.stanford.spezi.exampleAccessGuard1")
+}
 ```
 
-#### Fixed Code
+#### Biometric Access Guards
 
-The ``AccessGuardModule`` can also be configured with a fixed code passed as a string. This is shown in the example below.
+SpeziAccessGuard also supports biometric-based access guards, which are unlocked via Face ID or Touch ID.
+
+> Note: If no biometric authentication method is available, biometric access guards use a 6-digit code-based access guard as a fallback.
 
 ```swift
 import Spezi
 import SpeziAccessGuard
 
-
 class ExampleDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
             AccessGuardModule {
-                CodeAccessGuard(.exampleAccessGuard, fixed: "1234")
-            }
-        }
-    }
-}
-```
-
-#### Multiple Guards
-
-The ``AccessGuardModule`` can also be configured with multiple access guards that use different mechanisms, as shown below. In this example, we create both a biometric-based access guard and an access guard with a fixed code that can be used on different views in the application. Each access guard must have a unique identifier.
-
-```swift
-import Spezi
-import SpeziAccessGuard∂
-
-
-class ExampleDelegate: SpeziAppDelegate {
-    override var configuration: Configuration {
-        Configuration {
-            AccessGuardModule {
-                BiometricAccessGuard(.accessGuard1)
-                CodeAccessGuard(.accessGuard2, fixed: "1234")
+                BiometricAccessGuard(.accessGuard2)
             }
         }
     }
 }
 
 extension AccessGuardIdentifier where AccessGuard == BiometricAccessGuard {
-    static let accessGuard1: Self = .biometric("edu.stanford.spezi.exampleAccessGuard1")
-}
-
-extension AccessGuardIdentifier where AccessGuard == CodeAccessGuard {
-    static let accessGuard2: Self = .passcode("edu.stanford.spezi.exampleAccessGuard2")
+    static let accessGuard2: Self = .biometric("edu.stanford.spezi.exampleAccessGuard2")
 }
 ```
 
-> Tip: You can learn more about a [`Module` in the Spezi documentation](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/module).
+#### Alternative Code-based Access Guards
 
-### 3. Configure target properties
+In addition to their "regular" behaviour, where the user is asked to set a passcode the first time an access guard is used (unless the app already prompted the user to set the code), ``CodeAccessGuard``s have two additional modes:
+- Fixed-code access guard, which use an unchangeable code that is set by the app when defining the access guard in the module configuration
+- Custom-validation access guards, which delegate the validation of the user-entered code to the app, allowing custom handling and additional patterns which cannot be represented using the regular and fixed-code access guards
 
-To ensure that your application has the necessary permissions for biometrics, follow the steps below to configure the target properties within your Xcode project:
 
-- Open your project settings in Xcode by selecting *PROJECT_NAME > TARGET_NAME > Info* tab.
-- Add a key named `Privacy - Face ID Usage Description` to the `Custom iOS Target Properties` (the `Info.plist` file) and provide a string value that describes why your application needs access to Face ID.
-
-This entry is mandatory for apps that utilize biometrics. Failing to provide it will result in your app being unable to access these features. 
-
-## Examples
-
-### Setting an Access Code
-
-Using ``SetAccessGuard``, we can create a view that allows the user to set their access code. This step must be done before access guards can be used to guard a SwiftUI view, with the exception of an access guard that uses a fixed code. (Note that the access guard will be automatically unlocked after the passcode is set until it is locked or times out.)
+Example: using ``CodeAccessGuard`` with a custom validation closure to implement consumable access codes, where each code can only be used once:
 
 ```swift
-import SpeziAccessGuard
-
-struct SetAccessCode: View {
-    var body: some View {
-        SetAccessGuard(identifier: .exampleAccessGuard)
-    }
-}
-```
-
-### Guarding Access to a SwiftUI View
-
-Now, we can use the ``AccessGuarded`` view to guard access to a SwiftUI view with an access code.
-
-```swift
-import SpeziAccessGuard
-
-struct ProtectedContent: View {    
-    var body: some View {
-        AccessGuarded(.exampleAccessGuard) {
-            Text("Secured content...")
-        }
-    }
-}
-```
-
-### Locking an Access Guard
-
-The access guard will lock automatically when it times out. However, we can also lock an access guard directly using the ``AccessGuard/lock(identifier:)`` method. Here, we add a toolbar item with a button that will lock the access guard.
-
-```swift
-struct ProtectedContent: View {
-    @Environment(AccessGuard.self) private var accessGuard
+@MainActor
+final class ConsumableCodes: Sendable {
+    private(set) var consumedCodes: [String] = []
+    private(set) var remainingCodes = [
+        "1111", "2222", "3333", "4444"
+    ]
     
-    var body: some View {
-        AccessGuarded(.exampleAccessGuard) {
-            Text("Secured content...")
+    func validate(_ code: String) -> CodeAccessGuard.ValidationResult {
+        if let idx = remainingCodes.firstIndex(of: code) {
+            remainingCodes.remove(at: idx)
+            consumedCodes.append(code)
+            return .valid
+        } else {
+            return consumedCodes.contains(code) ? .invalid(message: "Already Consumed") : .invalid
         }
-        .toolbar {
-            ToolbarItem {
-                Button("Lock Access Guard") {
-                    try? accessGuard.lock(identifier: .exampleAccessGuard)
-                }
-            }
+    }
+}
+
+
+// in the Spezi App Delegate
+override var configuration: Configuration {
+    let consumableCodes = ConsumableCodes()
+    AccessGuardModule {
+        CodeAccessGuard(.exampleAccessGuard1, fixed: "1234")
+        CodeAccessGuard(.exampleAccessGuard3, format: .numeric(4)) { code in
+            await consumableCodes.validate(code)
         }
     }
 }
 ```
 
-### Resetting an Access Guard
 
-To remove the access code and all information from an access guard, we can use the ``AccessGuard/resetAccessCode(for:)`` method. Here, we add a toolbar item with a button that will reset the access guard.
+## Topics
 
-```swift
-struct ProtectedContent: View {
-    @Environment(AccessGuard.self) private var accessGuard
-    
-    var body: some View {
-        AccessGuarded(.exampleAccessGuard) {
-            Text("Secured content...")
-        }
-        .toolbar {
-            ToolbarItem {
-                Button("Reset Access Guard") {
-                    try? accessGuard.resetAccessCode(for: .exampleAccessGuard)
-                }
-            }
-        }
-    }
-}
-```
+### Access Guard Types
+- ``AccessGuards``
+- ``AccessGuardIdentifier``
+- ``CodeAccessGuard``
+- ``BiometricAccessGuard``
+
+### UI Components
+- ``AccessGuarded``
+- ``AccessGuard``
+- ``SetAccessGuard``
+- ``AccessGuardButton``

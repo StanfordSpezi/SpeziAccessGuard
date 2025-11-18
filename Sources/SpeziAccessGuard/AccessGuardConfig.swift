@@ -6,12 +6,12 @@
 // SPDX-License-Identifier: MIT
 //
 
-import SwiftUI
+public import SwiftUI
 
 
 /// Access Guard Configuration
 @_documentation(visibility: internal)
-public protocol _AccessGuardConfigurationProtocol: Sendable, Identifiable { // swiftlint:disable:this type_name
+public protocol _AccessGuardConfig: Sendable, Identifiable { // swiftlint:disable:this type_name
     /// The view used to unlock the access guard
     associatedtype _UnlockView: View // swiftlint:disable:this type_name
     /// This access guard's associated model type
@@ -30,7 +30,7 @@ public protocol _AccessGuardConfigurationProtocol: Sendable, Identifiable { // s
 }
 
 
-extension _AccessGuardConfigurationProtocol {
+extension _AccessGuardConfig {
     var typeErasedId: any _AnyAccessGuardIdentifier {
         id
     }

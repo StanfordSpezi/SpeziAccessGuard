@@ -6,18 +6,35 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Foundation
-import LocalAuthentication
-import SpeziFoundation
-import SwiftUI
+private import Foundation
+private import LocalAuthentication
+public import SpeziFoundation
+public import SwiftUI
 
 
-public struct BiometricAccessGuard: _AccessGuardConfigurationProtocol {
+/// An Access Guard that is unlocked by via biometrics (Face ID).
+///
+/// - Important: In order to use biometric (Face ID) access guards, you need to add the `NSFaceIDUsageDescription` key to your app's Info.plist.
+///
+/// ## Topics
+///
+/// ### Initializers
+/// - ``init(_:timeout:fallback:)``
+///
+/// ### Instance Properties
+/// - ``id``
+/// - ``timeout``
+/// - ``fallback``
+public struct BiometricAccessGuard: _AccessGuardConfig {
     public let id: AccessGuardIdentifier<Self>
     public let timeout: Duration
     public let fallback: CodeAccessGuard.Kind?
     
     /// Creates a Biometric Access Guard
+    ///
+    /// - parameter id: The access guard's identifier. Don't use the same identifier for multiple access guards.
+    /// - parameter timeout: How long the access guard should remain unlocked after the app moves to the background.
+    /// - parameter fallback: The ``CodeAccessGuard`` to use in case biometrics are not available.
     public init(
         _ id: AccessGuardIdentifier<Self>,
         timeout: Duration = .minutes(5),

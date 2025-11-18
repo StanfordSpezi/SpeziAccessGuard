@@ -13,7 +13,8 @@ import SwiftUI
 
 struct ConsumableCodesView: View {
     @Environment(ConsumableCodesModule.self) private var consumableCodes
-    @Environment(AccessGuard.self) private var accessGuard
+//    @Environment(AccessGuards.self) private var accessGuards
+    @AccessGuard(.testConsumable) private var accessGuard
     
     @State private var isShowingSheet = false
     
@@ -25,7 +26,7 @@ struct ConsumableCodesView: View {
             }
             Section {
                 Button("Open Secret View") {
-                    accessGuard.lock(.testConsumable)
+                    accessGuard.lock()
                     isShowingSheet = true
                 }
             }

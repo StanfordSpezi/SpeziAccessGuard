@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-import SwiftUI
+public import SwiftUI
 
 /// A view that conditionally displays either a locked button or unlocked content based on an AccessGuard's state.
 ///
@@ -52,15 +52,14 @@ import SwiftUI
 ///
 /// The `AccessGuardButton` offers a declarative and reusable way to control access to secure content in SwiftUI apps,
 /// integrating seamlessly with the environment-based dependency injection of an `AccessGuard`.
-public struct AccessGuardButton<Locked: View, Unlocked: View, Configuration: _AccessGuardConfigurationProtocol>: View {
-    @Environment(AccessGuard.self) private var accessGuard
-    private let identifier: AccessGuardIdentifier<Configuration>
-    private let locked: () -> Locked
-    private let unlocked: () -> Unlocked
+public struct AccessGuardButton<Locked: View, Unlocked: View, Config: _AccessGuardConfig>: View {
+    @AccessGuard<Config> private var accessGuard: Config._Model
+    private let locked: @MainActor () -> Locked
+    private let unlocked: @MainActor () -> Unlocked
     @State private var isShowingUnlockSheet = false
     
     public var body: some View {
-        if accessGuard.isLocked(identifier) {
+        if accessGuard.isLocked {
             Button {
                 isShowingUnlockSheet = true
             } label: {
@@ -76,20 +75,20 @@ public struct AccessGuardButton<Locked: View, Unlocked: View, Configuration: _Ac
     
     @ViewBuilder private var unlockSheetContent: some View {
         NavigationStack {
-            AccessGuarded(identifier) {
+            AccessGuarded(accessGuard.identifier) {
                 VStack { }
                     .onAppear {
                         isShowingUnlockSheet = false
                     }
             }
-                .navigationTitle(NSLocalizedString("UNLOCK_TITLE", bundle: .module, comment: ""))
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button(NSLocalizedString("CANCEL", bundle: .module, comment: ""), role: .cancel) {
-                            isShowingUnlockSheet = false
-                        }
+            .navigationTitle(NSLocalizedString("UNLOCK_TITLE", bundle: .module, comment: ""))
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(NSLocalizedString("CANCEL", bundle: .module, comment: ""), role: .cancel) {
+                        isShowingUnlockSheet = false
                     }
                 }
+            }
         }
     }
     
@@ -99,11 +98,12 @@ public struct AccessGuardButton<Locked: View, Unlocked: View, Configuration: _Ac
     ///   - locked: The label of the button displayed when access is locked.
     ///   - unlocked: The content displayed when access is unlocked.
     public init(
-        _ identifier: AccessGuardIdentifier<Configuration>,
-        @ViewBuilder locked: @escaping () -> Locked,
-        @ViewBuilder unlocked: @escaping () -> Unlocked
+        _ identifier: AccessGuardIdentifier<Config>,
+        @ViewBuilder locked: @escaping @MainActor () -> Locked,
+        @ViewBuilder unlocked: @escaping @MainActor () -> Unlocked
     ) {
-        self.identifier = identifier
+//        self.identifier = identifier
+        _accessGuard = .init(identifier)
         self.locked = locked
         self.unlocked = unlocked
     }
@@ -119,7 +119,7 @@ public struct AccessGuardButton<Locked: View, Unlocked: View, Configuration: _Ac
         Text("Super secret stuff 🤫")
     }
     .previewWith {
-        AccessGuardModule {
+        AccessGuards {
             CodeAccessGuard(identifier, fixed: "1234")
         }
     }

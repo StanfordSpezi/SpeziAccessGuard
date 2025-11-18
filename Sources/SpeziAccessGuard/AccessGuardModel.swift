@@ -6,9 +6,9 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Foundation
-import LocalAuthentication
-import Observation
+public import Foundation
+private import LocalAuthentication
+public import Observation
 import SpeziKeychainStorage
 
 
@@ -17,10 +17,10 @@ public protocol _AnyAccessGuardModel: Observable, Sendable { // swiftlint:disabl
     associatedtype UnlockInput
     associatedtype UnlockResult
     
-    associatedtype Config: _AccessGuardConfigurationProtocol /* where Config._Model.Configuration == Self */
+    associatedtype Config: _AccessGuardConfig /* where Config._Model.Configuration == Self */
     var isLocked: Bool { get }
     var config: Config { get }
-    init(config: Config, context: AccessGuard)
+    init(config: Config, context: AccessGuards)
     
     @_spi(Internal)
     func lock()
@@ -39,6 +39,10 @@ public protocol _AnyAccessGuardModel: Observable, Sendable { // swiftlint:disabl
 
 
 extension _AnyAccessGuardModel {
+    var identifier: AccessGuardIdentifier<Config> {
+        config.id
+    }
+    
     func unlock() async throws -> UnlockResult where UnlockInput == Void {
         try await unlock(())
     }

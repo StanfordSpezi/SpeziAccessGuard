@@ -10,7 +10,7 @@ import Spezi
 import SwiftUI
 
 
-struct AccessGuardView<Guarded: View, Config: _AccessGuardConfigurationProtocol>: View {
+struct AccessGuardView<Guarded: View, Config: _AccessGuardConfig>: View {
     let config: Config
     var model: Config._Model
     let guarded: @MainActor () -> Guarded
