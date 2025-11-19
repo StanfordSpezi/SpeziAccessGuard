@@ -39,7 +39,7 @@ public final class _BiometricAccessGuardModel: _AnyAccessGuardModel { // swiftli
                 try context.register(CodeAccessGuard(
                     id: config.id.passcodeFallback,
                     timeout: config.timeout,
-                    isOptional: true, // TOOD this really should be false?!
+                    isOptional: true,
                     kind: fallbackKind
                 ))
             } catch {

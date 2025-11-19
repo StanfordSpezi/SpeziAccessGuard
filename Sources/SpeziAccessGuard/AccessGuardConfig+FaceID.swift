@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable file_types_order
+
 private import Foundation
 private import LocalAuthentication
 public import SpeziFoundation
@@ -48,7 +50,7 @@ public struct BiometricAccessGuard: _AccessGuardConfig {
     @_spi(Internal)
     public func _makeUnlockView(model: _BiometricAccessGuardModel) -> some View { // swiftlint:disable:this identifier_name
         if model.isAvailable {
-            BiometricsUnlockView(model: model)
+            BiometricUnlockView(model: model)
         } else if let fallback = model.fallback {
             fallback.config._makeUnlockView(model: fallback)
         } else {
@@ -58,7 +60,7 @@ public struct BiometricAccessGuard: _AccessGuardConfig {
 }
 
 
-private struct BiometricsUnlockView: View {
+private struct BiometricUnlockView: View {
     var model: _BiometricAccessGuardModel
     private let context = LAContext()
     

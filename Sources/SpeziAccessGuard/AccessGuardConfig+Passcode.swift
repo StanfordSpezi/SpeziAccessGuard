@@ -30,10 +30,23 @@ public import SwiftUI
 /// - ``id``
 /// - ``timeout``
 public struct CodeAccessGuard: _AccessGuardConfig {
+    /// The result of evaluating a dynamic access guard against a user-entered passcode.
+    ///
+    /// ## Topics
+    /// ### Results
+    /// - ``valid``
+    /// - ``invalid``
+    /// - ``invalid(message:)``
     public enum ValidationResult: Sendable {
+        /// The user-entered passcode was correct, and the access guard should be unlocked in response.
         case valid
+        
+        /// The user-entered passcode was incorrect, and the access guard should remain locked.
+        ///
+        /// - parameter message: An optional error message that should be displayed to the user.
         case invalid(message: LocalizedStringResource?)
         
+        /// The user-entered passcode was incorrect, and the access guard should remain locked.
         public static var invalid: Self {
             .invalid(message: nil)
         }
@@ -41,7 +54,6 @@ public struct CodeAccessGuard: _AccessGuardConfig {
     
     public enum Kind: Sendable {
         case regular(format: PasscodeFormat)
-        case fixed(format: PasscodeFormat, code: String)
         case custom(
             message: LocalizedStringResource?,
             format: PasscodeFormat,
@@ -55,7 +67,7 @@ public struct CodeAccessGuard: _AccessGuardConfig {
     let kind: Kind
     var format: PasscodeFormat {
         switch kind {
-        case .regular(let format), .fixed(let format, _), .custom(_, let format, _):
+        case .regular(let format), .custom(_, let format, _):
             format
         }
     }
@@ -78,11 +90,6 @@ public struct CodeAccessGuard: _AccessGuardConfig {
                     await model.unlock($0)
                 }
             }
-        case let .fixed(format, _):
-            EnterCodeView(format: format) {
-                await model.unlock($0)
-            }
-
         case let .custom(message, format, validate: _):
             EnterCodeView(format: format, title: message) {
                 await model.unlock($0)
@@ -112,13 +119,51 @@ extension CodeAccessGuard {
         fixed fixedCode: String,
         timeout: Duration = .minutes(5)
     ) {
-        self.id = id
-        self.timeout = timeout
-        self.isOptional = false
-        self.kind = .fixed(format: .automatic(forFixedCode: fixedCode), code: fixedCode)
+        self.init(id, timeout: timeout, message: nil, format: .automatic(forFixedCode: fixedCode)) { code in
+            code == fixedCode ? .valid : .invalid
+        }
     }
     
-    /// Creates a passcode-based Access Guard with customizable code validation
+    /// Creates a dynamic passcode-based Access Guard with custom code validation.
+    ///
+    /// This allows the app to fully control the unlock behaviour of a passcode-protected access guard.
+    ///
+    /// Example: using ``CodeAccessGuard`` with a custom validation closure to implement consumable access codes, where each code can only be used once:
+    ///
+    /// ```swift
+    /// @MainActor
+    /// final class ConsumableCodes: Sendable {
+    ///     private(set) var consumedCodes: [String] = []
+    ///     private(set) var remainingCodes = [
+    ///         "1111", "2222", "3333", "4444"
+    ///     ]
+    ///
+    ///     func validate(_ code: String) -> CodeAccessGuard.ValidationResult {
+    ///         if let idx = remainingCodes.firstIndex(of: code) {
+    ///             remainingCodes.remove(at: idx)
+    ///             consumedCodes.append(code)
+    ///             return .valid
+    ///         } else {
+    ///             return consumedCodes.contains(code) ? .invalid(message: "Code Already Used") : .invalid
+    ///         }
+    ///     }
+    /// }
+    ///
+    /// // in the Spezi App Delegate
+    /// override var configuration: Configuration {
+    ///     let consumableCodes = ConsumableCodes()
+    ///     AccessGuards {
+    ///         CodeAccessGuard(.accessGuard, format: .numeric(4)) { code in
+    ///             await consumableCodes.validate(code)
+    ///         }
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// - Tip: In the example above, if `ConsumableCodes` were changed to conform to Spezi's `Module` protocol and added to the configuration,
+    ///     it'd be able to access (via the [`@Dependency`](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/module/dependency) API) other Spezi modules,
+    ///     thereby giving the access guard validation logic full access to the entire Spezi environment
+    ///     and it could use e.g. [SpeziStorage](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/) to keep track of the consumed/available codes.
     public init(
         _ id: AccessGuardIdentifier<Self>,
         timeout: Duration = .minutes(5),

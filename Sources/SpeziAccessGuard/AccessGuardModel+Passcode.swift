@@ -80,8 +80,6 @@ public final class _PasscodeAccessGuardModel: _AnyAccessGuardModel { // swiftlin
     
     func evaluate(_ code: String) async -> CodeAccessGuard.ValidationResult {
         switch config.kind {
-        case .fixed(_, let fixedCode):
-            code == fixedCode ? .valid : .invalid
         case .regular:
             if let persistedCode {
                 persistedCode.code == code ? .valid : .invalid
@@ -95,7 +93,7 @@ public final class _PasscodeAccessGuardModel: _AnyAccessGuardModel { // swiftlin
     
     func resetCode(newCode: String? = nil) throws {
         switch config.kind {
-        case .fixed, .custom:
+        case .custom:
             throw AccessGuardError.storeCodeError // TOOD better error!!!
         case .regular(let format):
             try keychain.deleteCredentials(withUsername: config.id.value, for: .accessGuard)
