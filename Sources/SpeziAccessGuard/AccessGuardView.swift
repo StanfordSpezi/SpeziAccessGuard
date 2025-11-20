@@ -10,32 +10,17 @@ import Spezi
 import SwiftUI
 
 
-struct AccessGuardView<GuardedView: View>: View {
-    private let guardedView: GuardedView
-    private let viewModel: AccessGuardViewModel
-
+struct AccessGuardView<Guarded: View, Config: _AccessGuardConfig>: View {
+    let config: Config
+    var model: Config._Model
+    let guarded: @MainActor () -> Guarded
     
     var body: some View {
-        if viewModel.locked {
-            EnterCodeView(viewModel: viewModel)
-                .onAppear {
-                    if viewModel.configuration.guardType == .biometrics {
-                        Task {
-                            try? await viewModel.authenticateWithBiometrics()
-                        }
-                    }
-                }
+        if model.isLocked {
+            config._makeUnlockView(model: model)
                 .ignoresSafeArea(.container)
         } else {
-            guardedView
+            guarded()
         }
-    }
-    
-    init(
-        viewModel: AccessGuardViewModel,
-        guardedView: GuardedView
-    ) {
-        self.guardedView = guardedView
-        self.viewModel = viewModel
     }
 }

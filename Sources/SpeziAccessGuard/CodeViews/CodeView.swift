@@ -11,44 +11,33 @@ import SwiftUI
 
 
 struct CodeView: View {
-    @Binding private var codeOption: CodeOptions
-    private let action: (String) async throws -> Void
+    let codeFormat: PasscodeFormat
+    private let action: @MainActor (String) async throws -> Void
     @State private var code: String = ""
     @FocusState private var focused: Bool
     @State private var viewState: ViewState = .idle
-    @State private var wrongCodeCounter: Int = 0
-    @State private var oldKeyBoardType: UIKeyboardType?
-    
     
     var body: some View {
         SecureField(String(), text: $code)
             .textContentType(.password)
-            .keyboardType(codeOption.keyBoardType)
+            .keyboardType(codeFormat.keyboardType)
             .textFieldStyle(.roundedBorder)
             .focused($focused)
             .disabled(viewState == .processing)
             .accessibilityLabel(Text("PASSCODE_FIELD", bundle: .module))
             .overlay {
                 ZStack {
-                    if codeOption.maxLength == 4 {
-                        Color(UIColor.systemBackground)
-                        HStack(spacing: 32) {
-                            ForEach(0..<4) { index in
-                                if code.count <= index {
-                                    Image(systemName: "circle")
-                                } else {
-                                    Image(systemName: "circle.fill")
-                                }
-                            }
-                        }
-                    } else if codeOption.maxLength == 6 {
+                    switch codeFormat.length {
+                    case .exact(let length), .atLeast(let length):
                         Color(UIColor.systemBackground)
                         HStack(spacing: 24) {
-                            ForEach(0..<6) { index in
+                            ForEach(0..<length, id: \.self) { index in
                                 if code.count <= index {
                                     Image(systemName: "circle")
+                                        .accessibilityHidden(true)
                                 } else {
                                     Image(systemName: "circle.fill")
+                                        .accessibilityHidden(true)
                                 }
                             }
                         }
@@ -60,54 +49,26 @@ struct CodeView: View {
             }
             .task {
                 focused = true
-                oldKeyBoardType = codeOption.keyBoardType
             }
             .onChange(of: code) {
-                if code.count >= codeOption.maxLength {
+                if codeFormat.validate(code: code) {
                     Task { @MainActor in
                         await checkCode()
                     }
                 }
             }
-            .onChange(of: codeOption) {
-                guard oldKeyBoardType != codeOption.keyBoardType else {
-                    return
-                }
-                
-                focused = false
-                oldKeyBoardType = codeOption.keyBoardType
-                
-                Task { @MainActor in
-                    try await Task.sleep(for: .seconds(0.05))
-                    focused = true
-                }
-            }
     }
     
-    
-    init(codeOption: CodeOptions, action: @escaping (String) async throws -> Void) {
-        self._codeOption = .constant(codeOption)
+    init(codeFormat: PasscodeFormat, action: @escaping @MainActor (String) async throws -> Void) {
+        self.codeFormat = codeFormat
         self.action = action
     }
-    
-    init(codeOption: Binding<CodeOptions>, action: @escaping (String) async throws -> Void) {
-        self._codeOption = codeOption
-        self.action = action
-    }
-    
     
     private func checkCode() async {
         focused = false
         viewState = .processing
-        
-        do {
-            try await action(code)
-            focused = false
-        } catch {
-            wrongCodeCounter += 1
-            code = ""
-        }
-        
+        try? await action(code)
+        code = ""
         viewState = .idle
         try? await Task.sleep(for: .seconds(0.05))
         focused = true
@@ -115,11 +76,9 @@ struct CodeView: View {
 }
 
 
-struct AuthenticationView_Previews: PreviewProvider {
-    static var previews: some View {
-        CodeView(codeOption: .fourDigitNumeric) { _ in
-            try await Task.sleep(for: .seconds(1))
-        }
-        .padding(.horizontal)
+#Preview {
+    CodeView(codeFormat: .numeric(4)) { _ in
+        try await Task.sleep(for: .seconds(1))
     }
+    .padding(.horizontal)
 }

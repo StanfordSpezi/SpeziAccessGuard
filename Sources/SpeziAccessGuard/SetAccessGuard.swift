@@ -6,31 +6,28 @@
 // SPDX-License-Identifier: MIT
 //
 
-import SpeziKeychainStorage
-import SwiftUI
+public import SwiftUI
 
 
-/// Allows a user to set a code for a ``AccessGuarded`` view.
+/// Allows a user to set a code for an Access Guard.
 public struct SetAccessGuard: View {
-    @Environment(AccessGuard.self) private var accessGuard
-    
-    private let identifier: AccessGuardIdentifier
-    private let action: @MainActor () async -> Void
-    
+    @AccessGuard<CodeAccessGuard> private var accessGuard: CodeAccessGuard._Model
+    private let onSuccess: @MainActor () -> Void
     
     public var body: some View {
-        SetCodeView(viewModel: accessGuard.viewModel(for: identifier), action: action)
+        SetupPasscodeFlow(model: accessGuard) {
+            onSuccess()
+        }
     }
-    
     
     /// - Parameters:
     ///   - identifier: The identifier of the access guard configuration that should be used to guard this view.
-    ///   - action: An action that should be performed once the password has been set.
+    ///   - onSuccess: An action that should be performed once the password has been set.
     public init(
-        identifier: AccessGuardIdentifier,
-        action: @escaping @MainActor () async -> Void = {}
+        _ identifier: AccessGuardIdentifier<CodeAccessGuard>,
+        onSuccess: @escaping @MainActor () -> Void = {}
     ) {
-        self.identifier = identifier
-        self.action = action
+        _accessGuard = .init(identifier)
+        self.onSuccess = onSuccess
     }
 }

@@ -9,6 +9,7 @@
 import SnapshotTesting
 @testable import SpeziAccessGuard
 import SpeziKeychainStorage
+import SpeziTesting
 import SwiftUI
 import Testing
 
@@ -38,17 +39,25 @@ struct AccessGuardViewSnapshotTests {
 
     @MainActor
     private func performSnapshotTest(with config: TestConfiguration) async throws {
-        let viewModel = AccessGuardViewModel.default
-
+        let module = AccessGuards {
+            CodeAccessGuard.testConfig
+        }
+        withDependencyResolution {
+            KeychainStorage()
+            module
+        }
+        let model = module.model(for: AccessGuardIdentifier.fixedCodeTest)
+        
         if config.isLocked {
-            await viewModel.lock()
+            model.lock()
         } else {
-            try viewModel.checkAccessCode("0218")
+            _ = await model.unlock("0218")
         }
 
         let accessGuardView = AccessGuardView(
-            viewModel: viewModel,
-            guardedView: Color.green
+            config: CodeAccessGuard.testConfig,
+            model: model,
+            guarded: { Color.green }
         )
         .border(Color.red, width: 1)
 
@@ -60,20 +69,11 @@ struct AccessGuardViewSnapshotTests {
     }
 }
 
-extension AccessGuardViewModel {
-    @MainActor static var `default`: AccessGuardViewModel {
-        let keychainStorage = KeychainStorage()
-        let accessGuard = AccessGuard(keychainStorage: keychainStorage, [.testConfiguration])
-        return accessGuard.viewModel(for: AccessGuardConfiguration.identifier)
-    }
+
+extension AccessGuardIdentifier where AccessGuard == CodeAccessGuard {
+    static let fixedCodeTest: Self = .passcode("test.accessguard")
 }
 
-extension AccessGuardConfiguration {
-    static let identifier = AccessGuardIdentifier("test.accessguard")
-    static var testConfiguration: AccessGuardConfiguration {
-        FixedAccessGuard(
-            Self.identifier,
-            code: "0218"
-        )
-    }
+extension CodeAccessGuard {
+    static let testConfig = Self(.fixedCodeTest, fixed: "0218")
 }

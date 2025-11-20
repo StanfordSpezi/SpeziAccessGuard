@@ -6,8 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-import SpeziKeychainStorage
-import SwiftUI
+public import SwiftUI
 
 
 /// A view that guards the access to a view.
@@ -22,17 +21,15 @@ import SwiftUI
 /// ```
 ///
 /// > Tip: You can allow a user to set the passcode using the ``SetAccessGuard`` view.
-public struct AccessGuarded<GuardedView: View>: View {
-    @Environment(AccessGuard.self) private var accessGuard
-    
-    private let identifier: AccessGuardIdentifier
-    private let guardedView: GuardedView
-    
+public struct AccessGuarded<GuardedView: View, Config: _AccessGuardConfig>: View {
+    @AccessGuard<Config> private var accessGuard: Config._Model
+    private let guarded: @MainActor () -> GuardedView
     
     public var body: some View {
         AccessGuardView(
-            viewModel: accessGuard.viewModel(for: identifier),
-            guardedView: guardedView
+            config: accessGuard.config,
+            model: accessGuard,
+            guarded: guarded
         )
     }
     
@@ -41,18 +38,18 @@ public struct AccessGuarded<GuardedView: View>: View {
     ///   - identifier: The identifier of the access guard configuration that should be used to guard this view.
     ///   - guarded: The guarded view.
     public init(
-        _ identifier: AccessGuardIdentifier,
-        @ViewBuilder guarded guardedView: () -> GuardedView
+        _ identifier: AccessGuardIdentifier<Config>,
+        @ViewBuilder guarded: @escaping @MainActor () -> GuardedView
     ) {
-        self.identifier = identifier
-        self.guardedView = guardedView()
+        _accessGuard = .init(identifier)
+        self.guarded = guarded
     }
 }
 
 
 #if DEBUG
 #Preview {
-    let identifier = AccessGuardIdentifier("edu.stanford.spezi.myView")
+    let identifier = AccessGuardIdentifier.passcode("edu.stanford.spezi.myView")
     AccessGuarded(identifier) {
         Text("Super secret stuff 🤫")
     }

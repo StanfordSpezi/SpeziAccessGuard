@@ -14,7 +14,6 @@ enum AccessGuardError: LocalizedError {
     case storeCodeError
     case biometricsNotAvailable
     
-    
     var errorDescription: String {
         String(localized: "ACCESS_GUARD_ERROR_TITLE", bundle: .module)
     }

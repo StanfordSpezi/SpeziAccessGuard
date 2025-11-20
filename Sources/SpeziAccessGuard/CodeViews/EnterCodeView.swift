@@ -9,38 +9,94 @@
 import SwiftUI
 
 
-struct EnterCodeView: View {
-    var viewModel: AccessGuardViewModel
-    @State private var wrongCodeCounter: Int = 0
-    @State private var errorMessage: String?
+struct EnterCodeView<Header: View>: View {
+    typealias EvaluateCode = @MainActor (_ code: String) async -> CodeAccessGuard.ValidationResult
     
+    private struct ErrorMessage {
+        let numFailedAttempts: Int
+        let explainer: LocalizedStringResource?
+    }
+    
+    private let codeFormat: PasscodeFormat
+    private let header: Header
+    private let evaluateCode: EvaluateCode
+    @State private var numFailedAttempts: Int = 0
+    @State private var errorMessage: ErrorMessage?
     
     var body: some View {
         ZStack {
             Color(uiColor: .systemBackground)
             VStack(spacing: 32) {
-                if let codeOption = viewModel.codeOption {
-                    Text("ACCESS_CODE_PASSCODE_PROMPT", bundle: .module)
-                        .font(.title2)
-                        .frame(maxWidth: .infinity)
-                    CodeView(codeOption: codeOption) { code in
-                        do {
-                            try viewModel.checkAccessCode(code)
-                        } catch {
-                            wrongCodeCounter += 1
-                            let errorMessageTemplate = NSLocalizedString("ACCESS_CODE_PASSCODE_ERROR %@", bundle: .module, comment: "")
-                            errorMessage = String(format: errorMessageTemplate, "\(wrongCodeCounter)")
-                            throw error
+                header
+                    .frame(maxWidth: .infinity)
+                CodeView(codeFormat: codeFormat) { code in
+                    switch await evaluateCode(code) {
+                    case .valid:
+                        // entered correct code; the parent view will take it from here
+                        break
+                    case .invalid(let message):
+                        numFailedAttempts += 1
+                        errorMessage = .init(numFailedAttempts: numFailedAttempts, explainer: message)
+                    }
+                }
+                if let errorMessage {
+                    VStack {
+                        ErrorMessageCapsule(
+                            errorMessage: LocalizedStringResource("\(errorMessage.numFailedAttempts) Failed Attempts", bundle: .module)
+                        )
+                        if let explainer = errorMessage.explainer {
+                            Text(explainer)
+                                .font(.callout)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
                         }
                     }
-                } else {
-                    Text("ACCESS_CODE_NOT_SET", bundle: .module)
-                        .font(.title2)
-                        .frame(maxWidth: .infinity)
                 }
-                ErrorMessageCapsule(errorMessage: $errorMessage)
             }
-                .padding(.horizontal)
+            .padding(.horizontal)
+        }
+    }
+    
+    init(
+        format: PasscodeFormat,
+        @ViewBuilder header: () -> Header,
+        evaluateCode: @escaping EvaluateCode,
+    ) {
+        self.codeFormat = format
+        self.header = header()
+        self.evaluateCode = evaluateCode
+    }
+    
+    init(
+        format: PasscodeFormat,
+        title: LocalizedStringResource? = nil,
+        evaluateCode: @escaping EvaluateCode
+    ) where Header == Text {
+        self.init(
+            format: format,
+            header: {
+                Text(title ?? LocalizedStringResource("Enter Passcode", bundle: .module))
+                    .font(.title2)
+            },
+            evaluateCode: evaluateCode
+        )
+    }
+}
+
+
+#Preview {
+    EnterCodeView(format: .numeric(4), title: "Enter PIN") { code in
+        if code == "1234" {
+            return .valid
+        } else {
+            switch code.count {
+            case ..<4:
+                return .invalid(message: "too short")
+            case 4:
+                return .invalid(message: "WRONG")
+            default:
+                return .invalid(message: "too long")
+            }
         }
     }
 }

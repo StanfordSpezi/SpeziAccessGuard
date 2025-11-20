@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-import SwiftUI
+public import SwiftUI
 
 /// A view that conditionally displays either a locked button or unlocked content based on an AccessGuard's state.
 ///
@@ -45,22 +45,21 @@ import SwiftUI
 ///     }
 /// }
 ///
-/// extension AccessGuardIdentifier {
-///     static let myAccessGuard = Self("edu.stanford.spezi.myAccessGuard")
+/// extension AccessGuardIdentifier where AccessGuard == CodeAccessGuard {
+///     static let myAccessGuard: Self = .passcode("edu.stanford.spezi.myAccessGuard")
 /// }
 /// ```
 ///
 /// The `AccessGuardButton` offers a declarative and reusable way to control access to secure content in SwiftUI apps,
 /// integrating seamlessly with the environment-based dependency injection of an `AccessGuard`.
-public struct AccessGuardButton<Locked: View, Unlocked: View>: View {
-    @Environment(AccessGuard.self) private var accessGuard
-    private let identifier: AccessGuardIdentifier
-    private let locked: () -> Locked
-    private let unlocked: () -> Unlocked
+public struct AccessGuardButton<Locked: View, Unlocked: View, Config: _AccessGuardConfig>: View {
+    @AccessGuard<Config> private var accessGuard: Config._Model
+    private let locked: @MainActor () -> Locked
+    private let unlocked: @MainActor () -> Unlocked
     @State private var isShowingUnlockSheet = false
     
     public var body: some View {
-        if accessGuard.isLocked(identifier: identifier) {
+        if accessGuard.isLocked {
             Button {
                 isShowingUnlockSheet = true
             } label: {
@@ -76,20 +75,20 @@ public struct AccessGuardButton<Locked: View, Unlocked: View>: View {
     
     @ViewBuilder private var unlockSheetContent: some View {
         NavigationStack {
-            AccessGuarded(identifier) {
+            AccessGuarded(accessGuard.identifier) {
                 VStack { }
                     .onAppear {
                         isShowingUnlockSheet = false
                     }
             }
-                .navigationTitle(NSLocalizedString("UNLOCK_TITLE", bundle: .module, comment: ""))
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button(NSLocalizedString("CANCEL", bundle: .module, comment: ""), role: .cancel) {
-                            isShowingUnlockSheet = false
-                        }
+            .navigationTitle(NSLocalizedString("UNLOCK_TITLE", bundle: .module, comment: ""))
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(NSLocalizedString("CANCEL", bundle: .module, comment: ""), role: .cancel) {
+                        isShowingUnlockSheet = false
                     }
                 }
+            }
         }
     }
     
@@ -99,27 +98,28 @@ public struct AccessGuardButton<Locked: View, Unlocked: View>: View {
     ///   - locked: The label of the button displayed when access is locked.
     ///   - unlocked: The content displayed when access is unlocked.
     public init(
-        _ identifier: AccessGuardIdentifier,
-        @ViewBuilder locked: @escaping () -> Locked,
-        @ViewBuilder unlocked: @escaping () -> Unlocked
+        _ identifier: AccessGuardIdentifier<Config>,
+        @ViewBuilder locked: @escaping @MainActor () -> Locked,
+        @ViewBuilder unlocked: @escaping @MainActor () -> Unlocked
     ) {
-        self.identifier = identifier
+        _accessGuard = .init(identifier)
         self.locked = locked
         self.unlocked = unlocked
     }
 }
 
+
 #if DEBUG
 #Preview {
-    let identifier = AccessGuardIdentifier("edu.stanford.spezi.myView")
+    let identifier = AccessGuardIdentifier.passcode("edu.stanford.spezi.myView")
     AccessGuardButton(identifier) {
         Text("Unlock")
     } unlocked: {
         Text("Super secret stuff 🤫")
     }
     .previewWith {
-        AccessGuardModule {
-            FixedAccessGuard(identifier, code: "1234")
+        AccessGuards {
+            CodeAccessGuard(identifier, fixed: "1234")
         }
     }
 }
