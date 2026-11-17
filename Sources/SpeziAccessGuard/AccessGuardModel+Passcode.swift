@@ -36,14 +36,14 @@ public final class _PasscodeAccessGuardModel: _AnyAccessGuardModel { // swiftlin
         case set(PersistedPasscode)
         /// It is unknown whether a passcode is stored for this access guard.
         ///
-        /// This is the case if reading the stored passcode failed for a reason other than it not existing
-        /// (e.g., because protected data is not available before the device's first unlock after a reboot, or while the app is being prewarmed),
-        /// or if the stored entry exists but could not be decoded.
+        /// This is the case if protected data is currently unavailable (e.g., before the device's first unlock after a reboot, or while the app is being prewarmed),
+        /// if reading the stored passcode failed for a reason other than it not existing, or if the stored entry exists but could not be decoded.
         case unreadable
     }
     
     private let store: any PasscodeCredentialsStore
     private let notificationCenter: NotificationCenter
+    private let isProtectedDataAvailable: @MainActor () -> Bool
     @ObservationIgnored private var protectedDataObserver: (any NSObjectProtocol)?
     public let config: CodeAccessGuard
     private(set) var needsSetup = true
@@ -55,6 +55,11 @@ public final class _PasscodeAccessGuardModel: _AnyAccessGuardModel { // swiftlin
     private(set) var isPersistedPasscodeUnreadable = false
     
     private var persistedPasscodeState: PersistedPasscodeState {
+        guard isProtectedDataAvailable() else {
+            // While protected data is unavailable (e.g., before the device's first unlock after a reboot, or while the app is being prewarmed),
+            // a keychain query can report the passcode as not found instead of failing, so the result of the read can't be trusted.
+            return .unreadable
+        }
         let entry: String?
         do {
             entry = try store.retrievePasscodeEntry(for: config.id.value)
@@ -75,10 +80,18 @@ public final class _PasscodeAccessGuardModel: _AnyAccessGuardModel { // swiftlin
         self.init(config: config, store: context.keychain)
     }
     
-    init(config: CodeAccessGuard, store: any PasscodeCredentialsStore, notificationCenter: NotificationCenter = .default) {
+    /// - parameter isProtectedDataAvailable: Whether protected data, and therefore the stored passcode, is currently available.
+    ///     While this returns `false`, the stored passcode is treated as unreadable, regardless of what the store returns.
+    init(
+        config: CodeAccessGuard,
+        store: any PasscodeCredentialsStore,
+        notificationCenter: NotificationCenter = .default,
+        isProtectedDataAvailable: @escaping @MainActor () -> Bool = { UIApplication.shared.isProtectedDataAvailable }
+    ) {
         self.config = config
         self.store = store
         self.notificationCenter = notificationCenter
+        self.isProtectedDataAvailable = isProtectedDataAvailable
         setInitialLockedState()
     }
     
