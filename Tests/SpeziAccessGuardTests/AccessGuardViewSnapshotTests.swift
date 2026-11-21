@@ -63,7 +63,8 @@ struct AccessGuardViewSnapshotTests {
 
         assertSnapshot(
             of: accessGuardView,
-            as: .image(layout: .device(config: config.deviceConfig)),
+            // Text anti-aliasing differs slightly between iOS simulator runtimes, so allow small perceptual differences.
+            as: .image(perceptualPrecision: 0.98, layout: .device(config: config.deviceConfig)),
             named: config.testName
         )
     }
