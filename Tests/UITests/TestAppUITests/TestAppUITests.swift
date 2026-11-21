@@ -229,7 +229,7 @@ class TestAppUITests: XCTestCase {
         app.buttons["Access Guarded Alphanumeric"].tap()
         XCTAssert(app.staticTexts["Enter Passcode"].waitForExistence(timeout: 5.0))
 
-        let passcodeField = app.secureTextFields.firstMatch
+        let passcodeField = app.secureTextFields["Passcode Field"]
         XCTAssert(passcodeField.waitForExistence(timeout: 2.0))
         passcodeField.tap()
 

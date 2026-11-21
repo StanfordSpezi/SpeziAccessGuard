@@ -29,26 +29,10 @@ struct CodeView: View {
                 .disabled(viewState == .processing)
                 .accessibilityLabel(Text("PASSCODE_FIELD", bundle: .module))
                 .overlay {
-                    ZStack {
-                        switch codeFormat.length {
-                        case .exact(let length), .atLeast(let length):
-                            Color(UIColor.systemBackground)
-                            HStack(spacing: 24) {
-                                ForEach(0..<length, id: \.self) { index in
-                                    if code.count <= index {
-                                        Image(systemName: "circle")
-                                            .accessibilityHidden(true)
-                                    } else {
-                                        Image(systemName: "circle.fill")
-                                            .accessibilityHidden(true)
-                                    }
-                                }
-                            }
+                    codeIndicator
+                        .onTapGesture {
+                            focused = true
                         }
-                    }
-                    .onTapGesture {
-                        focused = true
-                    }
                 }
                 .onAppear {
                     focused = true
@@ -63,6 +47,30 @@ struct CodeView: View {
             }
         }
         .animation(.easeInOut, value: invalidCharacterMessage)
+        .onDisappear {
+            dismissTask?.cancel()
+            dismissTask = nil
+        }
+    }
+    
+    private var codeIndicator: some View {
+        ZStack {
+            switch codeFormat.length {
+            case .exact(let length), .atLeast(let length):
+                Color(UIColor.systemBackground)
+                HStack(spacing: 24) {
+                    ForEach(0..<length, id: \.self) { index in
+                        if code.count <= index {
+                            Image(systemName: "circle")
+                                .accessibilityHidden(true)
+                        } else {
+                            Image(systemName: "circle.fill")
+                                .accessibilityHidden(true)
+                        }
+                    }
+                }
+            }
+        }
     }
     
     init(codeFormat: PasscodeFormat, action: @escaping @MainActor (String) async throws -> Void) {
