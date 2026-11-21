@@ -20,6 +20,7 @@ class TestAppDelegate: SpeziAppDelegate {
                 BiometricAccessGuard(.testBiometrics)
                 CodeAccessGuard(.test, codeFormat: .numeric(4), isOptional: true, timeout: .seconds(10))
                 CodeAccessGuard(.testFixed, fixed: "1234")
+                CodeAccessGuard(.testAlphanumeric, fixed: "abc123")
                 CodeAccessGuard(.testConsumable, format: .numeric(4)) { code in
                     await consumableCodes.validate(code)
                 }
@@ -32,6 +33,7 @@ class TestAppDelegate: SpeziAppDelegate {
 extension AccessGuardIdentifier where AccessGuard == CodeAccessGuard {
     static let test: Self = .passcode("edu.stanford.spezi.accessguardtests.1.test")
     static let testFixed: Self = .passcode("edu.stanford.spezi.accessguardtests.1.testFixed")
+    static let testAlphanumeric: Self = .passcode("edu.stanford.spezi.accessguardtests.1.testAlphanumeric")
     static let testConsumable: Self = .passcode("edu.stanford.spezi.accessguardtests.1.testConsumable")
 }
 

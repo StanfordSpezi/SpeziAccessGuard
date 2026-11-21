@@ -43,6 +43,13 @@ struct ContentView: View {
                             }
                         }
                     }
+                    NavigationLink("Access Guarded Alphanumeric") {
+                        AccessGuarded(.testAlphanumeric) {
+                            Color.green.overlay {
+                                Text("Secured with alphanumeric code ...")
+                            }
+                        }
+                    }
                     NavigationLink("Access Guarded Biometrics") {
                         AccessGuarded(.testBiometrics) {
                             Color.green.overlay {
