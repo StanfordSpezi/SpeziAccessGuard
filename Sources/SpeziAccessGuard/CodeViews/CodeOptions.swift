@@ -69,7 +69,17 @@ extension PasscodeFormat {
             .asciiCapable
         }
     }
-    
+
+    /// A localized message to display when an invalid character is rejected.
+    var invalidCharacterMessage: LocalizedStringResource? {
+        switch self {
+        case .numeric:
+            LocalizedStringResource("PASSCODE_ONLY_DIGITS_ALLOWED", bundle: .module)
+        case .alphanumeric:
+            LocalizedStringResource("PASSCODE_ONLY_LETTERS_AND_DIGITS_ALLOWED", bundle: .module)
+        }
+    }
+
     func validate(code: String) -> Bool {
         switch self {
         case .numeric(.exact(let length)):
@@ -80,6 +90,16 @@ extension PasscodeFormat {
             code.allSatisfy { $0.isNumber || $0.isLetter } && code.count == length
         case .alphanumeric(.atLeast(let minLength)):
             code.allSatisfy { $0.isNumber || $0.isLetter } && code.count >= minLength
+        }
+    }
+
+    /// Returns a copy of `code` with any characters disallowed by this format removed.
+    func filteringInvalidCharacters(from code: String) -> String {
+        switch self {
+        case .numeric:
+            code.filter(\.isNumber)
+        case .alphanumeric:
+            code.filter { $0.isNumber || $0.isLetter }
         }
     }
 }

@@ -222,6 +222,31 @@ class TestAppUITests: XCTestCase {
     }
     
     
+    func testInvalidCharacterFiltering() throws {
+        let app = XCUIApplication()
+        app.launch()
+
+        app.buttons["Access Guarded Alphanumeric"].tap()
+        XCTAssert(app.staticTexts["Enter Passcode"].waitForExistence(timeout: 5.0))
+
+        let passcodeField = app.secureTextFields["Passcode Field"]
+        XCTAssert(passcodeField.waitForExistence(timeout: 2.0))
+        passcodeField.tap()
+
+        // Type an invalid character for an alphanumeric passcode — it should be filtered and an error shown
+        passcodeField.typeText("!")
+        let errorCapsule = app.descendants(matching: .any)
+            .matching(NSPredicate(format: "identifier == 'invalidCharacterMessage'"))
+            .firstMatch
+        XCTAssert(errorCapsule.waitForExistence(timeout: 2.0))
+
+        // Valid input should still work after the invalid character is filtered
+        passcodeField.tap()
+        passcodeField.typeText("abc123")
+        XCTAssert(app.staticTexts["Secured with alphanumeric code ..."].waitForExistence(timeout: 2.0))
+    }
+
+
     func testCustomCodeBehaviour() {
         enum ExpectedUnlockBehaviour {
             case success

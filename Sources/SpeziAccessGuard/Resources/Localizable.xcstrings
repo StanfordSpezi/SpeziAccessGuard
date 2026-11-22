@@ -250,6 +250,38 @@
     "Error: %@" : {
 
     },
+    "PASSCODE_ONLY_DIGITS_ALLOWED" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur Ziffern sind erlaubt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only digits are allowed"
+          }
+        }
+      }
+    },
+    "PASSCODE_ONLY_LETTERS_AND_DIGITS_ALLOWED" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur Buchstaben und Ziffern sind erlaubt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only letters and digits are allowed"
+          }
+        }
+      }
+    },
     "PASSCODE_FIELD" : {
       "extractionState" : "manual",
       "localizations" : {
