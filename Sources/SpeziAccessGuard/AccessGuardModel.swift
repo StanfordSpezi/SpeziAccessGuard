@@ -50,6 +50,11 @@ extension _AnyAccessGuardModel {
     public func didEnterBackground() {} // swiftlint:disable:this missing_docs
     
     public func willEnterForeground(lastEnteredBackground: Date) { // swiftlint:disable:this missing_docs
+        lockIfTimedOut(lastEnteredBackground: lastEnteredBackground)
+    }
+    
+    /// Locks the access guard if the app was in the background for longer than the access guard's timeout.
+    func lockIfTimedOut(lastEnteredBackground: Date) {
         if lastEnteredBackground.addingTimeInterval(config.timeout.timeInterval) < .now {
             lock()
         }
